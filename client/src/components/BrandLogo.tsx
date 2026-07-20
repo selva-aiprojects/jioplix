@@ -14,7 +14,7 @@ export default function BrandLogo({ size = 'md', light = false }: BrandLogoProps
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <img 
-        src={customLogo || "/logo.png"} 
+        src={customLogo || "/logo.svg"} 
         alt="Jioplix Logo" 
         style={{ 
           height: `${height}px`, 
