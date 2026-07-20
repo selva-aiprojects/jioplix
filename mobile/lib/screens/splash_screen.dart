@@ -4,7 +4,7 @@ import '../theme/app_colors.dart';
 import 'login_screen.dart';
 import 'role_dashboard_router.dart';
 
-/// Animated splash screen with logo reveal, pulse glow, and auto-redirect.
+/// Fresh, premium animated splash screen for Jioplix
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -15,30 +15,35 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _logoController;
-  late AnimationController _pulseController;
   late Animation<double> _logoScale;
   late Animation<double> _logoOpacity;
-  late Animation<double> _pulseScale;
   late Animation<double> _textOpacity;
+  late Animation<Offset> _textSlide;
 
   @override
   void initState() {
     super.initState();
 
-    // Logo entrance animation
+    // Sleek entrance animation
     _logoController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1400),
     );
-    _logoScale = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
+
+    _logoScale = Tween<double>(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _logoController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+      ),
     );
+
     _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _logoController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0.1, 0.7, curve: Curves.easeOut),
       ),
     );
+
     _textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _logoController,
@@ -46,13 +51,11 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    // Continuous pulse glow
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    )..repeat(reverse: true);
-    _pulseScale = Tween<double>(begin: 1.0, end: 1.15).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    _textSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+      CurvedAnimation(
+        parent: _logoController,
+        curve: const Interval(0.5, 1.0, curve: Curves.easeOutCubic),
+      ),
     );
 
     _logoController.forward();
@@ -60,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateAfterDelay() async {
-    await Future.delayed(const Duration(milliseconds: 2200));
+    await Future.delayed(const Duration(milliseconds: 2400));
     if (!mounted) return;
 
     final prefs = await SharedPreferences.getInstance();
@@ -74,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen>
       PageRouteBuilder(
         pageBuilder: (_, __, ___) =>
             hasToken ? const RoleDashboardRouter() : const LoginScreen(),
-        transitionDuration: const Duration(milliseconds: 600),
+        transitionDuration: const Duration(milliseconds: 800),
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(
             opacity: CurvedAnimation(
@@ -91,162 +94,129 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void dispose() {
     _logoController.dispose();
-    _pulseController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0F172A), Color(0xFF1E293B), Color(0xFF0F172A)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: [0.0, 0.5, 1.0],
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          // Elegant minimal background pattern
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              width: 400,
+              height: 400,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.primaryLight.withValues(alpha: 0.15),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-        child: Center(
-          child: AnimatedBuilder(
-            listenable: _logoController,
-            builder: (context, child) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Pulse Glow Ring
-                  ListenableBuilder(
-                    listenable: _pulseController,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: _pulseScale.value,
-                        child: Container(
-                          width: 140,
-                          height: 140,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColors.primary.withValues(
-                                alpha: 0.15 * _logoOpacity.value,
-                              ),
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  // Logo (overlaid on pulse)
-                  Transform.translate(
-                    offset: const Offset(0, -140),
-                    child: Opacity(
-                      opacity: _logoOpacity.value.clamp(0.0, 1.0),
+          Positioned(
+            bottom: -150,
+            left: -50,
+            child: Container(
+              width: 500,
+              height: 500,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.secondaryLight.withValues(alpha: 0.1),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Center(
+            child: AnimatedBuilder(
+              animation: _logoController,
+              builder: (context, child) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Premium Logo Reveal
+                    Opacity(
+                      opacity: _logoOpacity.value,
                       child: Transform.scale(
                         scale: _logoScale.value,
                         child: Container(
-                          width: 120,
-                          height: 120,
+                          width: 130,
+                          height: 130,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.05),
+                            color: Colors.white,
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 blurRadius: 40,
                                 spreadRadius: 10,
+                                offset: const Offset(0, 10),
                               ),
                             ],
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(24),
+                            padding: const EdgeInsets.all(28),
                             child: Image.asset(
                               'assets/logo.png',
                               errorBuilder: (_, __, ___) => const Icon(
-                                Icons.health_and_safety_rounded,
-                                size: 56,
-                                color: Colors.white,
+                                Icons.favorite_rounded,
+                                size: 64,
+                                color: AppColors.primary,
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-
-                  // App Name
-                  Transform.translate(
-                    offset: const Offset(0, -120),
-                    child: Opacity(
-                      opacity: _textOpacity.value.clamp(0.0, 1.0),
-                      child: Column(
-                        children: [
-                          const Text(
-                            'Jioplix',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: AppColors.primary.withValues(alpha: 0.3),
-                                width: 0.5,
-                              ),
-                            ),
-                            child: const Text(
-                              'HOSPITAL INFORMATION MANAGEMENT',
+                    const SizedBox(height: 32),
+                    // Typography Entrance
+                    Opacity(
+                      opacity: _textOpacity.value,
+                      child: SlideTransition(
+                        position: _textSlide,
+                        child: Column(
+                          children: [
+                            const Text(
+                              'Jioplix',
                               style: TextStyle(
-                                color: Color(0xFF93C5FD),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1.5,
+                                color: AppColors.textPrimary,
+                                fontSize: 42,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -1.2,
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 8),
+                            Text(
+                              'HEALTH INTELLIGENCE',
+                              style: TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 2.5,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
-        ),
+        ],
       ),
-    );
-  }
-}
-
-/// Helper for Listenable-based animation building.
-class AnimatedBuilder extends StatelessWidget {
-  final Listenable listenable;
-  final Widget Function(BuildContext context, Widget? child) builder;
-  final Widget? child;
-
-  const AnimatedBuilder({
-    super.key,
-    required this.listenable,
-    required this.builder,
-    this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: listenable,
-      builder: builder,
-      child: child,
     );
   }
 }
