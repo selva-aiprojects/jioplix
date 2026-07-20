@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,8 +97,6 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
     try {
       final api = ref.read(apiServiceProvider);
       final prefs = await SharedPreferences.getInstance();
-
-      // Temporarily set tenant ID to route lookup query to the correct database shard
       await prefs.setString('tenant_id', _selectedFacilityId!);
 
       final searchRes = await api.searchPatients(query);
@@ -164,8 +163,6 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
     try {
       final api = ref.read(apiServiceProvider);
       final prefs = await SharedPreferences.getInstance();
-
-      // Route creation request to the selected hospital database schema shard
       await prefs.setString('tenant_id', _selectedFacilityId!);
 
       final dobStr = _signUpDob != null
@@ -224,127 +221,127 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.6,
-          ),
-          decoration: const BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusXxl)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.75,
               ),
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Text(
-                  'Select Hospital / Facility',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.8),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 48,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: AppColors.textHint.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(2.5),
+                    ),
                   ),
-                ),
-              ),
-              Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: tenants.length,
-                  itemBuilder: (context, index) {
-                    final tenant = tenants[index];
-                    final tenantId = tenant['id'].toString();
-                    final isSelected = _selectedFacilityId == tenantId;
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            setState(() => _selectedFacilityId = tenantId);
-                            Navigator.pop(context);
-                          },
-                          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.primarySurface
-                                  : AppColors.surface,
-                              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                              border: Border.all(
+                  const Padding(
+                    padding: EdgeInsets.all(28),
+                    child: Text(
+                      'Select Hospital',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      itemCount: tenants.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final tenant = tenants[index];
+                        final tenantId = tenant['id'].toString();
+                        final isSelected = _selectedFacilityId == tenantId;
+                        return Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              setState(() => _selectedFacilityId = tenantId);
+                              Navigator.pop(context);
+                            },
+                            borderRadius: BorderRadius.circular(24),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
                                 color: isSelected
-                                    ? AppColors.primary
-                                    : AppColors.border,
-                                width: isSelected ? 1.5 : 1,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    gradient: isSelected
-                                        ? AppColors.primaryGradient
-                                        : null,
-                                    color: isSelected
-                                        ? null
-                                        : AppColors.background,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.local_hospital_rounded,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : AppColors.primary,
-                                    size: 22,
-                                  ),
-                                ),
-                                const SizedBox(width: 14),
-                                Expanded(
-                                  child: Text(
-                                    tenant['name'].toString(),
-                                    style: TextStyle(
-                                      fontWeight: isSelected
-                                          ? FontWeight.w800
-                                          : FontWeight.w600,
-                                      fontSize: 15,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                                Icon(
-                                  isSelected
-                                      ? Icons.check_circle_rounded
-                                      : Icons.chevron_right_rounded,
+                                    ? AppColors.primarySurface
+                                    : Colors.white.withValues(alpha: 0.6),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
                                   color: isSelected
                                       ? AppColors.primary
-                                      : AppColors.textHint,
-                                  size: 22,
+                                      : Colors.white.withValues(alpha: 0.5),
+                                  width: 2,
                                 ),
-                              ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? AppColors.primary : Colors.white,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        if (!isSelected)
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: 0.05),
+                                            blurRadius: 10,
+                                          )
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      Icons.local_hospital_rounded,
+                                      color: isSelected ? Colors.white : AppColors.textMuted,
+                                      size: 24,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Text(
+                                      tenant['name'].toString(),
+                                      style: TextStyle(
+                                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                        fontSize: 16,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                  if (isSelected)
+                                    const Icon(
+                                      Icons.check_circle_rounded,
+                                      color: AppColors.primary,
+                                      size: 26,
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 36),
+                ],
               ),
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
         );
       },
@@ -359,7 +356,7 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
         label: Text(label),
         selected: isSelected,
         selectedColor: AppColors.primarySurface,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.white.withValues(alpha: 0.5),
         labelStyle: TextStyle(
           color: isSelected ? AppColors.primary : AppColors.textTertiary,
           fontWeight: FontWeight.bold,
@@ -367,16 +364,14 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
         ),
         checkmarkColor: AppColors.primary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 1.5 : 1.0,
+            color: isSelected ? AppColors.primary : Colors.transparent,
+            width: isSelected ? 2.0 : 0.0,
           ),
         ),
         onSelected: (v) {
-          if (v) {
-            setState(() => _signUpGender = label);
-          }
+          if (v) setState(() => _signUpGender = label);
         },
       ),
     );
@@ -387,248 +382,270 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
     final tenantsAsync = ref.watch(patientTenantsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceVariant,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFF8FAFC), Color(0xFFEFF6FF), Color(0xFFECFDF5)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 0.6, 1.0],
+      backgroundColor: Colors.black,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // High-Res AI Background Image
+          Image.asset(
+            'assets/patient_bg.png',
+            fit: BoxFit.cover,
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header Row (Back + Title)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary, size: 20),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Patient Portal Onboarding',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  child: Column(
+          
+          SafeArea(
+            child: Column(
+              children: [
+                // Header Row (Back + Title)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
                     children: [
-                      // Header Logo & Branding
-                      Container(
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.1),
-                              blurRadius: 30,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.health_and_safety_rounded,
-                          size: 50,
-                          color: AppColors.primary,
-                        ),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          );
+                        },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(width: 8),
                       const Text(
-                        'Jioplix HIMS',
+                        'Patient Portal Onboarding',
                         style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.textPrimary,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Access clinical schedules & manage digital health records',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: AppColors.textMuted,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Hospital Selector Dropdown Card
-                      Container(
-                        decoration: AppTheme.cardDecoration(
-                          shadow: AppTheme.shadowSubtle,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: tenantsAsync.when(
-                            data: (tenants) {
-                              if (_selectedFacilityId == null && tenants.isNotEmpty) {
-                                _selectedFacilityId = tenants.first['id'].toString();
-                              }
-                              final activeName = tenants.firstWhere(
-                                (t) => t['id'].toString() == _selectedFacilityId,
-                                orElse: () => {'name': 'Select Hospital'},
-                              )['name'].toString();
-
-                              return _buildFacilitySelectorButton(activeName, () => _showFacilitySelector(tenants));
-                            },
-                            loading: () => const Center(
-                              child: SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2),
-                              ),
-                            ),
-                            error: (e, __) => _buildFacilitySelectorButton('City Clinic (Offline)', () {
-                              _showFacilitySelector([
-                                {'id': '1', 'name': 'City Clinic'},
-                                {'id': '2', 'name': 'Metropolis Diagnostics'},
-                              ]);
-                            }),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Tab Chip Toggles (Lookup vs SignUp)
-                      Container(
-                        height: 48,
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => setState(() {
-                                  _isSignUp = false;
-                                  _errorMessage = null;
-                                }),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: !_isSignUp ? AppColors.primary : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  child: Text(
-                                    'Sign In / Lookup',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                      color: !_isSignUp ? Colors.white : AppColors.textTertiary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => setState(() {
-                                  _isSignUp = true;
-                                  _errorMessage = null;
-                                }),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: _isSignUp ? AppColors.primary : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  child: Text(
-                                    'Register Profile',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                      color: _isSignUp ? Colors.white : AppColors.textTertiary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-
-                      // Dynamic Height Form Card
-                      Container(
-                        decoration: AppTheme.cardDecoration(
-                          shadow: AppTheme.shadowMedium,
-                        ),
-                        child: AnimatedSize(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                          child: Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: _isSignUp ? _buildRegisterForm() : _buildLookupForm(),
-                          ),
-                        ),
-                      ),
-
-                      // Error box if any
-                      if (_errorMessage != null) ...[
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.errorSurface,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                            border: Border.all(color: AppColors.errorLight),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 18),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  _errorMessage!,
-                                  style: const TextStyle(
-                                    color: AppColors.error,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                    child: Column(
+                      children: [
+                        // Header Logo & Branding
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                            child: Container(
+                              padding: const EdgeInsets.all(18),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1.5),
+                              ),
+                              child: const Icon(
+                                Icons.health_and_safety_rounded,
+                                size: 50,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Jioplix Patient Portal',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Access clinical schedules & manage digital health records',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Hospital Selector Dropdown Card
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 1.5),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: tenantsAsync.when(
+                                  data: (tenants) {
+                                    if (_selectedFacilityId == null && tenants.isNotEmpty) {
+                                      _selectedFacilityId = tenants.first['id'].toString();
+                                    }
+                                    final activeName = tenants.firstWhere(
+                                      (t) => t['id'].toString() == _selectedFacilityId,
+                                      orElse: () => {'name': 'Select Hospital'},
+                                    )['name'].toString();
+
+                                    return _buildFacilitySelectorButton(activeName, () => _showFacilitySelector(tenants));
+                                  },
+                                  loading: () => const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2),
+                                      ),
+                                    ),
+                                  ),
+                                  error: (e, __) => _buildFacilitySelectorButton('API Connection Error', () {
+                                    ref.refresh(patientTenantsProvider);
+                                  }),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Tab Chip Toggles (Lookup vs SignUp)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              height: 52,
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () => setState(() {
+                                        _isSignUp = false;
+                                        _errorMessage = null;
+                                      }),
+                                      child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 200),
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: !_isSignUp ? Colors.white : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Text(
+                                          'Sign In / Lookup',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                            color: !_isSignUp ? AppColors.textPrimary : Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () => setState(() {
+                                        _isSignUp = true;
+                                        _errorMessage = null;
+                                      }),
+                                      child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 200),
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: _isSignUp ? Colors.white : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Text(
+                                          'Register Profile',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                            color: _isSignUp ? AppColors.textPrimary : Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Dynamic Height Form Card
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(32),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.75),
+                                borderRadius: BorderRadius.circular(32),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 1.5),
+                              ),
+                              child: AnimatedSize(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeInOut,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(28),
+                                  child: _isSignUp ? _buildRegisterForm() : _buildLookupForm(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Error box if any
+                        if (_errorMessage != null) ...[
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.errorSurface.withValues(alpha: 0.9),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: AppColors.errorLight),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 20),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: const TextStyle(
+                                      color: AppColors.errorDark,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  // ── Tab 1: Lookup Form ──────────────────────────────────────────────────
   Widget _buildLookupForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -636,48 +653,51 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
       children: [
         const Text(
           'Find Existing Patient Profile',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         const Text(
           'Enter phone number or medical records identifier (MRN) to synchronize your data.',
-          style: TextStyle(fontSize: 11, color: AppColors.textMuted, height: 1.3),
+          style: TextStyle(fontSize: 12, color: AppColors.textMuted, height: 1.4),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
         TextField(
           controller: _loginQueryController,
           keyboardType: TextInputType.text,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-          decoration: const InputDecoration(
-            labelText: 'Phone Number or MRN ID',
-            prefixIcon: Icon(Icons.search_rounded, color: AppColors.textHint, size: 20),
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary, fontSize: 16),
+          decoration: InputDecoration(
+            labelText: 'Phone Number or MRN',
+            filled: true,
+            fillColor: Colors.white.withValues(alpha: 0.6),
+            prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: AppColors.primary, width: 2)),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
         ElevatedButton(
           onPressed: _isLoading ? null : _handlePatientLookup,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           ),
           child: _isLoading
               ? const SizedBox(
-                  height: 18,
-                  width: 18,
+                  height: 20,
+                  width: 20,
                   child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                 )
               : const Text(
                   'ACCESS PORTAL',
-                  style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                  style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5, fontSize: 15),
                 ),
         ),
       ],
     );
   }
 
-  // ── Tab 2: Register Form ─────────────────────────────────────────────────
   Widget _buildRegisterForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -685,30 +705,34 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
       children: [
         const Text(
           'Register New Patient Account',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         const Text(
           'Create a new digital profile in the selected hospital system.',
-          style: TextStyle(fontSize: 11, color: AppColors.textMuted, height: 1.3),
+          style: TextStyle(fontSize: 12, color: AppColors.textMuted, height: 1.4),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
         TextField(
           controller: _signUpNameController,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-          decoration: const InputDecoration(
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+          decoration: InputDecoration(
             labelText: 'Full Name',
-            prefixIcon: Icon(Icons.person_outline_rounded, color: AppColors.textHint, size: 20),
+            filled: true, fillColor: Colors.white.withValues(alpha: 0.6),
+            prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.textMuted, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
           ),
         ),
         const SizedBox(height: 12),
         TextField(
           controller: _signUpPhoneController,
           keyboardType: TextInputType.phone,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-          decoration: const InputDecoration(
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+          decoration: InputDecoration(
             labelText: 'Phone Number',
-            prefixIcon: Icon(Icons.phone_outlined, color: AppColors.textHint, size: 20),
+            filled: true, fillColor: Colors.white.withValues(alpha: 0.6),
+            prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.textMuted, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
           ),
         ),
         const SizedBox(height: 12),
@@ -716,60 +740,67 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
           controller: _signUpDobController,
           readOnly: true,
           onTap: _pickDate,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-          decoration: const InputDecoration(
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+          decoration: InputDecoration(
             labelText: 'Birth Date',
-            prefixIcon: Icon(Icons.calendar_month_outlined, color: AppColors.textHint, size: 20),
+            filled: true, fillColor: Colors.white.withValues(alpha: 0.6),
+            prefixIcon: const Icon(Icons.calendar_month_outlined, color: AppColors.textMuted, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         const Text(
           'Gender',
           style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textTertiary, fontSize: 13),
         ),
-        const SizedBox(height: 6),
-        Row(
-          children: ['Male', 'Female', 'Other']
-              .map((g) => _buildGenderChip(g))
-              .toList(),
+        const SizedBox(height: 8),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: ['Male', 'Female', 'Other'].map((g) => _buildGenderChip(g)).toList(),
+          ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         TextField(
           controller: _signUpEmailController,
           keyboardType: TextInputType.emailAddress,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-          decoration: const InputDecoration(
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+          decoration: InputDecoration(
             labelText: 'Email (Optional)',
-            prefixIcon: Icon(Icons.email_outlined, color: AppColors.textHint, size: 20),
+            filled: true, fillColor: Colors.white.withValues(alpha: 0.6),
+            prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textMuted, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
           ),
         ),
         const SizedBox(height: 12),
         TextField(
           controller: _signUpAbhaController,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-          decoration: const InputDecoration(
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+          decoration: InputDecoration(
             labelText: 'ABHA ID / Number (Optional)',
-            prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textHint, size: 20),
+            filled: true, fillColor: Colors.white.withValues(alpha: 0.6),
+            prefixIcon: const Icon(Icons.badge_outlined, color: AppColors.textMuted, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         ElevatedButton(
           onPressed: _isLoading ? null : _handlePatientRegister,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           ),
           child: _isLoading
               ? const SizedBox(
-                  height: 18,
-                  width: 18,
+                  height: 20,
+                  width: 20,
                   child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                 )
               : const Text(
                   'CREATE ACCOUNT',
-                  style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                  style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5, fontSize: 15),
                 ),
         ),
       ],
@@ -781,31 +812,37 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
-              const Icon(Icons.business_rounded, color: AppColors.primary, size: 20),
-              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  color: AppColors.primarySurface,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.business_rounded, color: AppColors.primary, size: 22),
+              ),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       'SELECTED HOSPITAL',
-                      style: TextStyle(fontSize: 9, color: AppColors.textHint, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                      style: TextStyle(fontSize: 10, color: AppColors.textHint, fontWeight: FontWeight.w800, letterSpacing: 0.5),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       text,
-                      style: const TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold, fontSize: 13),
-                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textHint),
+              const Icon(Icons.unfold_more_rounded, color: AppColors.textHint),
             ],
           ),
         ),

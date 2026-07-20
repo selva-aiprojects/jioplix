@@ -1,10 +1,11 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import 'login_screen.dart';
 import 'role_dashboard_router.dart';
 
-/// Fresh, premium animated splash screen for Jioplix
+/// Ultra high-res, Nano Banana style animated splash screen
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -30,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1400),
     );
 
-    _logoScale = Tween<double>(begin: 0.7, end: 1.0).animate(
+    _logoScale = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(
         parent: _logoController,
         curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
@@ -63,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateAfterDelay() async {
-    await Future.delayed(const Duration(milliseconds: 2400));
+    await Future.delayed(const Duration(milliseconds: 2800));
     if (!mounted) return;
 
     final prefs = await SharedPreferences.getInstance();
@@ -77,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen>
       PageRouteBuilder(
         pageBuilder: (_, __, ___) =>
             hasToken ? const RoleDashboardRouter() : const LoginScreen(),
-        transitionDuration: const Duration(milliseconds: 800),
+        transitionDuration: const Duration(milliseconds: 1000),
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(
             opacity: CurvedAnimation(
@@ -100,44 +101,22 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          // Elegant minimal background pattern
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.primaryLight.withValues(alpha: 0.15),
-                    Colors.white.withValues(alpha: 0.0),
-                  ],
-                ),
-              ),
-            ),
+          // High-Res AI Background Image
+          Image.asset(
+            'assets/splash_bg.png',
+            fit: BoxFit.cover,
           ),
-          Positioned(
-            bottom: -150,
-            left: -50,
-            child: Container(
-              width: 500,
-              height: 500,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.secondaryLight.withValues(alpha: 0.1),
-                    Colors.white.withValues(alpha: 0.0),
-                  ],
-                ),
-              ),
-            ),
+          
+          // Subtle Darkening Overlay
+          Container(
+            color: Colors.black.withValues(alpha: 0.2),
           ),
+
+          // Foreground Content
           Center(
             child: AnimatedBuilder(
               animation: _logoController,
@@ -145,41 +124,51 @@ class _SplashScreenState extends State<SplashScreen>
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Premium Logo Reveal
+                    // Glassmorphism Logo Container
                     Opacity(
                       opacity: _logoOpacity.value,
                       child: Transform.scale(
                         scale: _logoScale.value,
-                        child: Container(
-                          width: 130,
-                          height: 130,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.1),
-                                blurRadius: 40,
-                                spreadRadius: 10,
-                                offset: const Offset(0, 10),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              width: 140,
+                              height: 140,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(40),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.4),
+                                  width: 1.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.2),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(28),
-                            child: Image.asset(
-                              'assets/logo.png',
-                              errorBuilder: (_, __, ___) => const Icon(
-                                Icons.favorite_rounded,
-                                size: 64,
-                                color: AppColors.primary,
+                              child: Padding(
+                                padding: const EdgeInsets.all(28),
+                                child: Image.asset(
+                                  'assets/logo.png',
+                                  color: Colors.white, // Ensure the logo is perfectly white on dark BG
+                                  errorBuilder: (_, __, ___) => const Icon(
+                                    Icons.favorite_rounded,
+                                    size: 64,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 36),
                     // Typography Entrance
                     Opacity(
                       opacity: _textOpacity.value,
@@ -190,20 +179,27 @@ class _SplashScreenState extends State<SplashScreen>
                             const Text(
                               'Jioplix',
                               style: TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 42,
+                                color: Colors.white,
+                                fontSize: 46,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -1.2,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black45,
+                                    blurRadius: 20,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 12),
                             Text(
                               'HEALTH INTELLIGENCE',
                               style: TextStyle(
-                                color: AppColors.textMuted,
-                                fontSize: 12,
+                                color: Colors.white.withValues(alpha: 0.8),
+                                fontSize: 13,
                                 fontWeight: FontWeight.w800,
-                                letterSpacing: 2.5,
+                                letterSpacing: 3.5,
                               ),
                             ),
                           ],

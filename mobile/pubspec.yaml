@@ -25,3 +25,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/splash_bg.png
+    - assets/login_bg.png
+    - assets/patient_bg.png
