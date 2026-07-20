@@ -1,11 +1,11 @@
-# Healthezee HIMS – robots.txt
-# Whitekraaft Solutions LLP © 2026
+# Jioplix HIMS – robots.txt
+# Jioplix © 2026
 
 User-agent: *
 Allow: /
 Allow: /login
 Allow: /mobile
-Allow: /Healthezee.apk
+Allow: /Jioplix.apk
 Allow: /sitemap.xml
 
 # Block authenticated/private tenant routes from indexing
@@ -20,4 +20,4 @@ Disallow: /api/
 Crawl-delay: 10
 
 # Sitemap location
-Sitemap: https://healthezee.whitekraaft.com/sitemap.xml
+Sitemap: https://jioplix.com/sitemap.xml

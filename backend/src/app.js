@@ -24,9 +24,9 @@ const ALLOWED_ORIGINS = [
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:4000',
-  `https://${process.env.APP_DOMAIN || 'healthezee.com'}`,
-  `https://www.${process.env.APP_DOMAIN || 'healthezee.com'}`,
-  `https://${process.env.DEV_APP_DOMAIN || 'dev.healthezee.com'}`,
+  `https://${process.env.APP_DOMAIN || 'jioplix.com'}`,
+  `https://www.${process.env.APP_DOMAIN || 'jioplix.com'}`,
+  `https://${process.env.DEV_APP_DOMAIN || 'dev.jioplix.com'}`,
 ].filter(Boolean);
 
 app.use(cors({
@@ -34,8 +34,8 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
     // Allow any subdomain of the configured domains (tenant routing)
-    const rootDomain = process.env.APP_DOMAIN || 'healthezee.com';
-    const devDomain  = process.env.DEV_APP_DOMAIN || 'dev.healthezee.com';
+    const rootDomain = process.env.APP_DOMAIN || 'jioplix.com';
+    const devDomain  = process.env.DEV_APP_DOMAIN || 'dev.jioplix.com';
     const isSubdomain = origin.endsWith(`.${rootDomain}`) || origin.endsWith(`.${devDomain}`);
     if (ALLOWED_ORIGINS.includes(origin) || isSubdomain) {
       return callback(null, true);
@@ -796,7 +796,7 @@ app.get("/health-db", async (req, res) => {
 });
 
 // Domain redirection middleware (domains configured via APP_DOMAIN / DEV_APP_DOMAIN env vars)
-// Allows subdomain-based tenant routing (e.g., {tenant}.healthezee.com)
+// Allows subdomain-based tenant routing (e.g., {tenant}.jioplix.com)
 app.use((req, res, next) => {
   const host = req.headers.host || "";
   const isLocal = host.includes("localhost") || host.includes("127.0.0.1") || host.includes("::1");

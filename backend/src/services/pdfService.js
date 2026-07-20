@@ -132,7 +132,7 @@ function createPrescriptionPDF(tenantName, prescription, patient, encounter, ite
       });
 
       // --- HEADER ---
-      doc.fontSize(22).font('Helvetica-Bold').fillColor('#0f172a').text(tenantName || 'HEALTHEZEE CLINICS', { align: 'left' });
+      doc.fontSize(22).font('Helvetica-Bold').fillColor('#0f172a').text(tenantName || 'JIOPLIX CLINICS', { align: 'left' });
       doc.fontSize(10).font('Helvetica').fillColor('#64748b').text('Integrated Digital Healthcare Network', { align: 'left' });
       
       doc.y = 50; // align to top right for doctor info
@@ -223,7 +223,7 @@ function createLabReportPDF(tenantName, labOrder, patient, results) {
       });
 
       // --- HEADER ---
-      doc.fontSize(22).font('Helvetica-Bold').fillColor('#0f172a').text(tenantName || 'HEALTHEZEE DIAGNOSTICS', { align: 'left' });
+      doc.fontSize(22).font('Helvetica-Bold').fillColor('#0f172a').text(tenantName || 'JIOPLIX DIAGNOSTICS', { align: 'left' });
       doc.fontSize(10).font('Helvetica').fillColor('#64748b').text('Clinical Reference Laboratories', { align: 'left' });
       
       doc.y = 50;

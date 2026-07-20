@@ -1,7 +1,7 @@
 # HIMS :: Project Progress Tracker
 
 ## 🚀 Overview
-**Platform**: Healthezee HIMS (Smart Healthcare System)
+**Platform**: Jioplix HIMS (Smart Healthcare System)
 **Architecture**: Multi-Tenant Isolated Schema (PostgreSQL)
 **Status**: Core Provisioning Stable | Shard Management Active | Diagnostic Command Center Live
 

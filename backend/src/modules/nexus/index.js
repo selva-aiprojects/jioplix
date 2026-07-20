@@ -662,7 +662,7 @@ router.put('/tenants/:id/branding', async (req, res, next) => {
     await req.prisma.$executeRawUnsafe(
       `UPDATE nexus.tenants SET ui_settings = $1::jsonb, name = $2 WHERE id = $3::uuid`,
       JSON.stringify(settings),
-      String(settings.hospitalName || 'Healthezee Hospital'),
+      String(settings.hospitalName || 'Jioplix Hospital'),
       String(id)
     );
     res.json({ message: 'Branding updated successfully in global registry' });
@@ -796,7 +796,7 @@ router.post("/tenants", async (req, res, next) => {
         const dashboardUrl = process.env.APP_URL || "http://localhost:3000";
         const emailHtml = `
           <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 40px; border: 1px solid #e2e8f0; border-radius: 20px;">
-            <h2>Welcome to Healthezee HIMS</h2>
+            <h2>Welcome to Jioplix HIMS</h2>
             <p>Your hospital shard <strong>${name}</strong> is ready.</p>
             <div style="background: #f8fafc; padding: 20px; border-radius: 12px;">
               <p><strong>Admin Email:</strong> ${loginEmail}</p>

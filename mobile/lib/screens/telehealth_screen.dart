@@ -42,7 +42,7 @@ class _TelehealthScreenState extends State<TelehealthScreen> {
         .toLowerCase()
         .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
         .replaceAll(RegExp(r'^-+|-+$'), '');
-    return 'healthezee-${slug.isEmpty ? 'consult' : slug}';
+    return 'jioplix-${slug.isEmpty ? 'consult' : slug}';
   }
 
   Uri get _meetingUri => Uri.parse(

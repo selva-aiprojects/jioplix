@@ -1,4 +1,4 @@
-# Healthezee HIMS: Tiered User Manual
+# Jioplix HIMS: Tiered User Manual
 
 ## Table of Contents
 1. [Overview](#overview)
@@ -10,7 +10,7 @@
 ---
 
 ## Overview
-Welcome to the Healthezee Health Information Management System (HIMS). Our platform is designed to streamline hospital operations through a scalable, multi-tenant architecture. 
+Welcome to The Jioplix Health Information Management System (HIMS). Our platform is designed to streamline hospital operations through a scalable, multi-tenant architecture. 
 
 ---
 

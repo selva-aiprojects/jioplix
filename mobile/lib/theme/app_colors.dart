@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Healthezee Design System — Color Palette
+/// Jioplix Design System — Color Palette
 /// All colors are semantically named for healthcare UI contexts.
 class AppColors {
   AppColors._();

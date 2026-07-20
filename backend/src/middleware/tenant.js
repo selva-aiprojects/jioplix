@@ -3,7 +3,7 @@
 const { prisma } = require('../config/prisma');
 const { si } = require('./sanitize');
 
-const ROOT_DOMAIN = process.env.APP_DOMAIN || process.env.DEV_APP_DOMAIN || 'healthezee.com';
+const ROOT_DOMAIN = process.env.APP_DOMAIN || process.env.DEV_APP_DOMAIN || 'jioplix.com';
 const RESERVED_SUBDOMAINS = ['dev', 'staging', 'stage', 'test', 'www', 'api', 'app', 'mail', 'admin', 'support', 'help', 'docs', 'status', 'uat', 'qa'];
 
 function extractSubdomain(host) {

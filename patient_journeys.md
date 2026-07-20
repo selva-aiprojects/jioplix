@@ -1,4 +1,4 @@
-# Healthezee :: Patient Journey Workflows
+# Jioplix :: Patient Journey Workflows
 
 This document outlines the clinical journey for patients across the three HIMS service tiers, highlighting critical checkpoints such as clinical vitals capture.
 
@@ -15,7 +15,7 @@ sequenceDiagram
     actor Receptionist as Front Desk Receptionist
     actor Nurse as Triage Nurse (OPD Queue)
     actor Doctor as Consulting Doctor
-    participant System as Healthezee EMR
+    participant System as Jioplix EMR
 
     Patient->>Receptionist: Arrives at Clinic for Registration
     Receptionist->>System: Registers Patient (Weight, Height, BP, Temp are OPTIONAL)
@@ -38,7 +38,7 @@ sequenceDiagram
 
 ---
 
-## 🟢 Tier 1: HEALTHEZEE BASIC (OP Focused) [STABLE & VALIDATED]
+## 🟢 Tier 1: JIOPLIX BASIC (OP Focused) [STABLE & VALIDATED]
 **Designed for**: Individual Doctors & Small Clinics.
 **Focus**: Rapid consultation and records management.
 
@@ -49,7 +49,7 @@ sequenceDiagram
 
 ---
 
-## 🔵 Tier 2: HEALTHEZEE STANDARD (OP + Lab & Pharmacy) [STABLE & VALIDATED]
+## 🔵 Tier 2: JIOPLIX STANDARD (OP + Lab & Pharmacy) [STABLE & VALIDATED]
 **Designed for**: Multi-specialty Clinics & Nursing Homes.
 **Focus**: Integrated diagnostic and medication workflow.
 
@@ -62,7 +62,7 @@ sequenceDiagram
 
 ---
 
-## 🟣 Tier 3: HEALTHEZEE PROFESSIONAL (IP + Day Care) [STABLE & VALIDATED]
+## 🟣 Tier 3: JIOPLIX PROFESSIONAL (IP + Day Care) [STABLE & VALIDATED]
 **Designed for**: Large Hospitals & Tertiary Care Centers.
 **Focus**: Continuous care and facility management.
 

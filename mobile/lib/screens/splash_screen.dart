@@ -182,7 +182,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: Column(
                         children: [
                           const Text(
-                            'Healthezee',
+                            'Jioplix',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 32,

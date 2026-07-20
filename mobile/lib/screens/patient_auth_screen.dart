@@ -453,7 +453,7 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        'Healthezee HIMS',
+                        'Jioplix HIMS',
                         style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w900,

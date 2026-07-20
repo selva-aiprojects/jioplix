@@ -1,4 +1,4 @@
-# Secrets Rotation Guide — Healthezee HIMS
+# Secrets Rotation Guide — Jioplix HIMS
 
 > **CRITICAL:** Treat this document as sensitive. Do not commit it to a public repository.
 > Execute all steps in a secure terminal session with restricted access.
@@ -31,14 +31,14 @@ ALTER USER your_db_user WITH PASSWORD 'NEW_STRONG_PASSWORD_HERE';
 
 ### 1.3 Update `.env`
 ```env
-DATABASE_URL=postgresql://your_db_user:NEW_STRONG_PASSWORD_HERE@69.12.82.14:5432/healthezee_prod?sslmode=require
+DATABASE_URL=postgresql://your_db_user:NEW_STRONG_PASSWORD_HERE@69.12.82.14:5432/jioplix_prod?sslmode=require
 ```
 
 ### 1.4 Restart the backend service
 ```bash
-pm2 restart healthezee-backend
+pm2 restart jioplix-backend
 # or
-systemctl restart healthezee
+systemctl restart jioplix
 ```
 
 ---
@@ -70,8 +70,8 @@ Visit: https://resend.com/api-keys
 
 ### 3.2 Create a new API key
 - Click **Create API Key**
-- Name: `healthezee-prod-v2`
-- Domain: `healthezee.com`
+- Name: `jioplix-prod-v2`
+- Domain: `jioplix.com`
 - Permission: **Sending access** only
 
 ### 3.3 Delete the old key
@@ -144,7 +144,7 @@ METRICS_TOKEN=<output from above>
 ```yaml
 # prometheus.yml
 scrape_configs:
-  - job_name: 'healthezee'
+  - job_name: 'jioplix'
     static_configs:
       - targets: ['your-api-host:4000']
     bearer_token: '<METRICS_TOKEN>'
@@ -202,8 +202,8 @@ After rotating, ensure these NEW variables are also added to `.env`:
 METRICS_TOKEN=<generate with: openssl rand -hex 32>
 SEED_DEFAULT_PASSWORD=<set a known strong password for seeded demo users>
 STAFF_DEFAULT_PASSWORD=<set if you want a fixed default for new staff accounts>
-APP_DOMAIN=healthezee.com
-DEV_APP_DOMAIN=dev.healthezee.com
+APP_DOMAIN=jioplix.com
+DEV_APP_DOMAIN=dev.jioplix.com
 ```
 
 ---

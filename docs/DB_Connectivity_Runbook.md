@@ -1,4 +1,4 @@
-# DB Connectivity Runbook for Healthezee
+# DB Connectivity Runbook for Jioplix
 
 This runbook documents the steps taken to resolve intermittent DB connectivity and to prevent recurrence. Use this document for on-call troubleshooting and for sharing with the DB vendor.
 
@@ -9,9 +9,9 @@ This runbook documents the steps taken to resolve intermittent DB connectivity a
 - Instrumentation: Added Prometheus metrics (`hims_db_query_duration_seconds`, `hims_db_errors_total`) and instrumentation around Prisma raw queries and health endpoints.
 
 ## Affected Services
-- App Service (dev): `healthezee-dev-ashzabdjazfwdzdd`
-- App Service (prod): `Healthezee-az` / hostnames `healthezee.com`, `www.healthezee.com`, `healthezee-az-ashzabdjazfwdzdd.southindia-01.azurewebsites.net`
-- Database host: `tserver` (self-hosted Postgres) at `204.152.214.26:5432` (schema: `nexus`, DB: `healthezeedb`)
+- App Service (dev): `jioplix-dev-ashzabdjazfwdzdd`
+- App Service (prod): `Jioplix-az` / hostnames `jioplix.com`, `www.jioplix.com`, `Jioplix-az-ashzabdjazfwdzdd.southindia-01.azurewebsites.net`
+- Database host: `tserver` (self-hosted Postgres) at `204.152.214.26:5432` (schema: `nexus`, DB: `jioplixdb`)
 - Prod Outbound IPs:
   - `104.211.201.94`
   - `13.71.66.90`
@@ -34,9 +34,9 @@ This runbook documents the steps taken to resolve intermittent DB connectivity a
    ```
 2. Edit `pg_hba.conf` (path from `SHOW hba_file;`) and add lines for App Service outbound IPs:
    ```text
-   host    healthezeedb    healthezeeuser    20.219.121.219/32    md5
-   host    healthezeedb    healthezeeuser    20.219.107.150/32    md5
-   host    healthezeedb    healthezeeuser    20.219.124.7/32      md5
+   host    jioplixdb    jioplixuser    20.219.121.219/32    md5
+   host    jioplixdb    jioplixuser    20.219.107.150/32    md5
+   host    jioplixdb    jioplixuser    20.219.124.7/32      md5
    ```
 3. Reload Postgres:
    ```bash
@@ -82,28 +82,28 @@ To capture real-time startup errors, DB latencies, and 504 errors, enable Applic
 ```bash
 # Create Application Insights instance
 az monitor app-insights component create \
-  --app healthezee-prod-ai \
+  --app jioplix-prod-ai \
   --location southindia \
-  --resource-group Healthezee-Resource-Group \
+  --resource-group Jioplix-Resource-Group \
   --kind web
 
 # Get Instrumentation Key
 az monitor app-insights component show \
-  --app healthezee-prod-ai \
-  --resource-group Healthezee-Resource-Group \
+  --app jioplix-prod-ai \
+  --resource-group Jioplix-Resource-Group \
   --query instrumentationKey -o tsv
 
 # Add to App Service (replace <KEY> with the value above)
 az webapp config appsettings set \
-  --name Healthezee-az \
-  --resource-group Healthezee-Resource-Group \
+  --name Jioplix-az \
+  --resource-group Jioplix-Resource-Group \
   --settings APPINSIGHTS_INSTRUMENTATIONKEY="<KEY>" \
             ApplicationInsightsAgent_EXTENSION_VERSION="~3"
 ```
 
 Then restart the app:
 ```bash
-az webapp restart --name Healthezee-az --resource-group Healthezee-Resource-Group
+az webapp restart --name Jioplix-az --resource-group Jioplix-Resource-Group
 ```
 
 Query logs in Application Insights for:
@@ -125,8 +125,8 @@ Query logs in Application Insights for:
 2. Check App Service settings include correct `DATABASE_URL`.
 3. Confirm outbound IPs and ensure they are in `pg_hba.conf` or firewall rules.
 4. On DB server:
-   - `sudo -u postgres psql -d healthezeedb -c "SHOW hba_file;"`
-   - `sudo -u postgres grep -n 'healthezee' /var/lib/pgsql/data/pg_hba.conf`
+   - `sudo -u postgres psql -d jioplixdb -c "SHOW hba_file;"`
+   - `sudo -u postgres grep -n 'jioplix' /var/lib/pgsql/data/pg_hba.conf`
    - `sudo systemctl reload postgresql`
    - `sudo journalctl -u postgresql -n 200 --no-pager | egrep -i 'connection|authentication|reject|pg_hba'`
 5. Check metrics endpoint `/metrics` for `hims_db_errors_total` and `hims_db_query_duration_seconds`.

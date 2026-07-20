@@ -1,7 +1,7 @@
 # Implementation Plan: HIMS Mobile App (Flutter)
 
 ## 1. Project Objective
-Develop a high-performance, cross-platform mobile application using **Flutter** to provide doctors and patients with portable access to the Healthezee HIMS ecosystem.
+Develop a high-performance, cross-platform mobile application using **Flutter** to provide doctors and patients with portable access to the Jioplix HIMS ecosystem.
 
 ---
 

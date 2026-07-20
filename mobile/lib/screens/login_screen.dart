@@ -343,7 +343,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                         const SizedBox(height: 24),
                         const Text(
-                          'Healthezee HIMS',
+                          'Jioplix HIMS',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 28,
@@ -667,7 +667,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   FadeTransition(
                     opacity: _fadeIn,
                     child: const Text(
-                      'Powered by Healthezee HIMS v1.0',
+                      'Powered by Jioplix HIMS v1.0',
                       style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textHint,

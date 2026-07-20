@@ -502,7 +502,7 @@ class _RoleDashboardRouterState extends State<RoleDashboardRouter> {
             // Profile Options
             _buildProfileOption(
               icon: Icons.info_outline_rounded,
-              label: 'About Healthezee',
+              label: 'About Jioplix',
               subtitle: 'Version 1.0.1',
               onTap: () {},
             ),

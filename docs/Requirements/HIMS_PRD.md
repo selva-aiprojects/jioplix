@@ -1,4 +1,4 @@
-# HIMS by Healthezee – Product Requirements Document (PRD)
+# HIMS by Jioplix – Product Requirements Document (PRD)
 
 ## 1. Product Vision
 Cloud-native multi-tenant Hospital Information Management System (HIMS) supporting clinics (OPD) and hospitals (OPD + IPD), with an AI-First architecture focused on operational efficiency and clinical intelligence.
@@ -6,7 +6,7 @@ Cloud-native multi-tenant Hospital Information Management System (HIMS) supporti
 ---
 
 ## 2. Product Scope & Tiers
-The Healthezee HIMS follows a 4-tier subscription model, enabling hospitals to scale as they grow.
+The Jioplix HIMS follows a 4-tier subscription model, enabling hospitals to scale as they grow.
 
 ### Tier 1: Basic (OPD & Communications)
 - Patient Management (MRN Generation)

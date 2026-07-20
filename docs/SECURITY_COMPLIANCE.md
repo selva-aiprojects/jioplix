@@ -1,4 +1,4 @@
-# Healthezee HIMS — Security Compliance Document
+# Jioplix HIMS — Security Compliance Document
 
 **Version:** 2.0 (Post-Hardening)
 **Date:** July 2026
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Healthezee HIMS is a multi-tenant Hospital Information Management System (HIMS) that processes sensitive patient health data including Personally Identifiable Information (PII), Protected Health Information (PHI), Aadhaar numbers, and ABHA (Ayushman Bharat Health Account) identifiers.
+Jioplix HIMS is a multi-tenant Hospital Information Management System (HIMS) that processes sensitive patient health data including Personally Identifiable Information (PII), Protected Health Information (PHI), Aadhaar numbers, and ABHA (Ayushman Bharat Health Account) identifiers.
 
 This document certifies the security controls implemented across the platform following a full security audit and remediation cycle completed in July 2026.
 
@@ -189,8 +189,8 @@ The following headers are now set on all responses:
 **After (hardened):**
 ```js
 origin: (origin, callback) => {
-  // Explicit whitelist: localhost (dev), healthezee.com, dev.healthezee.com
-  // Any *.healthezee.com subdomain (tenant routing)
+  // Explicit whitelist: localhost (dev), jioplix.com, dev.jioplix.com
+  // Any *.jioplix.com subdomain (tenant routing)
 }
 ```
 
@@ -267,7 +267,7 @@ In the event of a suspected security incident:
 3. **Within 72 hours:** Notify affected patients if PHI exposed (DPDP Act requirement)
 4. **Ongoing:** Preserve server logs, DB audit logs, and network logs for forensics
 
-**Security Contact:** engineering@healthezee.com
+**Security Contact:** engineering@jioplix.com
 
 ---
 

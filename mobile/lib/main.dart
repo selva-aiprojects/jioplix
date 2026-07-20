@@ -15,18 +15,18 @@ void main() {
   );
   runApp(
     const ProviderScope(
-      child: HealthezeeApp(),
+      child: JioplixApp(),
     ),
   );
 }
 
-class HealthezeeApp extends StatelessWidget {
-  const HealthezeeApp({super.key});
+class JioplixApp extends StatelessWidget {
+  const JioplixApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Healthezee',
+      title: 'Jioplix',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: const SplashScreen(),

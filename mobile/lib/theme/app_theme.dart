@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-/// Healthezee Design System — Theme Configuration
+/// Jioplix Design System — Theme Configuration
 class AppTheme {
   AppTheme._();
 

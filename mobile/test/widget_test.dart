@@ -6,7 +6,7 @@ import 'package:hims_mobile/screens/login_screen.dart';
 import 'package:hims_mobile/screens/patient_auth_screen.dart';
 
 void main() {
-  testWidgets('renders the Healthezee login shell',
+  testWidgets('renders the Jioplix login shell',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -24,11 +24,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Healthezee HIMS'), findsOneWidget);
+    expect(find.text('Jioplix HIMS'), findsOneWidget);
     expect(find.text('Clinical Operations Portal'), findsOneWidget);
   });
 
-  testWidgets('renders the Healthezee patient auth portal',
+  testWidgets('renders the Jioplix patient auth portal',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(

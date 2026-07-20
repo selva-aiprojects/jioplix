@@ -2496,7 +2496,7 @@ router.post("/ai/chat", async (req, res, next) => {
     } catch (e) {}
 
     const hospitalContext = {
-      hospitalName: req.tenantName || "Healthezee Hospital",
+      hospitalName: req.tenantName || "Jioplix Hospital",
       stats: {
         totalPatients,
         activeAdmissions,

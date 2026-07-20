@@ -1,7 +1,7 @@
-# Healthezee HIMS Technical Architecture
+# Jioplix HIMS Technical Architecture
 
 ## 1. System Overview
-Healthezee HIMS is a high-velocity, multi-tenant clinical platform designed for enterprise scalability. It utilizes a **Shared-Instance, Separate-Schema** database architecture to ensure maximum performance and data isolation.
+Jioplix HIMS is a high-velocity, multi-tenant clinical platform designed for enterprise scalability. It utilizes a **Shared-Instance, Separate-Schema** database architecture to ensure maximum performance and data isolation.
 
 ---
 

@@ -8,24 +8,24 @@
 
   <!-- Landing Page (Home) -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- Login / Portal Sign-In -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/login</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/login</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Mobile App Preview Portal -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/mobile</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/mobile</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -34,40 +34,40 @@
 
   <!-- Features Section -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/#features</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/#features</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- AI Engine Section -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/#ai-services</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/#ai-services</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Pricing Tiers -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/#pricing</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/#pricing</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Product Roadmap -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/#future</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/#future</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- Contact Us -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/#contact</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/#contact</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -76,8 +76,8 @@
 
   <!-- Android APK Download -->
   <url>
-    <loc>https://healthezee.whitekraaft.com/Healthezee.apk</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/Jioplix.apk</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -85,8 +85,8 @@
   <!-- ══ STANDARDS & COMPLIANCE (ANCHOR) ═════════════════════════════════ -->
 
   <url>
-    <loc>https://healthezee.whitekraaft.com/#standards</loc>
-    <lastmod>2026-06-11</lastmod>
+    <loc>https://jioplix.com/#standards</loc>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
