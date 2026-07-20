@@ -895,7 +895,7 @@ export default function LandingPage() {
           </div>
 
           <p style={{ textAlign: 'center', fontSize: '13px', color: '#475569', margin: 0 }}>
-            Powered by <strong style={{ color: '#7c3aed' }}>Cybelinx Technologies Pvt. Ltd.</strong> · Hyderabad, India
+            Powered by <strong style={{ color: '#7c3aed' }}>Cybelinx Technologies Pvt. Ltd.</strong> · Bangalore, India
           </p>
         </div>
       </section>
