@@ -20,10 +20,10 @@ function getBaseUrl() {
     }
     // Production Vercel Deployment Fallback
     if (host.includes('vercel.app') || host.includes('jioplix')) {
-      return 'https://jioplix-backend.vercel.app';
+      return '';
     }
   }
-  return 'https://jioplix-backend.vercel.app';
+  return '';
 }
 
 export const API_BASE_URL = getBaseUrl();
