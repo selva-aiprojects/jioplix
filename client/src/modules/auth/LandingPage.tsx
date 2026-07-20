@@ -355,7 +355,7 @@ export default function LandingPage() {
 
           {!isMobile && (
             <nav style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
-              {[['#features', 'Features'], ['#ai-services', 'AI Engine'], ['#pricing', 'Pricing'], ['#future', 'Roadmap'], ['#contact', 'Contact']].map(([href, label]) => (
+              {[['#features', 'Features'], ['#ai-services', 'AI Engine'], ['#future', 'Roadmap'], ['#contact', 'Contact']].map(([href, label]) => (
                 <a key={href} href={href} className="nav-link" style={{ color: '#64748b', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>{label}</a>
               ))}
               <a href="/Jioplix.apk" download="Jioplix.apk" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#2563eb', textDecoration: 'none', fontSize: '14px', fontWeight: 700 }}>
@@ -698,120 +698,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 7. PRICING ─────────────────────────────────────────────────────────── */}
-      <section id="pricing" style={{ padding: '100px 24px', background: 'white' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '56px' }}>
-          <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#2563eb' }}>Transparent Pricing</span>
-            <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '12px 0 16px', letterSpacing: '-1px' }}>Scale at your own pace.</h2>
-            <p style={{ color: '#64748b', fontSize: '16px', lineHeight: 1.7 }}>No hidden setup fees. No offline servers. Pure cloud, instantly provisioned.</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4,1fr)', gap: '20px', alignItems: 'stretch' }}>
-            {[
-              { title: 'Basic', price: '₹3,499', period: '/doctor/month', badge: null, popular: false, enterprise: false, color: '#2563eb',
-                features: ['Single Doctor Console', 'OPD Scheduling & Registration', 'Simple EMR Timeline', 'Prescription Generation', 'UPI Billing Integration', 'Standard Email Support'] },
-              { title: 'Standard', price: '₹8,999', period: '/facility/month', badge: 'Most Popular', popular: true, enterprise: false, color: '#7c3aed',
-                features: ['Up to 5 Active Doctors', 'Pharmacy & Lab Consoles', 'ABDM Address & M1 Sync', 'Auto-billing Dispatch', 'Staff Shift Management', '24/7 Priority Support'] },
-              { title: 'Professional', price: '₹15,999', period: '/facility/month', badge: null, popular: false, enterprise: false, color: '#0891b2',
-                features: ['Unlimited Doctors & Beds', 'Full Bed Occupancy Map', 'AI Speech Consultation Scribe', 'FHIR Interoperability', 'Insurance Claims Hub', 'Dedicated Account Manager'] },
-              { title: 'Enterprise', price: 'Get in Touch with us', period: 'Professional + On Demand', badge: 'Custom', popular: false, enterprise: true, color: '#7c3aed',
-                features: ['Everything in Professional', 'Multi-Branch / Hospital Setup', 'Custom AI Model Fine-Tuning', 'On-Demand Infra Scaling', 'HIPAA & ISO 27001 Audit', 'Named Technical Manager'] }
-            ].map(({ title, price, period, badge, popular, enterprise, color, features }) => (
-              <div key={title} className="price-card" style={{
-                background: enterprise ? 'linear-gradient(135deg, #f5f3ff 0%, #edd9ff 100%)' : 'white',
-                borderRadius: '24px',
-                padding: '32px 24px',
-                border: popular ? `2px solid ${color}` : enterprise ? '2px solid #7c3aed' : '1px solid #f1f5f9',
-                boxShadow: popular ? `0 24px 48px ${color}20` : enterprise ? '0 24px 48px rgba(124, 58, 237, 0.2)' : '0 4px 16px rgba(0,0,0,0.04)',
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                transform: popular ? 'scale(1.03)' : 'none'
-              }}>
-                {badge && (
-                  <span style={{ position: 'absolute', top: '-13px', left: '50%', transform: 'translateX(-50%)', padding: '4px 14px', background: popular ? color : enterprise ? 'linear-gradient(90deg, #7c3aed, #4f46e5)' : 'linear-gradient(90deg, #6366f1, #0284c7)', color: 'white', fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px', borderRadius: '999px', whiteSpace: 'nowrap', boxShadow: popular ? `0 4px 12px ${color}50` : enterprise ? '0 4px 12px rgba(124, 58, 237, 0.4)' : 'none' }}>
-                    {badge}
-                  </span>
-                )}
-                <div style={{ marginBottom: '24px' }}>
-                  <h3 style={{ fontWeight: 800, color: enterprise ? '#5b21b6' : '#0f172a', fontSize: '16px', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{title}</h3>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', flexWrap: 'wrap' }}>
-                    {enterprise ? (
-                      <a href="mailto:sales@cybelinx.com" style={{ fontSize: '22px', fontWeight: 900, color: '#7c3aed', letterSpacing: '-1.5px', textDecoration: 'none', transition: 'all 0.25s' }} className="price-link">
-                        {price}
-                      </a>
-                    ) : (
-                      <span style={{ fontSize: '36px', fontWeight: 900, color, letterSpacing: '-1px' }}>{price}</span>
-                    )}
-                    <span style={{ fontSize: '11px', color: enterprise ? '#6d28d9' : '#94a3b8', fontWeight: 500 }}>{period}</span>
-                  </div>
-                </div>
-                <div style={{ height: '1px', background: enterprise ? '#ddd6fe' : '#f1f5f9', marginBottom: '20px' }} />
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {features.map((feat, i) => (
-                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: enterprise ? '#4c1d95' : '#64748b', lineHeight: 1.45 }}>
-                      <CheckCircle style={{ color: enterprise ? '#7c3aed' : color, width: '15px', height: '15px', flexShrink: 0, marginTop: '2px' }} />
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-                {enterprise ? (
-                  <a href="mailto:sales@cybelinx.com" style={{
-                    display: 'block',
-                    width: '100%',
-                    marginTop: '24px',
-                    padding: '14px',
-                    borderRadius: '12px',
-                    fontWeight: 700,
-                    fontSize: '13px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s',
-                    border: '1.5px solid #7c3aed',
-                    background: 'rgba(124, 58, 237, 0.08)',
-                    color: '#7c3aed',
-                    boxShadow: '0 8px 20px rgba(124, 58, 237, 0.15)',
-                    textDecoration: 'none',
-                    textAlign: 'center'
-                  }}>
-                    Contact Sales
-                  </a>
-                ) : (
-                  <button onClick={() => navigate('/login')} style={{
-                    width: '100%',
-                    marginTop: '24px',
-                    padding: '14px',
-                    borderRadius: '12px',
-                    fontWeight: 700,
-                    fontSize: '13px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s',
-                    border: 'none',
-                    background: popular ? color : '#f8fafc',
-                    color: popular ? 'white' : '#1e293b',
-                    boxShadow: popular ? `0 8px 20px ${color}40` : 'none'
-                  }}>
-                    Access Portal
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div style={{ maxWidth: '720px', margin: '0 auto', background: 'linear-gradient(135deg, #eff6ff, #f0fdf4)', border: '1px solid #bfdbfe', borderRadius: '20px', padding: '28px 32px', textAlign: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '10px' }}>
-              <Zap style={{ color: '#2563eb', width: '18px', height: '18px' }} />
-              <span style={{ fontWeight: 800, color: '#1e40af', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Why Jioplix saves 60% more than legacy software</span>
-            </div>
-            <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>No offline servers, no site setup fees, no maintenance overhead. Cloud-native and instantly provisioned — saving clinical teams over <strong style={{ color: '#1d4ed8' }}>40% of diagnostic charting time</strong> via GenAI tools.</p>
-          </div>
-        </div>
-      </section>
-
       {/* ── 8. ROADMAP ─────────────────────────────────────────────────────────── */}
       <section id="future" style={{ padding: '100px 24px', background: 'var(--app-bg)' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '56px' }}>
@@ -909,7 +795,7 @@ export default function LandingPage() {
               <p style={{ fontSize: '13px', color: '#475569', maxWidth: '280px', lineHeight: 1.6, textAlign: isMobile ? 'center' : 'left' }}>India's most comprehensive clinical operating system for modern healthcare.</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '12px 40px' }}>
-              {[['Features', '#features'], ['AI Engine', '#ai-services'], ['Pricing', '#pricing'], ['Roadmap', '#future'], ['Contact Us', '#contact'], ['Mobile App', '/Jioplix.apk']].map(([label, href]) => (
+              {[['Features', '#features'], ['AI Engine', '#ai-services'], ['Roadmap', '#future'], ['Contact Us', '#contact'], ['Mobile App', '/Jioplix.apk']].map(([label, href]) => (
                 <a key={href} href={href} download={href.endsWith('.apk') ? 'Jioplix.apk' : undefined} style={{ color: '#475569', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.2s' }}
                   onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = '#0f172a'}
                   onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>
