@@ -12,7 +12,7 @@ function getBaseUrl() {
     }
     // If running on Docker deployment port 3000, route API to port 5000 on the same server IP/host
     if (port === '3000') {
-      return `${window.location.protocol}//${host}:5000`;
+      return `${window.location.protocol}//${host}:4000`;
     }
     // If local dev server (port 5173 or localhost without docker)
     if (['localhost', '127.0.0.1', '::1'].includes(host)) {

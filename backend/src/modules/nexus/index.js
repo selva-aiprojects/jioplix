@@ -636,6 +636,18 @@ router.get("/tenants", async (req, res, next) => {
   }
 });
 
+router.get("/tenants/public", async (req, res, next) => {
+  try {
+    const tenants = await req.prisma.$queryRawUnsafe(`
+      SELECT id, name, domain
+      FROM nexus.tenants
+    `);
+    res.json(tenants);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/tenants/:id', async (req, res, next) => {
   try {
     // SECURITY: id from URL param — positional param

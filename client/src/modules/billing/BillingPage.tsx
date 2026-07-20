@@ -969,7 +969,7 @@ export default function BillingPage() {
                   {/* Footer Brand */}
                   <div style={{ textAlign: 'center', marginTop: '64px', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#94a3b8', fontSize: '11px', fontWeight: 800 }}>
-                      <span>POWERED BY JIOPLIX® CLINICAL NETWORK</span>
+                      <span>POWERED BY CYBELINX® CLINICAL NETWORK</span>
                       <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#cbd5e1' }}></span>
                       <span>SECURE ELECTRONIC RECORD</span>
                     </div>

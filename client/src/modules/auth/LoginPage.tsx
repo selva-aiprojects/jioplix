@@ -272,7 +272,7 @@ export default function LoginPage() {
             </button>
 
             <div style={{ textAlign: 'center', marginTop: '10px' }}>
-               <p style={{ fontSize: '12px', color: '#94b8d4', fontWeight: 600 }}>POWERED BY <span style={{ color: '#00C897', fontWeight: 900 }}>JIOPLIX</span></p>
+               <p style={{ fontSize: '12px', color: '#94b8d4', fontWeight: 600 }}>POWERED BY <span style={{ color: '#00C897', fontWeight: 900 }}>CYBELINX</span></p>
             </div>
           </form>
         </div>
