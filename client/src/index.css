@@ -1191,3 +1191,9 @@ code, pre, .font-mono, [style*="monospace"] {
   box-shadow: 0 0 0 3px rgba(0, 86, 168, 0.12);
 }
 
+
+.hero-gradient-text {
+  background: linear-gradient(to right, #0078FF, #00C897);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

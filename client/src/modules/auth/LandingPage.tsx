@@ -93,7 +93,7 @@ const GLOBAL_CSS = `
     left: 0;
     width: 0;
     height: 2px;
-    background: #2563eb;
+    background: #0078FF;
     border-radius: 999px;
     transition: width 0.25s;
   }
@@ -181,10 +181,10 @@ export default function LandingPage() {
       title: 'AI-Powered Doctor EMR Console',
       desc: 'Consultation logs in under 45 seconds. Specialty templates, SNOMED CT, ICD-11 — all at your fingertips.',
       features: ['Specialty-specific templates (Pediatrics, Cardio, Gynac)', 'Integrated SNOMED CT & ICD-11 terminology search', 'Instant e-prescriptions with WhatsApp/SMS sharing', 'Bedside order entry for diagnostics & pharmacy'],
-      color: '#2563eb',
+      color: '#0078FF',
       mockup: (
         <div style={{ background: '#0a0f1e', borderRadius: '16px', padding: '20px', color: 'white', fontSize: '11px', border: '1px solid #1e3a5f', boxShadow: '0 32px 64px rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #2563eb, #0891b2, #2563eb)', backgroundSize: '200% auto', animation: 'shimmer 2s linear infinite' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #0078FF, #0891b2, #0078FF)', backgroundSize: '200% auto', animation: 'shimmer 2s linear infinite' }} />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '12px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#ef4444', display: 'inline-block' }} />
@@ -193,7 +193,7 @@ export default function LandingPage() {
               <span style={{ fontSize: '9px', color: '#4b6a8b', marginLeft: '8px', fontFamily: 'monospace' }}>EMR v3.1 · OPD_ACTIVE</span>
             </div>
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-              <span style={{ background: 'rgba(37,99,235,0.2)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, border: '1px solid rgba(37,99,235,0.3)' }}>Vitals ✓</span>
+              <span style={{ background: 'rgba(0,120,255,0.2)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, border: '1px solid rgba(0,120,255,0.3)' }}>Vitals ✓</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', padding: '2px 8px', borderRadius: '4px' }}>
                 <Sparkles style={{ width: '8px', height: '8px', color: '#a78bfa' }} />
                 <span style={{ fontSize: '8px', color: '#a78bfa', fontWeight: 700 }}>AI Scribe ON</span>
@@ -239,13 +239,13 @@ export default function LandingPage() {
       title: 'Real-Time Bed Occupancy & Ward Desk',
       desc: 'Bird\'s-eye clarity on every ward. Track ICU, general, and private beds with discharge predictions.',
       features: ['Visual map of all general, private & ICU beds', 'AI discharge predictor with recovery timelines', 'Direct link to billing on transfer or discharge', 'Nurse station callboards synced with orders'],
-      color: '#7c3aed',
+      color: '#00C897',
       mockup: (
         <div style={{ background: '#0a0f1e', borderRadius: '16px', padding: '20px', color: 'white', fontSize: '11px', border: '1px solid #2d1f5e', boxShadow: '0 32px 64px rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #7c3aed, #a78bfa, #7c3aed)', backgroundSize: '200% auto', animation: 'shimmer 2s linear infinite' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #00C897, #a78bfa, #00C897)', backgroundSize: '200% auto', animation: 'shimmer 2s linear infinite' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1e1b4b', paddingBottom: '12px', marginBottom: '16px' }}>
             <h4 style={{ fontWeight: 800, color: '#e2e8f0', margin: 0, fontSize: '12px' }}>ICU & PRIVATE WARD A</h4>
-            <span style={{ background: 'rgba(124,58,237,0.2)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '9px', fontWeight: 700, border: '1px solid rgba(124,58,237,0.3)' }}>82% Occupied</span>
+            <span style={{ background: 'rgba(0, 200, 151,0.2)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '9px', fontWeight: 700, border: '1px solid rgba(0, 200, 151,0.3)' }}>82% Occupied</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '8px', marginBottom: '14px' }}>
             {[['Bed 1', 'Deepika', '#34d399', 'rgba(16,185,129,0.1)', 'rgba(16,185,129,0.25)'],
@@ -358,7 +358,7 @@ export default function LandingPage() {
               {[['#features', 'Features'], ['#ai-services', 'AI Engine'], ['#future', 'Roadmap'], ['#contact', 'Contact']].map(([href, label]) => (
                 <a key={href} href={href} className="nav-link" style={{ color: '#64748b', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>{label}</a>
               ))}
-              <a href="/Jioplix.apk" download="Jioplix.apk" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#2563eb', textDecoration: 'none', fontSize: '14px', fontWeight: 700 }}>
+              <a href="/Jioplix.apk" download="Jioplix.apk" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#0078FF', textDecoration: 'none', fontSize: '14px', fontWeight: 700 }}>
                 <Smartphone style={{ width: '14px', height: '14px' }} /> Mobile App
               </a>
             </nav>
@@ -370,7 +370,7 @@ export default function LandingPage() {
                 Sign In
               </button>
             )}
-            <button onClick={() => navigate('/login')} className="btn-primary" style={{ padding: '10px 22px', borderRadius: '10px', background: 'linear-gradient(135deg, #1d4ed8, #2563eb)', color: 'white', fontWeight: 700, fontSize: '14px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 16px rgba(37,99,235,0.3)' }}>
+            <button onClick={() => navigate('/login')} className="btn-primary" style={{ padding: '10px 22px', borderRadius: '10px', background: 'linear-gradient(135deg, #0056A8, #0078FF)', color: 'white', fontWeight: 700, fontSize: '14px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,120,255,0.3)' }}>
               Access Portal
             </button>
           </div>
@@ -381,7 +381,7 @@ export default function LandingPage() {
       <section style={{
         position: 'relative', overflow: 'hidden',
         padding: isMobile ? '80px 20px 60px' : '120px 24px 100px',
-        background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(37,99,235,0.1) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 50%, rgba(8,145,178,0.07) 0%, transparent 50%), #ffffff'
+        background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,120,255,0.1) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 50%, rgba(8,145,178,0.07) 0%, transparent 50%), #ffffff'
       }}>
         {/* Grid overlay */}
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(#e2e8f015 1px, transparent 1px), linear-gradient(90deg, #e2e8f015 1px, transparent 1px)', backgroundSize: '40px 40px', pointerEvents: 'none' }} />
@@ -389,30 +389,30 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', gap: '64px', position: 'relative' }}>
           {/* Left */}
           <div style={{ flex: 1.1, display: 'flex', flexDirection: 'column', gap: '28px', animation: 'fadeInUp 0.8s ease both' }}>
-            <div style={{ display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: '8px', background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.2)', padding: '6px 16px 6px 8px', borderRadius: '999px' }}>
-              <span style={{ background: '#2563eb', color: 'white', fontSize: '9px', fontWeight: 800, padding: '2px 8px', borderRadius: '999px', letterSpacing: '0.5px' }}>NEW</span>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: '#1d4ed8' }}>ABDM Certified · AI Scribe v2.0</span>
+            <div style={{ display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: '8px', background: 'rgba(0,120,255,0.08)', border: '1px solid rgba(0,120,255,0.2)', padding: '6px 16px 6px 8px', borderRadius: '999px' }}>
+              <span style={{ background: '#0078FF', color: 'white', fontSize: '9px', fontWeight: 800, padding: '2px 8px', borderRadius: '999px', letterSpacing: '0.5px' }}>NEW</span>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#0056A8' }}>ABDM Certified · AI Scribe v2.0</span>
             </div>
 
             <h1 style={{ fontSize: isMobile ? '36px' : '60px', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: '#0f172a', margin: 0 }}>
-              The Clinical OS<br />
-              Indian Medicine<br />
-              <span className="hero-gradient-text">Has Been Waiting For.</span>
+              The Intelligent Engine<br />
+              Powering Modern<br />
+              <span className="hero-gradient-text">Healthcare Excellence.</span>
             </h1>
 
             <p style={{ fontSize: isMobile ? '16px' : '18px', color: '#64748b', lineHeight: 1.7, maxWidth: '520px', margin: 0 }}>
-              Jioplix unifies OPD, IPD, Pharmacy, Lab, and Billing under one AI-powered platform — built for the pace of Indian clinical workflows.
+              Bring OPD, IPD, Pharmacy, Labs, and Billing together in a seamless AI-driven ecosystem — engineered to handle the scale and speed of modern medical facilities.
             </p>
 
             {/* Trust badges */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              {[['✓ ABDM Registered', '#dcfce7', '#16a34a'], ['✓ HIPAA Compliant', '#dbeafe', '#1d4ed8'], ['✓ HL7 FHIR Ready', '#f3e8ff', '#7c3aed']].map(([label, bg, col]) => (
+              {[['✓ ABDM Registered', '#dcfce7', '#16a34a'], ['✓ HIPAA Compliant', '#e0f2fe', '#0056A8'], ['✓ HL7 FHIR Ready', '#ccfbf1', '#00C897']].map(([label, bg, col]) => (
                 <span key={label} style={{ background: bg, color: col, fontSize: '12px', fontWeight: 700, padding: '5px 12px', borderRadius: '999px' }}>{label}</span>
               ))}
             </div>
 
             <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px', marginTop: '8px' }}>
-              <button onClick={() => navigate('/login')} className="btn-primary" style={{ padding: '16px 28px', borderRadius: '14px', background: 'linear-gradient(135deg, #1d4ed8, #2563eb)', color: 'white', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(37,99,235,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
+              <button onClick={() => navigate('/login')} className="btn-primary" style={{ padding: '16px 28px', borderRadius: '14px', background: 'linear-gradient(135deg, #0056A8, #0078FF)', color: 'white', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,120,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
                 Access Portal <ArrowRight style={{ width: '16px', height: '16px' }} />
               </button>
             </div>
@@ -444,7 +444,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
-                Optimized smaller builds: <a href="/Jioplix-arm64-v8a.apk" download="Jioplix-arm64-v8a.apk" style={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none' }}>ARM64 (64-bit)</a> | <a href="/Jioplix-armeabi-v7a.apk" download="Jioplix-armeabi-v7a.apk" style={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none' }}>ARMv7 (32-bit)</a>
+                Optimized smaller builds: <a href="/Jioplix-arm64-v8a.apk" download="Jioplix-arm64-v8a.apk" style={{ color: '#0078FF', fontWeight: 600, textDecoration: 'none' }}>ARM64 (64-bit)</a> | <a href="/Jioplix-armeabi-v7a.apk" download="Jioplix-armeabi-v7a.apk" style={{ color: '#0078FF', fontWeight: 600, textDecoration: 'none' }}>ARMv7 (32-bit)</a>
               </div>
             </div>
 
@@ -470,7 +470,7 @@ export default function LandingPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #1e293b' }}>
                   {['#ef4444','#f59e0b','#22c55e'].map(c => <span key={c} style={{ width: '10px', height: '10px', borderRadius: '50%', background: c, display: 'inline-block' }} />)}
                   <span style={{ fontSize: '10px', color: '#475569', fontFamily: 'monospace', marginLeft: '8px' }}>Jioplix · Dashboard</span>
-                  <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center', background: 'rgba(37,99,235,0.15)', border: '1px solid rgba(37,99,235,0.3)', padding: '3px 10px', borderRadius: '999px' }}>
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center', background: 'rgba(0,120,255,0.15)', border: '1px solid rgba(0,120,255,0.3)', padding: '3px 10px', borderRadius: '999px' }}>
                     <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 6px #34d399' }} />
                     <span style={{ fontSize: '9px', color: '#34d399', fontWeight: 700 }}>Live</span>
                   </div>
@@ -506,7 +506,7 @@ export default function LandingPage() {
             </div>
             {/* Floating badges */}
             <div style={{ position: 'absolute', top: '-12px', right: '-12px', background: 'white', borderRadius: '16px', padding: '12px 16px', boxShadow: '0 16px 32px rgba(0,0,0,0.12)', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sparkles style={{ width: '18px', height: '18px', color: '#7c3aed' }} />
+              <Sparkles style={{ width: '18px', height: '18px', color: '#00C897' }} />
               <div>
                 <div style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a' }}>AI Scribe Active</div>
                 <div style={{ fontSize: '9px', color: '#94a3b8' }}>98.2% accuracy</div>
@@ -524,15 +524,15 @@ export default function LandingPage() {
       </section>
 
       {/* ── 3. SOCIAL PROOF / STATS BAR ────────────────────────────────────────── */}
-      <section style={{ background: 'linear-gradient(135deg, #f5f3ff 0%, #e0e7ff 100%)', padding: '48px 24px', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+      <section style={{ background: 'linear-gradient(135deg, #f0fdfa 0%, #e0e7ff 100%)', padding: '48px 24px', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <p style={{ fontSize: '13px', color: '#7c3aed', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' }}>Powering modern healthcare across India</p>
+            <p style={{ fontSize: '13px', color: '#00C897', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' }}>Powering modern healthcare across India</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '2px' }}>
             {[
-              { label: 'Consultations Logged', value: 2400000, suffix: '+', display: '2.4M+', icon: FileText, color: '#2563eb' },
-              { label: 'Prescriptions Issued', value: 800000, suffix: '+', display: '800K+', icon: Pill, color: '#7c3aed' },
+              { label: 'Consultations Logged', value: 2400000, suffix: '+', display: '2.4M+', icon: FileText, color: '#0078FF' },
+              { label: 'Prescriptions Issued', value: 800000, suffix: '+', display: '800K+', icon: Pill, color: '#00C897' },
               { label: 'Hospitals Onboarded', value: 500, suffix: '+', display: '500+', icon: HeartPulse, color: '#059669' },
               { label: 'Avg Time Saved / Day', value: 3, suffix: 'h', display: '3h+', icon: Clock, color: '#d97706' }
             ].map(({ label, display, icon: Icon, color }, i) => (
@@ -550,14 +550,14 @@ export default function LandingPage() {
       <section id="standards" style={{ padding: '100px 24px', background: 'white' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '56px' }}>
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#2563eb' }}>Built on Global Standards</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#0078FF' }}>Built on Global Standards</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '12px 0 16px', letterSpacing: '-1px' }}>Compliance isn't optional. It's foundational.</h2>
             <p style={{ color: '#64748b', fontSize: '16px', lineHeight: 1.7 }}>Every Jioplix module is architected against NHA, ABDM, HL7 FHIR, and international clinical governance frameworks.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4,1fr)', gap: '20px' }}>
             {[
-              { icon: Shield, label: 'NHA ABDM Certified', desc: 'Registered with Ayushman Bharat Digital Mission & ABHA ID creation', color: '#2563eb', bg: '#eff6ff' },
-              { icon: ArrowLeftRight, label: 'HL7 FHIR R4 APIs', desc: 'Interoperability with national health registries and partner labs', color: '#7c3aed', bg: '#f5f3ff' },
+              { icon: Shield, label: 'NHA ABDM Certified', desc: 'Registered with Ayushman Bharat Digital Mission & ABHA ID creation', color: '#0078FF', bg: '#f0f9ff' },
+              { icon: ArrowLeftRight, label: 'HL7 FHIR R4 APIs', desc: 'Interoperability with national health registries and partner labs', color: '#00C897', bg: '#f0fdfa' },
               { icon: BookOpen, label: 'SNOMED CT & ICD-11', desc: 'Clinical terminology standards for structured diagnosis coding', color: '#059669', bg: '#ecfdf5' },
               { icon: Lock, label: 'End-to-End Encryption', desc: 'AES-256 data-at-rest with TLS 1.3 in transit on all PHI records', color: '#dc2626', bg: '#fef2f2' }
             ].map(({ icon: Icon, label, desc, color, bg }) => (
@@ -579,7 +579,7 @@ export default function LandingPage() {
       <section id="features" style={{ padding: '100px 24px', background: 'var(--app-bg)' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
           <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#7c3aed' }}>Platform Features</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#00C897' }}>Platform Features</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '12px 0 0', letterSpacing: '-1px' }}>Every module. One platform.</h2>
           </div>
 
@@ -630,13 +630,13 @@ export default function LandingPage() {
       </section>
 
       {/* ── 6. BENTO GRID — AI FEATURES ────────────────────────────────────────── */}
-      <section id="ai-services" style={{ padding: '100px 24px', background: 'linear-gradient(135deg, #eff6ff 0%, #f5f3ff 50%, #faf5ff 100%)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '10%', left: '5%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(124, 58, 237, 0.08), transparent)', pointerEvents: 'none' }} />
+      <section id="ai-services" style={{ padding: '100px 24px', background: 'linear-gradient(135deg, #f0f9ff 0%, #f0fdfa 50%, #faf5ff 100%)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '10%', left: '5%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(0, 200, 151, 0.08), transparent)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08), transparent)', pointerEvents: 'none' }} />
 
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '56px', position: 'relative' }}>
           <div style={{ textAlign: 'center', maxWidth: '620px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#7c3aed' }}>Powered by GenAI</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#00C897' }}>Powered by GenAI</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '12px 0 16px', letterSpacing: '-1px' }}>Clinical AI that actually works.</h2>
             <p style={{ color: '#475569', fontSize: '16px', lineHeight: 1.7 }}>Not a chatbot. A purpose-built clinical intelligence layer trained on Indian medical workflows.</p>
           </div>
@@ -644,8 +644,8 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gridTemplateRows: 'auto', gap: '16px' }}>
             {/* Large card */}
             <div className="bento-card" style={{ gridColumn: isMobile ? '1' : '1 / 2', gridRow: '1 / 3', background: 'linear-gradient(145deg, #ffffff, #faf5ff)', border: '1px solid #edd9ff', borderRadius: '24px', padding: '36px', display: 'flex', flexDirection: 'column', gap: '24px', minHeight: '280px' }}>
-              <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'rgba(124, 58, 237, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
-                <Mic style={{ color: '#7c3aed', width: '24px', height: '24px' }} />
+              <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'rgba(0, 200, 151, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(0, 200, 151, 0.2)' }}>
+                <Mic style={{ color: '#00C897', width: '24px', height: '24px' }} />
               </div>
               <div>
                 <h3 style={{ fontWeight: 800, color: '#0f172a', fontSize: '20px', margin: '0 0 10px' }}>AI Speech Scribe</h3>
@@ -654,10 +654,10 @@ export default function LandingPage() {
               <div style={{ marginTop: 'auto', background: '#faf5ff', borderRadius: '12px', padding: '14px', border: '1px solid #edd9ff' }}>
                 <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
                   {[40, 65, 45, 80, 55, 90, 60, 75, 50, 85, 70, 95].map((h, i) => (
-                    <div key={i} style={{ flex: 1, height: `${h * 0.4}px`, background: 'rgba(124, 58, 237, 0.7)', borderRadius: '2px' }} />
+                    <div key={i} style={{ flex: 1, height: `${h * 0.4}px`, background: 'rgba(0, 200, 151, 0.7)', borderRadius: '2px' }} />
                   ))}
                 </div>
-                <div style={{ fontSize: '10px', color: '#7c3aed', display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ fontSize: '10px', color: '#00C897', display: 'flex', justifyContent: 'space-between' }}>
                   <span>🎙 Listening...</span><span style={{ color: '#4f46e5', fontWeight: 600 }}>98.2% accuracy</span>
                 </div>
               </div>
@@ -680,9 +680,9 @@ export default function LandingPage() {
             ))}
 
             {/* Bottom wide card */}
-            <div className="bento-card" style={{ gridColumn: isMobile ? '1' : '2 / 4', background: 'linear-gradient(145deg, #ffffff, #eff6ff)', border: '1px solid #bfdbfe', borderRadius: '24px', padding: '32px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '24px', alignItems: 'center' }}>
+            <div className="bento-card" style={{ gridColumn: isMobile ? '1' : '2 / 4', background: 'linear-gradient(145deg, #ffffff, #f0f9ff)', border: '1px solid #bfdbfe', borderRadius: '24px', padding: '32px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '24px', alignItems: 'center' }}>
               <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'rgba(37, 99, 235, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(37, 99, 235, 0.2)', flexShrink: 0 }}>
-                <Globe style={{ color: '#2563eb', width: '24px', height: '24px' }} />
+                <Globe style={{ color: '#0078FF', width: '24px', height: '24px' }} />
               </div>
               <div style={{ flex: 1 }}>
                 <h3 style={{ fontWeight: 800, color: '#1e40af', fontSize: '18px', margin: '0 0 8px' }}>FHIR Interoperability Gateway</h3>
@@ -690,7 +690,7 @@ export default function LandingPage() {
               </div>
               <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                 {['ABHA', 'PMJAY', 'CoWIN', 'HFR'].map(tag => (
-                  <span key={tag} style={{ background: 'rgba(37, 99, 235, 0.08)', color: '#2563eb', fontSize: '10px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(37, 99, 235, 0.2)' }}>{tag}</span>
+                  <span key={tag} style={{ background: 'rgba(37, 99, 235, 0.08)', color: '#0078FF', fontSize: '10px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(37, 99, 235, 0.2)' }}>{tag}</span>
                 ))}
               </div>
             </div>
@@ -709,7 +709,7 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: '24px' }}>
             {[
               { icon: Watch, quarter: 'Q3 2026', title: 'Wearable Vitals Integration', desc: 'Continuous vitals streaming from Apple Watch, Fitbit, and IoT bedside monitors directly into patient EMR timelines.', color: '#0891b2', bg: '#ecfeff' },
-              { icon: Fingerprint, quarter: 'Q4 2026', title: 'ABHA Biometric Auth', desc: 'Facial recognition and fingerprint login for patients at reception kiosks — zero paper, zero friction at triage.', color: '#7c3aed', bg: '#f5f3ff' },
+              { icon: Fingerprint, quarter: 'Q4 2026', title: 'ABHA Biometric Auth', desc: 'Facial recognition and fingerprint login for patients at reception kiosks — zero paper, zero friction at triage.', color: '#00C897', bg: '#f0fdfa' },
               { icon: Brain, quarter: 'Q1 2027', title: 'Imaging AI Diagnostic', desc: 'On-platform X-Ray, CT, and MRI reading assistance powered by radiology-trained vision models.', color: '#dc2626', bg: '#fef2f2' },
             ].map(({ icon: Icon, quarter, title, desc, color, bg }) => (
               <div key={title} className="feature-card" style={{ background: 'white', border: '1px solid #f1f5f9', borderRadius: '24px', padding: '32px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -730,7 +730,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── 9. CTA BAND ────────────────────────────────────────────────────────── */}
-      <section style={{ padding: '80px 24px', background: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #0284c7 100%)', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ padding: '80px 24px', background: 'linear-gradient(135deg, #1e40af 0%, #0056A8 50%, #0284c7 100%)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px', pointerEvents: 'none' }} />
         <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative', display: 'flex', flexDirection: 'column', gap: '28px', alignItems: 'center' }}>
           <h2 style={{ fontSize: isMobile ? '28px' : '44px', fontWeight: 900, color: 'white', lineHeight: 1.2, letterSpacing: '-1px', margin: 0 }}>
@@ -740,7 +740,7 @@ export default function LandingPage() {
             Join 500+ healthcare providers who've already modernized with Jioplix. Setup in under 15 minutes.
           </p>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button onClick={() => navigate('/login')} style={{ padding: '16px 32px', borderRadius: '14px', background: 'white', color: '#1d4ed8', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', transition: 'all 0.3s' }}>
+            <button onClick={() => navigate('/login')} style={{ padding: '16px 32px', borderRadius: '14px', background: 'white', color: '#0056A8', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', transition: 'all 0.3s' }}>
               Access Portal
             </button>
              <a href="mailto:sales@cybelinx.com" style={{ padding: '16px 32px', borderRadius: '14px', background: 'rgba(255,255,255,0.15)', color: 'white', fontWeight: 700, fontSize: '15px', border: '1.5px solid rgba(255,255,255,0.3)', cursor: 'pointer', textDecoration: 'none', backdropFilter: 'blur(8px)', transition: 'all 0.3s' }}>
@@ -751,17 +751,17 @@ export default function LandingPage() {
       </section>
 
       {/* ── 10. CONTACT US ──────────────────────────────────────────────────────── */}
-      <section id="contact" style={{ padding: '100px 24px', background: 'linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%)' }}>
+      <section id="contact" style={{ padding: '100px 24px', background: 'linear-gradient(135deg, #f0f9ff 0%, #f0fdfa 100%)' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '56px' }}>
           <div style={{ textAlign: 'center' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#7c3aed' }}>Get In Touch</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#00C897' }}>Get In Touch</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '12px 0 16px', letterSpacing: '-1px' }}>We'd love to hear from you.</h2>
             <p style={{ color: '#475569', fontSize: '16px', lineHeight: 1.7 }}>Questions about our plans, a personalised demo, or enterprise onboarding? Our team replies fast.</p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px' }}>
             {[
-              { href: 'mailto:sales@cybelinx.com', icon: Mail, label: 'Email Us', value: 'sales@cybelinx.com', sub: 'We reply within 24 business hours', iconBg: 'linear-gradient(135deg, #7c3aed, #c084fc)', hoverBorder: '#a855f7', hoverShadow: 'rgba(168, 85, 247, 0.15)' },
+              { href: 'mailto:sales@cybelinx.com', icon: Mail, label: 'Email Us', value: 'sales@cybelinx.com', sub: 'We reply within 24 business hours', iconBg: 'linear-gradient(135deg, #00C897, #c084fc)', hoverBorder: '#a855f7', hoverShadow: 'rgba(168, 85, 247, 0.15)' },
               { href: 'tel:+918825492600', icon: Phone, label: 'Sales Enquiry', value: '+91 88254 92600', sub: 'Mon – Sat, 9 AM – 7 PM IST', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#059669', hoverShadow: 'rgba(5, 150, 105, 0.15)' },
               { href: 'https://wa.me/918825492600', icon: MessageSquare, label: 'WhatsApp Us', value: '+91 88254 92600', sub: 'Chat with our sales team instantly', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#10b981', hoverShadow: 'rgba(16, 185, 129, 0.15)' }
             ].map(({ href, icon: Icon, label, value, sub, iconBg, hoverBorder, hoverShadow }) => (
@@ -772,7 +772,7 @@ export default function LandingPage() {
                   <Icon style={{ color: 'white', width: '20px', height: '20px' }} />
                 </div>
                 <div style={{ overflow: 'hidden' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>{label}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#00C897', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>{label}</span>
                   <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', display: 'block', marginBottom: '2px', whiteSpace: 'nowrap' }}>{value}</span>
                   <span style={{ fontSize: '11px', color: '#475569', display: 'block', lineHeight: 1.3 }}>{sub}</span>
                 </div>
@@ -781,7 +781,7 @@ export default function LandingPage() {
           </div>
 
           <p style={{ textAlign: 'center', fontSize: '13px', color: '#475569', margin: 0 }}>
-            Powered by <strong style={{ color: '#7c3aed' }}>Cybelinx Technologies Pvt. Ltd.</strong> · Bangalore, India
+            Powered by <strong style={{ color: '#00C897' }}>Cybelinx Technologies Pvt. Ltd.</strong> · Bangalore, India
           </p>
         </div>
       </section>
