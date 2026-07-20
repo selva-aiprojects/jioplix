@@ -738,7 +738,7 @@ export default function LandingPage() {
                   <h3 style={{ fontWeight: 800, color: enterprise ? '#5b21b6' : '#0f172a', fontSize: '16px', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{title}</h3>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', flexWrap: 'wrap' }}>
                     {enterprise ? (
-                      <a href="mailto:contactus@cybelinx.com" style={{ fontSize: '22px', fontWeight: 900, color: '#7c3aed', letterSpacing: '-1.5px', textDecoration: 'none', transition: 'all 0.25s' }} className="price-link">
+                      <a href="mailto:sales@cybelinx.com" style={{ fontSize: '22px', fontWeight: 900, color: '#7c3aed', letterSpacing: '-1.5px', textDecoration: 'none', transition: 'all 0.25s' }} className="price-link">
                         {price}
                       </a>
                     ) : (
@@ -757,7 +757,7 @@ export default function LandingPage() {
                   ))}
                 </ul>
                 {enterprise ? (
-                  <a href="mailto:contactus@cybelinx.com" style={{
+                  <a href="mailto:sales@cybelinx.com" style={{
                     display: 'block',
                     width: '100%',
                     marginTop: '24px',
@@ -857,7 +857,7 @@ export default function LandingPage() {
             <button onClick={() => navigate('/login')} style={{ padding: '16px 32px', borderRadius: '14px', background: 'white', color: '#1d4ed8', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', transition: 'all 0.3s' }}>
               Access Portal
             </button>
-             <a href="mailto:contactus@cybelinx.com" style={{ padding: '16px 32px', borderRadius: '14px', background: 'rgba(255,255,255,0.15)', color: 'white', fontWeight: 700, fontSize: '15px', border: '1.5px solid rgba(255,255,255,0.3)', cursor: 'pointer', textDecoration: 'none', backdropFilter: 'blur(8px)', transition: 'all 0.3s' }}>
+             <a href="mailto:sales@cybelinx.com" style={{ padding: '16px 32px', borderRadius: '14px', background: 'rgba(255,255,255,0.15)', color: 'white', fontWeight: 700, fontSize: '15px', border: '1.5px solid rgba(255,255,255,0.3)', cursor: 'pointer', textDecoration: 'none', backdropFilter: 'blur(8px)', transition: 'all 0.3s' }}>
               Talk to Sales
             </a>
           </div>
@@ -875,7 +875,7 @@ export default function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px' }}>
             {[
-              { href: 'mailto:contactus@cybelinx.com', icon: Mail, label: 'Email Us', value: 'contactus@cybelinx.com', sub: 'We reply within 24 business hours', iconBg: 'linear-gradient(135deg, #7c3aed, #c084fc)', hoverBorder: '#a855f7', hoverShadow: 'rgba(168, 85, 247, 0.15)' },
+              { href: 'mailto:sales@cybelinx.com', icon: Mail, label: 'Email Us', value: 'sales@cybelinx.com', sub: 'We reply within 24 business hours', iconBg: 'linear-gradient(135deg, #7c3aed, #c084fc)', hoverBorder: '#a855f7', hoverShadow: 'rgba(168, 85, 247, 0.15)' },
               { href: 'tel:+917032295550', icon: Phone, label: 'Sales Enquiry', value: '+91 70322 95550', sub: 'Mon – Sat, 9 AM – 7 PM IST', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#059669', hoverShadow: 'rgba(5, 150, 105, 0.15)' },
               { href: 'https://wa.me/917032295550', icon: MessageSquare, label: 'WhatsApp Us', value: '+91 70322 95550', sub: 'Chat with our sales team instantly', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#10b981', hoverShadow: 'rgba(16, 185, 129, 0.15)' }
             ].map(({ href, icon: Icon, label, value, sub, iconBg, hoverBorder, hoverShadow }) => (
