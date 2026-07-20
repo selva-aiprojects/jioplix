@@ -345,14 +345,13 @@ export default function LandingPage() {
       {/* ── 1. NAVBAR ─────────────────────────────────────────────────────────── */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 200,
-        backgroundColor: scrolled ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.7)',
-        backdropFilter: 'blur(20px)',
+        backgroundColor: '#ffffff',
         borderBottom: scrolled ? '1px solid #e2e8f0' : '1px solid transparent',
         transition: 'all 0.3s ease',
         padding: '0 24px'
       }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '68px' }}>
-          <BrandLogo size="sm" />
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '84px' }}>
+          <BrandLogo size="lg" />
 
           {!isMobile && (
             <nav style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
@@ -739,7 +738,7 @@ export default function LandingPage() {
                   <h3 style={{ fontWeight: 800, color: enterprise ? '#5b21b6' : '#0f172a', fontSize: '16px', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{title}</h3>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', flexWrap: 'wrap' }}>
                     {enterprise ? (
-                      <a href="mailto:contactus@whitekraaft.com" style={{ fontSize: '22px', fontWeight: 900, color: '#7c3aed', letterSpacing: '-1.5px', textDecoration: 'none', transition: 'all 0.25s' }} className="price-link">
+                      <a href="mailto:contactus@cybelinx.com" style={{ fontSize: '22px', fontWeight: 900, color: '#7c3aed', letterSpacing: '-1.5px', textDecoration: 'none', transition: 'all 0.25s' }} className="price-link">
                         {price}
                       </a>
                     ) : (
@@ -758,7 +757,7 @@ export default function LandingPage() {
                   ))}
                 </ul>
                 {enterprise ? (
-                  <a href="mailto:contactus@whitekraaft.com" style={{
+                  <a href="mailto:contactus@cybelinx.com" style={{
                     display: 'block',
                     width: '100%',
                     marginTop: '24px',
@@ -858,7 +857,7 @@ export default function LandingPage() {
             <button onClick={() => navigate('/login')} style={{ padding: '16px 32px', borderRadius: '14px', background: 'white', color: '#1d4ed8', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', transition: 'all 0.3s' }}>
               Access Portal
             </button>
-             <a href="mailto:contactus@whitekraaft.com" style={{ padding: '16px 32px', borderRadius: '14px', background: 'rgba(255,255,255,0.15)', color: 'white', fontWeight: 700, fontSize: '15px', border: '1.5px solid rgba(255,255,255,0.3)', cursor: 'pointer', textDecoration: 'none', backdropFilter: 'blur(8px)', transition: 'all 0.3s' }}>
+             <a href="mailto:contactus@cybelinx.com" style={{ padding: '16px 32px', borderRadius: '14px', background: 'rgba(255,255,255,0.15)', color: 'white', fontWeight: 700, fontSize: '15px', border: '1.5px solid rgba(255,255,255,0.3)', cursor: 'pointer', textDecoration: 'none', backdropFilter: 'blur(8px)', transition: 'all 0.3s' }}>
               Talk to Sales
             </a>
           </div>
@@ -876,7 +875,7 @@ export default function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px' }}>
             {[
-              { href: 'mailto:contactus@whitekraaft.com', icon: Mail, label: 'Email Us', value: 'contactus@whitekraaft.com', sub: 'We reply within 24 business hours', iconBg: 'linear-gradient(135deg, #7c3aed, #c084fc)', hoverBorder: '#a855f7', hoverShadow: 'rgba(168, 85, 247, 0.15)' },
+              { href: 'mailto:contactus@cybelinx.com', icon: Mail, label: 'Email Us', value: 'contactus@cybelinx.com', sub: 'We reply within 24 business hours', iconBg: 'linear-gradient(135deg, #7c3aed, #c084fc)', hoverBorder: '#a855f7', hoverShadow: 'rgba(168, 85, 247, 0.15)' },
               { href: 'tel:+917032295550', icon: Phone, label: 'Sales Enquiry', value: '+91 70322 95550', sub: 'Mon – Sat, 9 AM – 7 PM IST', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#059669', hoverShadow: 'rgba(5, 150, 105, 0.15)' },
               { href: 'https://wa.me/917032295550', icon: MessageSquare, label: 'WhatsApp Us', value: '+91 70322 95550', sub: 'Chat with our sales team instantly', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#10b981', hoverShadow: 'rgba(16, 185, 129, 0.15)' }
             ].map(({ href, icon: Icon, label, value, sub, iconBg, hoverBorder, hoverShadow }) => (
@@ -896,17 +895,17 @@ export default function LandingPage() {
           </div>
 
           <p style={{ textAlign: 'center', fontSize: '13px', color: '#475569', margin: 0 }}>
-            Powered by <strong style={{ color: '#7c3aed' }}>Whitekraaft Technologies Pvt. Ltd.</strong> · Hyderabad, India
+            Powered by <strong style={{ color: '#7c3aed' }}>Cybelinx Technologies Pvt. Ltd.</strong> · Hyderabad, India
           </p>
         </div>
       </section>
 
       {/* ── 11. FOOTER ─────────────────────────────────────────────────────────── */}
-      <footer style={{ background: '#f1f5f9', borderTop: '1px solid #e2e8f0', padding: '48px 24px' }}>
+      <footer style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '48px 24px' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
           <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'center' : 'flex-start', gap: '32px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: isMobile ? 'center' : 'flex-start' }}>
-              <BrandLogo size="sm" />
+              <BrandLogo size="lg" />
               <p style={{ fontSize: '13px', color: '#475569', maxWidth: '280px', lineHeight: 1.6, textAlign: isMobile ? 'center' : 'left' }}>India's most comprehensive clinical operating system for modern healthcare.</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '12px 40px' }}>
@@ -920,7 +919,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '24px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Copyright © 2026 Whitekraaft Solutions LLP. All Rights Reserved.</p>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Copyright © 2026 Cybelinx Solutions LLP. All Rights Reserved.</p>
             <div style={{ display: 'flex', gap: '20px', fontSize: '12px' }}>
               {['Privacy Policy', 'Terms of Service', 'ABDM Sandbox'].map(link => (
                 <a key={link} href="#" style={{ color: '#64748b', textDecoration: 'none' }}
