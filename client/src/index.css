@@ -1193,7 +1193,7 @@ code, pre, .font-mono, [style*="monospace"] {
 
 
 .hero-gradient-text {
-  background: linear-gradient(to right, #0078FF, #00C897);
+  background: linear-gradient(to right, #a855f7, #ec4899);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
