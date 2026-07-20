@@ -429,10 +429,14 @@ class _PatientAuthScreenState extends ConsumerState<PatientAuthScreen> {
                               ),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.health_and_safety_rounded,
-                            size: 50,
-                            color: AppColors.primary,
+                          child: Image.asset(
+                            'assets/logo.png',
+                            height: 50,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.health_and_safety_rounded,
+                              size: 50,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
