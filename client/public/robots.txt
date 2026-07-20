@@ -1,0 +1,23 @@
+# Healthezee HIMS – robots.txt
+# Whitekraaft Solutions LLP © 2026
+
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /mobile
+Allow: /Healthezee.apk
+Allow: /sitemap.xml
+
+# Block authenticated/private tenant routes from indexing
+Disallow: /tenant/
+Disallow: /nexus/
+Disallow: /billing
+Disallow: /appointments
+Disallow: /patients
+Disallow: /api/
+
+# Crawl delay (be kind to the server)
+Crawl-delay: 10
+
+# Sitemap location
+Sitemap: https://healthezee.whitekraaft.com/sitemap.xml
