@@ -6,7 +6,7 @@ interface BrandLogoProps {
   light?: boolean;
 }
 
-export default function BrandLogo({ size = 'md' }: BrandLogoProps) {
+export default function BrandLogo({ size = 'md', light = false }: BrandLogoProps) {
   const height = size === 'sm' ? 28 : size === 'md' ? 48 : 72;
   const useTenantBranding = getTenantBrandingConfig();
   const customLogo = useTenantBranding ? getNamespacedItem('theme_logo_url') || null : null;
@@ -20,6 +20,8 @@ export default function BrandLogo({ size = 'md' }: BrandLogoProps) {
           height: `${height}px`, 
           width: 'auto',
           display: 'block',
+          mixBlendMode: light ? 'normal' : 'multiply',
+          filter: light ? 'none' : 'brightness(1.05) contrast(1.1)'
         }} 
       />
     </div>
