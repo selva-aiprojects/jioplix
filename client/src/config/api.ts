@@ -18,8 +18,12 @@ function getBaseUrl() {
     if (['localhost', '127.0.0.1', '::1'].includes(host)) {
       return 'http://localhost:4000';
     }
+    // Production Vercel Deployment Fallback
+    if (host.includes('vercel.app') || host.includes('jioplix')) {
+      return 'https://jioplix-backend.vercel.app';
+    }
   }
-  return '';
+  return 'https://jioplix-backend.vercel.app';
 }
 
 export const API_BASE_URL = getBaseUrl();
