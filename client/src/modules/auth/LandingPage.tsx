@@ -443,9 +443,7 @@ export default function LandingPage() {
                   <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: '#f59e0b', color: 'white', fontSize: '8px', fontWeight: 800, padding: '2px 7px', borderRadius: '999px', letterSpacing: '0.5px' }}>SOON</span>
                 </div>
               </div>
-              <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
-                Optimized smaller builds: <a href="/Jioplix-arm64-v8a.apk" download="Jioplix-arm64-v8a.apk" style={{ color: '#0078FF', fontWeight: 600, textDecoration: 'none' }}>ARM64 (64-bit)</a> | <a href="/Jioplix-armeabi-v7a.apk" download="Jioplix-armeabi-v7a.apk" style={{ color: '#0078FF', fontWeight: 600, textDecoration: 'none' }}>ARMv7 (32-bit)</a>
-              </div>
+
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingTop: '8px', flexWrap: 'wrap' }}>
