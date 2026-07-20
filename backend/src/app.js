@@ -738,7 +738,7 @@ app.use((req, res, next) => {
   res.json = function (body) {
     if (res.statusCode >= 400 && body && body.error && typeof body.error === 'string') {
       const { rephraseError } = require("./services/aiService");
-      rephraseError({ message: body.error, code: body.details })
+      rephraseError({ message: body.error, code: body.details, status: res.statusCode })
         .then((polishedMsg) => {
           body.error = polishedMsg;
           originalJson.call(res, body);

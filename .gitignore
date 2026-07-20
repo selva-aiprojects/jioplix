@@ -39,3 +39,4 @@ tmp-debug-*.js
 test-results.json
 test_output.txt
 debug.log
+.vercel
