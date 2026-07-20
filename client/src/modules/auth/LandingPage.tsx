@@ -762,8 +762,8 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px' }}>
             {[
               { href: 'mailto:sales@cybelinx.com', icon: Mail, label: 'Email Us', value: 'sales@cybelinx.com', sub: 'We reply within 24 business hours', iconBg: 'linear-gradient(135deg, #7c3aed, #c084fc)', hoverBorder: '#a855f7', hoverShadow: 'rgba(168, 85, 247, 0.15)' },
-              { href: 'tel:+917032295550', icon: Phone, label: 'Sales Enquiry', value: '+91 70322 95550', sub: 'Mon – Sat, 9 AM – 7 PM IST', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#059669', hoverShadow: 'rgba(5, 150, 105, 0.15)' },
-              { href: 'https://wa.me/917032295550', icon: MessageSquare, label: 'WhatsApp Us', value: '+91 70322 95550', sub: 'Chat with our sales team instantly', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#10b981', hoverShadow: 'rgba(16, 185, 129, 0.15)' }
+              { href: 'tel:+918825492600', icon: Phone, label: 'Sales Enquiry', value: '+91 88254 92600', sub: 'Mon – Sat, 9 AM – 7 PM IST', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#059669', hoverShadow: 'rgba(5, 150, 105, 0.15)' },
+              { href: 'https://wa.me/918825492600', icon: MessageSquare, label: 'WhatsApp Us', value: '+91 88254 92600', sub: 'Chat with our sales team instantly', iconBg: 'linear-gradient(135deg, #059669, #10b981)', hoverBorder: '#10b981', hoverShadow: 'rgba(16, 185, 129, 0.15)' }
             ].map(({ href, icon: Icon, label, value, sub, iconBg, hoverBorder, hoverShadow }) => (
               <a key={href} href={href} className="contact-card" style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px 16px', textDecoration: 'none' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = hoverBorder; (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 16px 40px ${hoverShadow}`; }}
