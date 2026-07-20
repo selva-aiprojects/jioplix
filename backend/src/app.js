@@ -37,7 +37,11 @@ app.use(cors({
     const rootDomain = process.env.APP_DOMAIN || 'jioplix.com';
     const devDomain  = process.env.DEV_APP_DOMAIN || 'dev.jioplix.com';
     const isSubdomain = origin.endsWith(`.${rootDomain}`) || origin.endsWith(`.${devDomain}`);
-    if (ALLOWED_ORIGINS.includes(origin) || isSubdomain) {
+    
+    // Explicitly allow any vercel.app domains dynamically
+    const isVercelDomain = origin.endsWith('.vercel.app');
+
+    if (ALLOWED_ORIGINS.includes(origin) || isSubdomain || isVercelDomain) {
       return callback(null, true);
     }
     console.warn(`[CORS] Blocked request from origin: ${origin}`);
