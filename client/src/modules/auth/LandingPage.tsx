@@ -397,7 +397,7 @@ export default function LandingPage() {
             <h1 style={{ fontSize: isMobile ? '36px' : '60px', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: '#0f172a', margin: 0 }}>
               The Intelligent Engine<br />
               Powering Modern<br />
-              <span className="hero-gradient-text">Healthcare Excellence.</span>
+              <span style={{ background: 'linear-gradient(to right, #a855f7, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>Healthcare Excellence.</span>
             </h1>
 
             <p style={{ fontSize: isMobile ? '16px' : '18px', color: '#64748b', lineHeight: 1.7, maxWidth: '520px', margin: 0 }}>
