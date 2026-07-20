@@ -1,11 +1,10 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import 'login_screen.dart';
 import 'role_dashboard_router.dart';
 
-/// Ultra high-res, Nano Banana style animated splash screen
+/// Clean, White, Flashy animated splash screen
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -25,23 +24,23 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Sleek entrance animation
+    // Sleek flashy entrance animation
     _logoController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1600),
     );
 
-    _logoScale = Tween<double>(begin: 0.8, end: 1.0).animate(
+    _logoScale = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(
         parent: _logoController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+        curve: const Interval(0.0, 0.6, curve: Curves.elasticOut),
       ),
     );
 
     _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _logoController,
-        curve: const Interval(0.1, 0.7, curve: Curves.easeOut),
+        curve: const Interval(0.1, 0.5, curve: Curves.easeOut),
       ),
     );
 
@@ -78,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen>
       PageRouteBuilder(
         pageBuilder: (_, __, ___) =>
             hasToken ? const RoleDashboardRouter() : const LoginScreen(),
-        transitionDuration: const Duration(milliseconds: 1000),
+        transitionDuration: const Duration(milliseconds: 800),
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(
             opacity: CurvedAnimation(
@@ -101,117 +100,89 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // High-Res AI Background Image
-          Image.asset(
-            'assets/splash_bg.png',
-            fit: BoxFit.cover,
-          ),
-          
-          // Subtle Darkening Overlay
-          Container(
-            color: Colors.black.withValues(alpha: 0.2),
-          ),
-
-          // Foreground Content
-          Center(
-            child: AnimatedBuilder(
-              animation: _logoController,
-              builder: (context, child) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Glassmorphism Logo Container
-                    Opacity(
-                      opacity: _logoOpacity.value,
-                      child: Transform.scale(
-                        scale: _logoScale.value,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(40),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                            child: Container(
-                              width: 140,
-                              height: 140,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(40),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.4),
-                                  width: 1.5,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.2),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 10),
-                                  ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(28),
-                                child: Image.asset(
-                                  'assets/logo.png',
-                                  color: Colors.white, // Ensure the logo is perfectly white on dark BG
-                                  errorBuilder: (_, __, ___) => const Icon(
-                                    Icons.favorite_rounded,
-                                    size: 64,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
+      backgroundColor: Colors.white, // Pure white background
+      body: Center(
+        child: AnimatedBuilder(
+          animation: _logoController,
+          builder: (context, child) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Flashy Logo Container
+                Opacity(
+                  opacity: _logoOpacity.value,
+                  child: Transform.scale(
+                    scale: _logoScale.value,
+                    child: Container(
+                      width: 140,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.15),
+                            blurRadius: 40,
+                            spreadRadius: 10,
+                            offset: const Offset(0, 15),
+                          ),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 20,
+                            spreadRadius: 2,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(28),
+                        child: Image.asset(
+                          'assets/logo.png',
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.favorite_rounded,
+                            size: 64,
+                            color: AppColors.primary,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 36),
-                    // Typography Entrance
-                    Opacity(
-                      opacity: _textOpacity.value,
-                      child: SlideTransition(
-                        position: _textSlide,
-                        child: Column(
-                          children: [
-                            const Text(
-                              'Jioplix',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 46,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -1.2,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black45,
-                                    blurRadius: 20,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'HEALTH INTELLIGENCE',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 3.5,
-                              ),
-                            ),
-                          ],
+                  ),
+                ),
+                const SizedBox(height: 36),
+                // Typography Entrance
+                Opacity(
+                  opacity: _textOpacity.value,
+                  child: SlideTransition(
+                    position: _textSlide,
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Jioplix',
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 46,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -1.2,
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'HEALTH INTELLIGENCE',
+                          style: TextStyle(
+                            color: AppColors.primary.withValues(alpha: 0.8),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 3.5,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
