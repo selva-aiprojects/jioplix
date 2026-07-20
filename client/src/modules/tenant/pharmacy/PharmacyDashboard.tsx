@@ -73,7 +73,7 @@ export default function PharmacyDashboard({ embedded = false }: { embedded?: boo
           <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Real-time inventory metrics, low-stock surveillance, and medication dispensing throughput intelligence.</p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px', marginBottom: '40px' }}>
           {[
             { label: 'Total Stock items', value: stats.totalItems, color: '#3b82f6', icon: '📦' },
             { label: 'Low stock alerts', value: stats.lowStock, color: '#ef4444', icon: '⚠️' },

@@ -318,7 +318,7 @@ export default function StaffManagementPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid-responsive" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: '32px' }}>
+        <div className="grid-responsive" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', marginBottom: '32px' }}>
           <div className="stat-card">
             <p style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Total Staff</p>
             <h3 style={{ fontSize: '24px', fontWeight: 900, margin: 0 }}>{staff.length}</h3>

@@ -1431,7 +1431,7 @@ export default function DashboardPage() {
 
               <div className="page-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
                 <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a', margin: '0 0 20px' }}>Quick Actions</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', flex: 1 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '12px', flex: 1 }}>
                   {[
                     { label: 'Add Appointment', icon: Calendar, color: '#10b981', bg: '#ecfdf5', path: '/tenant/appointments/doctor-calendar?tab=Operational+Calendar' },
                     { label: 'Register Patient', icon: Users, color: '#3b82f6', bg: '#eff6ff', path: '/tenant/clinical/patient-register' },

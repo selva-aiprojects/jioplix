@@ -1047,7 +1047,7 @@ export default function BillingPage() {
           <h3 style={{ margin: '0 0 10px 0', fontSize: '11px', fontWeight: 800, color: '#000000', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             Patient Information
           </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', fontSize: '12px', color: '#000000' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px', fontSize: '12px', color: '#000000' }}>
             <div>
               <span style={{ display: 'block', fontWeight: 600, fontSize: '10px', color: '#000000' }}>PATIENT NAME</span>
               <span style={{ fontWeight: 700 }}>{patient?.name || "Walk-in Customer"}</span>

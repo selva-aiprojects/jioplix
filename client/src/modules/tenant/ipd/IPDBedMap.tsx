@@ -114,7 +114,7 @@ export default function IPDBedMap() {
         </div>
 
         {/* KPI Strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
           {[
             { label: 'Total Beds', value: totalBeds, color: '#3b82f6', icon: '🛏️' },
             { label: 'Occupied', value: totalOccupied, color: '#ef4444', icon: '🔴' },

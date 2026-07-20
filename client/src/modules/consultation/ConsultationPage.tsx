@@ -136,7 +136,7 @@ export default function ConsultationPage() {
                 <div style={{ color: '#ef4444' }}><Icons.Pulse /></div>
                 <h3 style={{ fontSize: '18px', fontWeight: 700 }}>Clinical Vitals</h3>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
                 <div style={{ padding: '16px', background: 'var(--app-bg)', borderRadius: '16px' }}>
                   <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>Blood Pressure</p>
                   <input value={vitals.bp} onChange={(e) => setVitals({...vitals, bp: e.target.value})} style={{ background: 'transparent', border: 'none', fontSize: '18px', fontWeight: 700, width: '100%', outline: 'none' }} />

@@ -248,7 +248,7 @@ export default function RecruitmentHubPage() {
         <Header title="Recruitment Hub" />
 
         {/* ── Stats Row ── */}
-        <div className="grid-responsive" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: '32px' }}>
+        <div className="grid-responsive" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', marginBottom: '32px' }}>
           {[
             { label: 'Open Positions', value: openReqs, color: '#16a34a', icon: '📋' },
             { label: 'Pending Approval', value: pendingApproval, color: '#d97706', icon: '⏳' },

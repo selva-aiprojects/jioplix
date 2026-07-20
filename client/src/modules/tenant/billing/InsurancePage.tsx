@@ -129,7 +129,7 @@ export default function InsurancePage() {
 
         {activeTab === 'claims' && (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
               {[
                 { label: 'Active Claims', val: claims.length, icon: FileText, color: '#3b82f6' },
                 { label: 'Pre-Auth Pending', val: claims.filter(c => c.status?.includes('PENDING')).length, icon: Clock, color: '#f59e0b' },

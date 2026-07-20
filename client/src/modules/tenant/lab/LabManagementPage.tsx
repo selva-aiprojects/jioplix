@@ -675,7 +675,7 @@ export default function LabManagementPage() {
             <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Live monitoring of clinical investigation orders, accessioning milestones, and result authorization.</p>
           </div>
           {/* Real-time Stats Dashboard */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '40px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '40px' }}>
               <div className="stat-card" style={{ background: stats.urgent > 0 ? 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)' : 'white', padding: '24px', borderRadius: '24px', border: `1px solid ${stats.urgent > 0 ? '#ef4444' : '#e2e8f0'}`, position: 'relative', overflow: 'hidden' }}>
                 <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 800, color: stats.urgent > 0 ? '#b91c1c' : '#64748b', textTransform: 'uppercase' }}>Critical / Urgent</p>
                 <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 900, color: stats.urgent > 0 ? '#ef4444' : '#0f172a' }}>{stats.urgent}</h3>

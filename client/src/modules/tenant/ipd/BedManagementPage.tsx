@@ -62,7 +62,7 @@ export default function BedManagementPage() {
         <Header title="IPD Bed Management & Occupancy" />
 
         {/* KPI strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '28px' }}>
           {[
             { label: 'Total Beds', value: loading ? '—' : totalBeds, color: '#3b82f6', icon: '🛏️' },
             { label: 'Occupied', value: loading ? '—' : totalOccupied, color: '#ef4444', icon: '🔴' },

@@ -1011,7 +1011,7 @@ const WeeklyScheduleTab = ({ doctor, schedules, onUpdate }: any) => {
              <h4 style={{ marginTop: 0, fontSize: '16px', fontWeight: 800, color: '#1e293b' }}>
                {editingSchedId ? 'Edit Timing Window' : 'Define Timing Window'}
              </h4>
-             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '16px' }}>
+             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px', marginBottom: '16px' }}>
                 <div>
                   <label style={labelStyle}>Day of Week</label>
                   <select value={newSched.weekday} onChange={(e) => setNewSched({ ...newSched, weekday: parseInt(e.target.value) })} style={inputStyle}>
@@ -1231,7 +1231,7 @@ const AnalyticsPanel = ({ stats }: any) => {
   const avgWait = stats.avgWait || 0;
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
       {[
         { label: 'Utilization', value: `${Math.round(utilization)}%`, color: '#0ea5e9', icon: <Zap size={20} /> },
         { label: 'Patient Retention', value: `${Math.round(retention)}%`, color: '#10b981', icon: <Activity size={20} /> },

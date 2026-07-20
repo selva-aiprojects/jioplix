@@ -212,7 +212,7 @@ export default function IPDPatientView() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginTop: '28px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginTop: '28px' }}>
                   {[
                     { label: 'Ward', value: adm.ward_name },
                     { label: 'Bed', value: adm.bed_number },

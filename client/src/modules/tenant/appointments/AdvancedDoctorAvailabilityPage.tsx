@@ -236,7 +236,7 @@ const WeeklyScheduleGrid = ({ doctor, schedules, onUpdate }: any) => {
       {showAdd && (
         <div style={{ marginTop: '24px', padding: '24px', background: 'var(--app-bg)', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
           <h4>Add New Weekly Session</h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
             <select value={newSched.weekday} onChange={(e) => setNewSched({...newSched, weekday: parseInt(e.target.value)})}>
               {weekdays.map((d, i) => <option key={i} value={i}>{d}</option>)}
             </select>
@@ -508,7 +508,7 @@ const AnalyticsPanel = ({ stats }: any) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
         {statItems.map(s => (
           <div key={s.label} style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #eef2f6' }}>
             <div style={{ color: s.color, marginBottom: '12px' }}><s.icon size={24} /></div>
