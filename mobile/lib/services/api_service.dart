@@ -13,7 +13,7 @@ class ApiService {
   static String get _baseUrl {
     if (_envBaseUrl.isNotEmpty) return _envBaseUrl;
     if (kReleaseMode) {
-      throw Exception('API_BASE_URL must be set via --dart-define for release builds');
+      return "https://jioplix-backend.vercel.app/api";
     }
     if (kIsWeb) {
       return "http://localhost:4000/api";
