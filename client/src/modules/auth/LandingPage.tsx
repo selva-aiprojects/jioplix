@@ -207,7 +207,7 @@ export default function LandingPage() {
             </div>
             <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', padding: '3px 10px', borderRadius: '20px', fontSize: '9px', fontWeight: 700, border: '1px solid rgba(16,185,129,0.3)' }}>Active</span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '6px', marginBottom: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '6px', marginBottom: '12px' }}>
             {[['Temp', '98.6°F', '#34d399'], ['BP', '120/80', '#60a5fa'], ['SpO₂', '98%', '#34d399'], ['Pulse', '72 bpm', '#f59e0b']].map(([label, val, col]) => (
               <div key={label} style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', padding: '8px', textAlign: 'center' }}>
                 <div style={{ fontSize: '8px', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>{label}</div>
@@ -247,7 +247,7 @@ export default function LandingPage() {
             <h4 style={{ fontWeight: 800, color: '#e2e8f0', margin: 0, fontSize: '12px' }}>ICU & PRIVATE WARD A</h4>
             <span style={{ background: 'rgba(0, 200, 151,0.2)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '9px', fontWeight: 700, border: '1px solid rgba(0, 200, 151,0.3)' }}>82% Occupied</span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '8px', marginBottom: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '8px', marginBottom: '14px' }}>
             {[['Bed 1', 'Deepika', '#34d399', 'rgba(16,185,129,0.1)', 'rgba(16,185,129,0.25)'],
               ['Bed 2', 'Karan', '#f87171', 'rgba(239,68,68,0.1)', 'rgba(239,68,68,0.25)'],
               ['Bed 3', 'Vacant', '#64748b', '#0f172a', '#1e293b'],
@@ -448,7 +448,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingTop: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingTop: '8px', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex' }}>
                 {['#4f46e5','#0891b2','#059669','#d97706'].map((col, i) => (
                   <div key={i} style={{ width: '32px', height: '32px', borderRadius: '50%', background: col, border: '2px solid white', marginLeft: i ? '-8px' : 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -476,7 +476,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 {/* Stats row */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px', marginBottom: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(3,1fr)', gap: '12px', marginBottom: '16px' }}>
                   {[['Today\'s OPD', '48', '#60a5fa', '+12%'], ['Beds Occupied', '82%', '#a78bfa', 'ICU: 90%'], ['Revenue', '₹2.4L', '#34d399', '+8% MoM']].map(([label, val, col, sub]) => (
                     <div key={label} style={{ background: '#0f172a', borderRadius: '12px', padding: '12px', border: '1px solid #1e293b' }}>
                       <div style={{ fontSize: '8px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '4px' }}>{label}</div>
