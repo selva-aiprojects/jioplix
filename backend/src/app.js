@@ -40,8 +40,11 @@ app.use(cors({
     
     // Explicitly allow any vercel.app domains dynamically
     const isVercelDomain = origin.endsWith('.vercel.app');
+    
+    // Allow any localhost port for local development (e.g. Flutter Web random ports)
+    const isLocalhost = origin.startsWith('http://localhost:');
 
-    if (ALLOWED_ORIGINS.includes(origin) || isSubdomain || isVercelDomain) {
+    if (ALLOWED_ORIGINS.includes(origin) || isSubdomain || isVercelDomain || isLocalhost) {
       return callback(null, true);
     }
     console.warn(`[CORS] Blocked request from origin: ${origin}`);

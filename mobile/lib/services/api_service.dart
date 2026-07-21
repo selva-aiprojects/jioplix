@@ -3,8 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/foundation.dart';
-import 'dart:io' show Platform;
-
 class ApiService {
   final Dio _dio = Dio();
 
@@ -18,7 +16,9 @@ class ApiService {
     if (kIsWeb) {
       return "http://localhost:4000/api";
     }
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    if (defaultTargetPlatform == TargetPlatform.windows || 
+        defaultTargetPlatform == TargetPlatform.linux || 
+        defaultTargetPlatform == TargetPlatform.macOS) {
       return "http://localhost:4000/api";
     }
     return "http://10.0.2.2:4000/api";

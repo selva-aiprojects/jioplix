@@ -782,12 +782,8 @@ code, pre, .font-mono, [style*="monospace"] {
   gap: 20px;
 }
 
-.grid-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.grid-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.grid-2, .grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .field-label {

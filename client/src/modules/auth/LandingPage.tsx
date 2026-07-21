@@ -422,13 +422,13 @@ export default function LandingPage() {
               <span style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px' }}>Download Mobile App</span>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
                 {/* Android */}
-                <a href="/Jioplix.apk" download="Jioplix.apk" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 18px', borderRadius: '12px', background: '#0f172a', color: 'white', fontWeight: 700, fontSize: '13px', textDecoration: 'none', border: '1.5px solid #334155', transition: 'all 0.25s', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+                <a href="/Jioplix-Lite.apk" download="Jioplix-Lite.apk" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 18px', borderRadius: '12px', background: '#0f172a', color: 'white', fontWeight: 700, fontSize: '13px', textDecoration: 'none', border: '1.5px solid #334155', transition: 'all 0.25s', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#1e293b'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#0f172a'; }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="#34d399"><path d="M17.523 15.341 14.8 12.618l2.723-2.723a.5.5 0 0 0-.707-.707L14.093 11.91 6.184 4H17a2 2 0 0 1 2 2v11.341a.5.5 0 0 0-.477.001zM4 5.657 12.436 14.1l-1.78 1.78a.5.5 0 0 0 .707.707l1.78-1.78 2.298 2.297A2 2 0 0 1 14 18H7a2 2 0 0 1-2-2V5.657zM3 6a2 2 0 0 1 .184-.84L5.66 7.636 3 10.293V6zm0 5.707 3.366-3.366 1.293 1.293L4.293 13H3v-1.293zm1.707 2l2.366-2.367 5.9 5.9H7a2 2 0 0 1-1.293-.477L4.707 13.707z"/></svg>
                   <div>
                     <div style={{ fontSize: '9px', color: '#64748b', lineHeight: 1 }}>GET IT ON</div>
-                    <div style={{ fontSize: '14px', fontWeight: 800, lineHeight: 1.2 }}>Android APK (Universal)</div>
+                    <div style={{ fontSize: '14px', fontWeight: 800, lineHeight: 1.2 }}>Android APK (Lite)</div>
                   </div>
                   <Download style={{ width: '14px', height: '14px', color: '#475569', marginLeft: '4px' }} />
                 </a>
