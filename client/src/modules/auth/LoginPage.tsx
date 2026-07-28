@@ -139,7 +139,7 @@ export default function LoginPage() {
 
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ marginBottom: '40px' }}>
-                 <BrandLogo size="md" light={true} />
+                 <BrandLogo size="md" forcePlatformLogo />
               </div>
 
               <h1 style={{ color: 'white', fontSize: '48px', fontWeight: 900, lineHeight: 1.1, marginBottom: '24px', fontFamily: "'Poppins', sans-serif" }}>
@@ -175,7 +175,7 @@ export default function LoginPage() {
         }}>
           {isMobile && (
             <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
-              <BrandLogo size="md" />
+              <BrandLogo size="md" forcePlatformLogo />
             </div>
           )}
           <div style={{ marginBottom: '40px' }}>

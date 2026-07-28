@@ -4,11 +4,12 @@ interface BrandLogoProps {
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
   light?: boolean;
+  forcePlatformLogo?: boolean;
 }
 
-export default function BrandLogo({ size = 'md', light = false }: BrandLogoProps) {
+export default function BrandLogo({ size = 'md', light = false, forcePlatformLogo = false }: BrandLogoProps) {
   const height = size === 'sm' ? 28 : size === 'md' ? 48 : 72;
-  const useTenantBranding = getTenantBrandingConfig();
+  const useTenantBranding = !forcePlatformLogo && getTenantBrandingConfig();
   const customLogo = useTenantBranding ? normalizeLogoUrl(getNamespacedItem('theme_logo_url')) : null;
   
   return (
