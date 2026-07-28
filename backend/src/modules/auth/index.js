@@ -30,6 +30,13 @@ router.post("/login", loginLimiter, async (req, res) => {
   try {
     console.log(`[AUTH] Login attempt for ${email} as ${type} in ${facility || 'domain-auto'}`);
 
+    // Nexus credentials are intentionally environment-only.  Surface a deployment
+    // configuration problem clearly instead of presenting it as a bad password.
+    if (type === "nexus" && (!NEXUS_USER || !NEXUS_PASS || !process.env.JWT_SECRET)) {
+      console.error("[AUTH] Nexus login is unavailable: required environment variables are missing.");
+      return res.status(503).json({ error: "Nexus administration is not configured on this deployment" });
+    }
+
     // 1. Master Bypass (For Nexus Login specifically)
     if (email === NEXUS_USER && password === NEXUS_PASS && type === "nexus") {
       console.log(`[AUTH] Master credential bypass triggered for Nexus`);

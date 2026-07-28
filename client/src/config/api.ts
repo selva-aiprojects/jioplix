@@ -18,12 +18,15 @@ function getBaseUrl() {
     if (['localhost', '127.0.0.1', '::1'].includes(host)) {
       return 'http://localhost:4000';
     }
-    // Production Vercel Deployment Fallback
+    // The Vercel project serves the SPA and `/api` serverless function together.
+    // Keeping production calls same-origin prevents a frontend deployment from
+    // accidentally authenticating against a different (or stale) backend project.
     if (host.includes('vercel.app') || host.includes('jioplix')) {
-      return 'https://jioplix-backend.vercel.app';
+      return window.location.origin;
     }
   }
-  return 'https://jioplix-backend.vercel.app';
+  // SSR/build fallback. Browser deployments use `window.location.origin` above.
+  return '';
 }
 
 export const API_BASE_URL = getBaseUrl();
