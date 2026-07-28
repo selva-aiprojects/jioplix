@@ -3,7 +3,7 @@ import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../config/api";
-import { applyTheme as applyThemeUtil, getNamespacedItem, setNamespacedItem } from "../../config/theme";
+import { applyTheme as applyThemeUtil, getNamespacedItem, normalizeLogoUrl, setNamespacedItem } from "../../config/theme";
 
 export default function SettingsPage() {
   const [hospitalName, setHospitalName] = useState(getNamespacedItem('tenantName') || localStorage.getItem('tenantName') || 'Jioplix Hospital');
@@ -21,15 +21,18 @@ export default function SettingsPage() {
 
   const applyTheme = async () => {
     const tenantId = localStorage.getItem('tenant');
+    const normalizedLogoUrl = normalizeLogoUrl(logoUrl) || '';
     if (tenantId) {
        try {
          await axios.put(`${API_BASE}/api/nexus/tenants/${tenantId}/branding`, {
-           hospitalName, primaryDark, primaryAccent, appBg, textMain, fontSize, logoUrl, heroBg, heroText, sidebarText
+           hospitalName, primaryDark, primaryAccent, appBg, textMain, fontSize, logoUrl: normalizedLogoUrl, heroBg, heroText, sidebarText
          }, {
            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
          });
        } catch (err) {
          console.error("Failed to sync branding to server:", err);
+         alert("Branding could not be saved to the server. Please try again.");
+         return;
        }
     }
     setNamespacedItem('tenantName', hospitalName);
@@ -39,7 +42,7 @@ export default function SettingsPage() {
     setNamespacedItem('theme_text_main', textMain);
     setNamespacedItem('theme_sidebar_text', sidebarText);
     setNamespacedItem('theme_font_size', fontSize);
-    setNamespacedItem('theme_logo_url', logoUrl);
+    setNamespacedItem('theme_logo_url', normalizedLogoUrl);
     setNamespacedItem('theme_hero_bg', heroBg);
     setNamespacedItem('theme_hero_text', heroText);
     
@@ -88,7 +91,15 @@ export default function SettingsPage() {
                   className="input-field" 
                   value={logoUrl} 
                   onChange={(e) => setLogoUrl(e.target.value)} 
+                  onBlur={() => setLogoUrl(normalizeLogoUrl(logoUrl) || '')}
                 />
+                {normalizeLogoUrl(logoUrl) && (
+                  <img
+                    src={normalizeLogoUrl(logoUrl) || undefined}
+                    alt="Logo preview"
+                    style={{ display: 'block', maxHeight: '56px', maxWidth: '220px', marginTop: '10px', objectFit: 'contain' }}
+                  />
+                )}
               </div>
               <div>
                 <label className="field-label">Base Font Size (px)</label>

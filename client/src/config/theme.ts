@@ -25,6 +25,18 @@ export const setNamespacedItem = (key: string, value: string) => {
   localStorage.setItem(tenantKey(key), value);
 };
 
+// Vite serves files from client/public at the site root.  Convert paths copied
+// from the repository (including the common "pubic" typo) into browser URLs.
+export const normalizeLogoUrl = (value: string | null | undefined): string | null => {
+  const url = value?.trim().replace(/\\/g, '/');
+  if (!url) return null;
+
+  const publicAsset = url.match(/(?:^|\/)(?:public|pubic)\/(.+)$/i);
+  if (publicAsset) return `/${publicAsset[1]}`;
+  if (/^(https?:|data:|\/)/i.test(url)) return url;
+  return `/${url.replace(/^\.\/+/, '')}`;
+};
+
 // ── Jioplix Brand Defaults ──
 const JIOPLIX_PRIMARY_DARK    = '#003870';   // Deep Medical Blue
 const JIOPLIX_PRIMARY_ACCENT  = '#0056A8';   // Medical Blue

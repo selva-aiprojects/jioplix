@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import BrandLogo from "./BrandLogo";
 import { applyTheme, getNamespacedItem } from "../config/theme";
 
 interface HeaderProps {
@@ -86,7 +85,7 @@ export default function Header({ title, compact = false }: HeaderProps) {
               </svg>
             </button>
             <div style={{ transform: 'scale(0.8)', transformOrigin: 'right center' }}>
-              <BrandLogo size="sm" />
+              <JioplixMark />
             </div>
           </div>
         )}
@@ -119,16 +118,7 @@ export default function Header({ title, compact = false }: HeaderProps) {
         width: isMobile ? '100%' : 'auto',
         justifyContent: isMobile ? 'center' : 'flex-end'
       }}>
-        {!isMobile && (
-          <div style={{ 
-            transform: 'scale(0.55)', 
-            transformOrigin: 'right center',
-            opacity: 1,
-            marginBottom: '-4px'
-          }}>
-            <BrandLogo size="sm" />
-          </div>
-        )}
+        {!isMobile && <JioplixMark />}
         <button 
           onClick={handleLogout}
           className="button-secondary"
@@ -154,5 +144,25 @@ export default function Header({ title, compact = false }: HeaderProps) {
         </button>
       </div>
     </header>
+  );
+}
+
+function JioplixMark() {
+  return (
+    <div
+      aria-label="Jioplix"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        height: '32px',
+        padding: '5px 9px',
+        background: 'rgba(255, 255, 255, 0.96)',
+        border: '1px solid rgba(255, 255, 255, 0.55)',
+        borderRadius: '9px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
+      }}
+    >
+      <img src="/logo.png" alt="Jioplix" style={{ height: '18px', width: 'auto', display: 'block' }} />
+    </div>
   );
 }

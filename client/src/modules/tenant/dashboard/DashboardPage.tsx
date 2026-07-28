@@ -701,6 +701,22 @@ export default function DashboardPage() {
               <ChevronDown size={14} />
             </div>
 
+            <div
+              aria-label="Jioplix"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                height: '36px',
+                padding: '6px 10px',
+                background: 'rgba(255, 255, 255, 0.96)',
+                border: '1px solid rgba(255, 255, 255, 0.55)',
+                borderRadius: '10px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
+              }}
+            >
+              <img src="/logo.png" alt="Jioplix" style={{ height: '19px', width: 'auto', display: 'block' }} />
+            </div>
+
             <button 
               onClick={handleLogout}
               className="button-secondary"

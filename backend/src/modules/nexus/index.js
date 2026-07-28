@@ -1,5 +1,6 @@
 const express = require("express");
 const { si } = require('../../middleware/sanitize');
+const { auth } = require('../../middleware/auth');
 const router = express.Router();
 const crypto = require("crypto");
 const fs = require("fs");
@@ -661,22 +662,39 @@ router.get('/tenants/:id', async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-router.put('/tenants/:id/branding', async (req, res, next) => {
+router.put('/tenants/:id/branding', auth, async (req, res, next) => {
   try {
     const { id } = req.params;
     const settings = req.body;
+    if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+      return res.status(400).json({ error: 'Branding settings must be an object' });
+    }
     try {
       await req.prisma.$executeRawUnsafe(`ALTER TABLE nexus.tenants ADD COLUMN IF NOT EXISTS ui_settings JSONB DEFAULT '{}'::jsonb`);
       await req.prisma.$executeRawUnsafe(`ALTER TABLE nexus.tenants ADD COLUMN IF NOT EXISTS admin_email VARCHAR(255)`);
+      await req.prisma.$executeRawUnsafe(`ALTER TABLE nexus.tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`);
     } catch (e) { console.warn('[NEXUS] Branding healing warning:', e.message); }
 
-    // SECURITY: all values as positional params
-    await req.prisma.$executeRawUnsafe(
-      `UPDATE nexus.tenants SET ui_settings = $1::jsonb, name = $2 WHERE id = $3::uuid`,
+    // A tenant can sign in with either its UUID or code.  Resolve both here so
+    // branding saves do not silently fail for code-based logins.
+    // SECURITY: all values as positional params, and tenant users can only edit themselves.
+    const updated = await req.prisma.$queryRawUnsafe(
+      `UPDATE nexus.tenants
+       SET ui_settings = COALESCE(ui_settings, '{}'::jsonb) || $1::jsonb,
+           name = COALESCE(NULLIF($2, ''), name),
+           logo_url = $3
+       WHERE (id::text = $4 OR code = $4)
+         AND ($5 = 'nexus' OR id::text = $5 OR code = $5)
+       RETURNING id`,
       JSON.stringify(settings),
-      String(settings.hospitalName || 'Jioplix Hospital'),
-      String(id)
+      String(settings.hospitalName || '').trim(),
+      String(settings.logoUrl || '').trim() || null,
+      String(id).trim(),
+      String(req.user.tenantId || '')
     );
+    if (!updated || updated.length === 0) {
+      return res.status(req.user.role === 'nexus' ? 404 : 403).json({ error: 'Tenant not found or access is not permitted' });
+    }
     res.json({ message: 'Branding updated successfully in global registry' });
   } catch (error) { next(error); }
 });
