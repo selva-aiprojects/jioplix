@@ -23,6 +23,9 @@ async function healSchema() {
     await prisma.$executeRawUnsafe(`
       UPDATE nexus.tenants SET code = db_name WHERE code IS NULL
     `);
+    await prisma.$executeRawUnsafe(`
+      UPDATE nexus.tenants SET domain = code WHERE domain IS NULL
+    `);
     console.log("[DB] nexus.tenants schema self-healed successfully.");
   } catch (err) {
     console.error("[DB] Self-healing failed:", err.message);

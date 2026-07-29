@@ -1,0 +1,158 @@
+
+> hims@1.0.0 dev
+> nodemon index.js
+
+[33m[nodemon] 3.1.14[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node index.js`[39m
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[AI] GROQ_API_KEY not set. AI features requiring Groq will be unavailable.
+[ABHA SERVICE] Live mode — connecting to ABDM Sandbox
+[ABHA SERVICE] Gateway: https://dev.abdm.gov.in/gateway
+[ABHA SERVICE] ABHA API: https://abhasbx.abdm.gov.in/abha/api
+[DB] Lazily Initializing Prisma Client with PG Adapter (SSL Bypass)...
+[DB] Running Self-Healing for nexus.tenants...
+(node:16668) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16668) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+[DB] nexus.tenants schema self-healed successfully.
+node:events:487
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (D:\Training\working\Cybelinx\Jioplix\backend\node_modules\express\lib\application.js:635:24)
+    at D:\Training\working\Cybelinx\Jioplix\backend\src\server.js:34:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v24.16.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node index.js`[39m
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+[32m[nodemon] restarting due to changes...[39m
+[AI] GROQ_API_KEY not set. AI features requiring Groq will be unavailable.
+[ABHA SERVICE] Live mode — connecting to ABDM Sandbox
+[ABHA SERVICE] Gateway: https://dev.abdm.gov.in/gateway
+[ABHA SERVICE] ABHA API: https://abhasbx.abdm.gov.in/abha/api
+[DB] Lazily Initializing Prisma Client with PG Adapter (SSL Bypass)...
+[DB] Running Self-Healing for nexus.tenants...
+(node:4076) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4076) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+[DB] nexus.tenants schema self-healed successfully.
+node:events:487
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (D:\Training\working\Cybelinx\Jioplix\backend\node_modules\express\lib\application.js:635:24)
+    at D:\Training\working\Cybelinx\Jioplix\backend\src\server.js:34:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v24.16.0
+[32m[nodemon] starting `node index.js`[39m
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+[AI] GROQ_API_KEY not set. AI features requiring Groq will be unavailable.
+[ABHA SERVICE] Live mode — connecting to ABDM Sandbox
+[ABHA SERVICE] Gateway: https://dev.abdm.gov.in/gateway
+[ABHA SERVICE] ABHA API: https://abhasbx.abdm.gov.in/abha/api
+[DB] Lazily Initializing Prisma Client with PG Adapter (SSL Bypass)...
+[DB] Running Self-Healing for nexus.tenants...
+(node:9764) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9764) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+[DB] nexus.tenants schema self-healed successfully.
+node:events:487
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (D:\Training\working\Cybelinx\Jioplix\backend\node_modules\express\lib\application.js:635:24)
+    at D:\Training\working\Cybelinx\Jioplix\backend\src\server.js:34:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v24.16.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node index.js`[39m
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[32m[nodemon] restarting due to changes...[39m
+[AI] GROQ_API_KEY not set. AI features requiring Groq will be unavailable.
+[ABHA SERVICE] Live mode — connecting to ABDM Sandbox
+[ABHA SERVICE] Gateway: https://dev.abdm.gov.in/gateway
+[ABHA SERVICE] ABHA API: https://abhasbx.abdm.gov.in/abha/api
+[DB] Lazily Initializing Prisma Client with PG Adapter (SSL Bypass)...
+[DB] Running Self-Healing for nexus.tenants...
+(node:11680) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11680) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+[DB] nexus.tenants schema self-healed successfully.
+API running on http://localhost:4000
+[31m[nodemon] Internal watch failed: EBUSY: resource busy or locked, watch 'D:\Training\working\Cybelinx\Jioplix\client\dist\Jioplix-Lite.apk'[39m

@@ -115,6 +115,8 @@ function App() {
         <Route path="/tenant/support" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Support"><SupportTicketsPage /></RoleGuard>} />
         <Route path="/tenant/communication" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Message Board"><MessageBoardPage /></RoleGuard>} />
         <Route path="/tenant/mail" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Mail Management"><MailManagementPage /></RoleGuard>} />
+        <Route path="/tenant/support" element={<Navigate to="/tenant/support/tickets" replace />} />
+        <Route path="/tenant/support/tickets" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Support"><SupportTicketsPage /></RoleGuard>} />
         <Route path="/billing" element={<RoleGuard allowedRoles={['admin', 'receptionist', 'staff', 'billing']} moduleName="Billing Desk"><BillingPage /></RoleGuard>} />
         <Route path="/appointments" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Appointments"><AppointmentsPage /></RoleGuard>} />
         <Route path="/patients" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Patient Directory"><PatientsPage /></RoleGuard>} />

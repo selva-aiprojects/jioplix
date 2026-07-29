@@ -244,8 +244,8 @@ async function seedSamples() {
 
           // 3. Register in Nexus
           await prisma.$executeRawUnsafe(`
-            INSERT INTO nexus.tenants (id, name, code, db_name, plan)
-            VALUES ('${id}', '${t.name}', '${t.code}', '${schemaName}', '${t.plan}')
+            INSERT INTO nexus.tenants (id, name, code, db_name, plan, domain)
+            VALUES ('${id}', '${t.name}', '${t.code}', '${schemaName}', '${t.plan}', '${t.code}')
           `);
 
           // 4. Provision Shard Schema

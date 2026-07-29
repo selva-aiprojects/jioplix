@@ -727,14 +727,14 @@ router.post("/tenants", async (req, res, next) => {
     const tenantId = crypto.randomUUID();
 
     // 1. Create Tenant in Global Registry
-    const domainValue = domain ? domain.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '') : null;
+    const domainValue = (domain || tenantCode).trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
     
     // SECURITY: All tenant registry fields as positional params
     await req.prisma.$executeRawUnsafe(
       `INSERT INTO nexus.tenants (id, code, name, db_name, domain, shard_id, plan, background_color, text_color, hero_background_color, overall_text_color, admin_email)
        VALUES ($1::uuid,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
       tenantId, tenantCode, String(name), schemaName,
-      domainValue || null, schemaName, String(plan || 'basic'),
+      domainValue, schemaName, String(plan || 'basic'),
       String(uiSettings?.backgroundColor || '#ffffff'),
       String(uiSettings?.textColor || '#1e293b'),
       String(uiSettings?.heroBackgroundColor || '#f8fafc'),
@@ -888,8 +888,9 @@ router.delete('/tenants/:id', async (req, res, next) => {
     if (!tenants || tenants.length === 0) return res.status(404).json({ error: 'Tenant not found' });
     const schemaName = tenants[0].db_name;
     await req.prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`);
+    await req.prisma.$executeRawUnsafe(`DELETE FROM nexus.tenant_admin_contacts WHERE tenant_id = $1::uuid`, String(id));
     await req.prisma.$executeRawUnsafe(`DELETE FROM nexus.tenants WHERE id = $1::uuid`, String(id));
-    res.json({ message: 'Tenant and schema deleted' });
+    res.json({ message: 'Tenant, schema, and tenant contacts deleted' });
   } catch (error) { next(error); }
 });
 

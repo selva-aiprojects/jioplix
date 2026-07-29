@@ -42,6 +42,19 @@ export default function TenantsListPage() {
     }
   };
 
+  const buildTenantUrl = (domainOrCode: string) => {
+    const tenantLabel = (domainOrCode || '').trim().toLowerCase();
+    // Prefer explicit Vite env for app domain when available
+    const configured = (import.meta as any).env?.VITE_APP_DOMAIN;
+    let root = configured || '';
+    if (!root && typeof window !== 'undefined') {
+      const host = window.location.hostname;
+      const parts = host.split('.');
+      root = parts.length >= 2 ? parts.slice(-2).join('.') : host;
+    }
+    return `${window.location.protocol}//${tenantLabel}.${root}`;
+  };
+
   return (
     <div className="dashboard-layout">
       <NexusSidebar />
@@ -80,8 +93,9 @@ export default function TenantsListPage() {
                        <span className="status-pill success" style={{ fontWeight: 700 }}>{t.plan || 'Standard'}</span>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', gap: '16px' }}>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <button className="button-link" onClick={() => navigate(`/nexus/tenants/${t.id}`)}>Manage</button>
+                        <button className="button-link" onClick={() => window.open(buildTenantUrl(t.domain || t.code || t.dbName || t.name.replace(/\s+/g,'-').toLowerCase()), '_blank')}>Open</button>
                         <button className="button-link" style={{ color: '#ef4444' }} onClick={() => handleDelete(t.id, t.name)}>Delete</button>
                       </div>
                     </td>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
 import { getTenantBrandingConfig, getNamespacedItem, normalizeLogoUrl } from "../config/theme";
 import { NavLink, useLocation } from "react-router-dom";
 import { 
@@ -28,6 +28,7 @@ const Icons: Record<string, any> = {
   "Consultation Desk": Stethoscope,
   "IPD Admission Hub": Bed,
   "Bed Management": ClipboardList,
+  "Discharge Process": ClipboardList,
   "Diagnostic Center": FlaskConical,
   Laboratory: FlaskConical,
   "Pharmacy Hub": Pill,
@@ -51,6 +52,7 @@ const normalizePath = (label: string, originalPath: string) => {
     "ipd admission hub": "/tenant/ipd/admission-desk",
     "bed management": "/tenant/ipd/beds",
     "discharge summaries": "/tenant/ipd/discharge",
+    "discharge process": "/tenant/ipd/discharge",
     "doctor's schedule": "/tenant/appointments/doctor-calendar?tab=Operational+Calendar",
     "appointment list": "/tenant/appointments",
     "diagnostic center": "/tenant/lab",
@@ -98,7 +100,8 @@ const normalizeLabel = (label: string) => {
     "ipd admission desk": "IPD Admission Hub",
     "ipd bed map": "Bed Management",
     "bed management": "Bed Management",
-    "discharge summaries": "Discharge Summaries",
+    "discharge summaries": "Discharge Process",
+    "discharge process": "Discharge Process",
     "advanced scheduling console": "Doctor's Schedule",
     "enterprise scheduling console": "Doctor's Schedule",
     "laboratory": "Laboratory",
@@ -168,7 +171,7 @@ export default function Sidebar() {
     const uniqueMap = new Map();
     dm.forEach((m: any) => {
       const mappedLabel = normalizeLabel(m.label);
-      const nPath = normalizePath(mappedLabel, m.path);
+      const nPath = normalizePath(m.label, m.path);
       if (!uniqueMap.has(nPath)) uniqueMap.set(nPath, { ...m, label: mappedLabel, path: nPath });
     });
     const pm = Array.from(uniqueMap.values());
@@ -193,8 +196,10 @@ export default function Sidebar() {
       "Clinical Intelligence Hub",
       "Doctor's Schedule", "Patient Register", "Patient Scheduling",
       "OPD Center", "OPD Queue", "Consultation Desk", "Prescription Queue",
-      "IPD Admission Hub", "Bed Management", "Discharge Summaries",
       "Clinical & Financial Archives"
+    ];
+    const ipdFlow = [
+      "IPD Admission Hub", "Bed Management", "Discharge Process"
     ];
     const serviceFlow = [
       "Laboratory", "AI Lab Assistant",
@@ -206,7 +211,8 @@ export default function Sidebar() {
     // const coreHRFlow = ["Benefits"];
     const adminFlow = [
       "Staff & Access", "Branding Settings", "Hospital Settings", 
-      "Message Board", "Mail & Communications", "Support & Tickets"
+      "Message Board", "Mail & Communications", "Support & Tickets",
+      "Help & Support", "Ticketing Management System"
     ];
 
     const getItems = (labels: string[]) => pm
@@ -216,10 +222,11 @@ export default function Sidebar() {
     const isIpdEnabled = ['professional', 'enterprise'].includes(plan);
 
     const gs = [
-      { id: 'clinical', title: "Clinical Operations", items: getItems(clinicalFlow).filter(i => {
-        if (!isIpdEnabled && ["ipd admission hub", "bed management", "discharge summaries"].includes(i.label.toLowerCase())) return false;
+      { id: 'clinical', title: "Clinical Operations", items: getItems(clinicalFlow), icon: Stethoscope },
+      { id: 'ipd', title: "IPD Processes", items: getItems(ipdFlow).filter(i => {
+        if (!isIpdEnabled && ["ipd admission hub", "bed management", "discharge process"].includes(i.label.toLowerCase())) return false;
         return true;
-      }), icon: Stethoscope },
+      }), icon: Bed },
       { id: 'services', title: "Diagnostic Services", items: getItems(serviceFlow), icon: FlaskConical },
       { id: 'billing', title: "Finance & Revenue", items: getItems(billingFlow), icon: Receipt },
       { id: 'admin', title: "System Administration", items: getItems(adminFlow), icon: Settings }
@@ -233,6 +240,8 @@ export default function Sidebar() {
   }, []);
 
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const lastScrolledRoute = useRef<string>('');
 
   const matchesLocation = (to: string) => {
     const [path, query] = to.split('?');
@@ -251,6 +260,27 @@ export default function Sidebar() {
     const activeGroup = groups.find(g => g.items.some(i => matchesLocation(i.path)));
     if (activeGroup) setOpenGroup(activeGroup.id);
   }, [location.pathname, location.search, groups]);
+
+  useLayoutEffect(() => {
+    const sidebar = sidebarRef.current;
+    if (!sidebar) return;
+
+    const currentRoute = `${location.pathname}${location.search}`;
+    if (lastScrolledRoute.current === currentRoute) return;
+
+    const activeLink = sidebar.querySelector('.nav-item.active') as HTMLElement | null;
+    if (!activeLink) return;
+
+    const sidebarRect = sidebar.getBoundingClientRect();
+    const linkRect = activeLink.getBoundingClientRect();
+
+    if (linkRect.top < sidebarRect.top || linkRect.bottom > sidebarRect.bottom) {
+      const scrollOffset = linkRect.top - sidebarRect.top - sidebarRect.height / 2 + linkRect.height / 2;
+      sidebar.scrollBy({ top: scrollOffset, behavior: 'auto' });
+    }
+
+    lastScrolledRoute.current = currentRoute;
+  }, [location.pathname, location.search, openGroup, groups]);
 
   const toggleGroup = (id: string) => setOpenGroup(prev => (prev === id ? null : id));
 
@@ -300,7 +330,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <nav className="nav-container" style={{ flex: 1, overflowY: 'auto', padding: '10px 12px' }}>
+        <nav ref={sidebarRef} className="nav-container" style={{ flex: 1, overflowY: 'auto', padding: '10px 12px' }}>
           {ungroupped.map((menu, idx) => (
             <SidebarLink key={idx} to={menu.path} icon={Icons[menu.icon] || LayoutDashboard} label={menu.label} />
           ))}
@@ -438,22 +468,12 @@ export default function Sidebar() {
 }
 
 function SidebarLink({ to, icon: Icon, label, isSubItem }: { to: string, icon: any, label: string, isSubItem?: boolean }) {
-  const location = useLocation();
-  const isActive = useMemo(() => {
-    const [path, query] = to.split('?');
-    if (location.pathname !== path) return false;
-    if (!query) return location.search === "" || location.search === "?";
-
-    const currentParams = new URLSearchParams(location.search);
-    const targetParams = new URLSearchParams(query.replace(/\+/g, ' '));
-    for (const [key, value] of targetParams.entries()) {
-      if (currentParams.get(key) !== value) return false;
-    }
-    return true;
-  }, [location, to]);
-
   return (
-    <NavLink to={to} className={() => `nav-item${isActive ? ' active' : ''}${isSubItem ? ' sub-item' : ''}`}>
+    <NavLink
+      to={to}
+      end
+      className={({ isActive }) => `nav-item${isActive ? ' active' : ''}${isSubItem ? ' sub-item' : ''}`}
+    >
       <Icon size={isSubItem ? 15 : 18} />
       <span style={{ flex: 1, lineHeight: '1.4' }}>{label}</span>
     </NavLink>
