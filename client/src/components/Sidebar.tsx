@@ -234,10 +234,23 @@ export default function Sidebar() {
 
   const [openGroup, setOpenGroup] = useState<string | null>(null);
 
+  const matchesLocation = (to: string) => {
+    const [path, query] = to.split('?');
+    if (location.pathname !== path) return false;
+    if (!query) return location.search === "" || location.search === "?";
+
+    const currentParams = new URLSearchParams(location.search);
+    const targetParams = new URLSearchParams(query.replace(/\+/g, ' '));
+    for (const [key, value] of targetParams.entries()) {
+      if (currentParams.get(key) !== value) return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
-    const activeGroup = groups.find(g => g.items.some(i => i.path === location.pathname));
+    const activeGroup = groups.find(g => g.items.some(i => matchesLocation(i.path)));
     if (activeGroup) setOpenGroup(activeGroup.id);
-  }, [location.pathname, groups]);
+  }, [location.pathname, location.search, groups]);
 
   const toggleGroup = (id: string) => setOpenGroup(prev => (prev === id ? null : id));
 
@@ -428,11 +441,15 @@ function SidebarLink({ to, icon: Icon, label, isSubItem }: { to: string, icon: a
   const location = useLocation();
   const isActive = useMemo(() => {
     const [path, query] = to.split('?');
-    const matchesPath = location.pathname === path;
-    if (!query) return matchesPath && (location.search === "" || location.search === "?");
-    const searchParams = new URLSearchParams(location.search);
-    const [key, val] = query.split('=');
-    return matchesPath && searchParams.get(key) === val;
+    if (location.pathname !== path) return false;
+    if (!query) return location.search === "" || location.search === "?";
+
+    const currentParams = new URLSearchParams(location.search);
+    const targetParams = new URLSearchParams(query.replace(/\+/g, ' '));
+    for (const [key, value] of targetParams.entries()) {
+      if (currentParams.get(key) !== value) return false;
+    }
+    return true;
   }, [location, to]);
 
   return (
