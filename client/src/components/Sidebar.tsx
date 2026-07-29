@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
+import { useState, useMemo, useRef, useLayoutEffect } from "react";
 import { getTenantBrandingConfig, getNamespacedItem, normalizeLogoUrl } from "../config/theme";
 import { NavLink, useLocation } from "react-router-dom";
 import { 
@@ -256,27 +256,27 @@ export default function Sidebar() {
     return true;
   };
 
-  useEffect(() => {
-    const activeGroup = groups.find(g => g.items.some(i => matchesLocation(i.path)));
-    if (activeGroup) setOpenGroup(activeGroup.id);
-  }, [location.pathname, location.search, groups]);
-
   useLayoutEffect(() => {
-    const sidebar = sidebarRef.current;
-    if (!sidebar) return;
+    const nav = sidebarRef.current;
+    if (!nav) return;
 
     const currentRoute = `${location.pathname}${location.search}`;
     if (lastScrolledRoute.current === currentRoute) return;
 
-    const activeLink = sidebar.querySelector('.nav-item.active') as HTMLElement | null;
+    const activeGroup = groups.find(g => g.items.some(i => matchesLocation(i.path)));
+    if (activeGroup && openGroup !== activeGroup.id) {
+      setOpenGroup(activeGroup.id);
+      return;
+    }
+
+    const activeLink = nav.querySelector('.nav-item.active') as HTMLElement | null;
     if (!activeLink) return;
 
-    const sidebarRect = sidebar.getBoundingClientRect();
+    const navRect = nav.getBoundingClientRect();
     const linkRect = activeLink.getBoundingClientRect();
-
-    if (linkRect.top < sidebarRect.top || linkRect.bottom > sidebarRect.bottom) {
-      const scrollOffset = linkRect.top - sidebarRect.top - sidebarRect.height / 2 + linkRect.height / 2;
-      sidebar.scrollBy({ top: scrollOffset, behavior: 'auto' });
+    const relativeTop = linkRect.top - navRect.top;
+    if (relativeTop < 0 || relativeTop + linkRect.height > navRect.height) {
+      nav.scrollTop = Math.max(0, nav.scrollTop + relativeTop - navRect.height / 2 + linkRect.height / 2);
     }
 
     lastScrolledRoute.current = currentRoute;
@@ -296,7 +296,7 @@ export default function Sidebar() {
         document.querySelector('.mobile-overlay')?.classList.remove('active');
       }}></div>
       
-      <div className="sidebar" style={{ width: '280px', height: '100vh', display: 'flex', flexDirection: 'column', overflowX: 'hidden' }}>
+      <div className="sidebar" style={{ width: '280px', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <button 
           className="sidebar-close" 
           onClick={() => {
@@ -346,7 +346,7 @@ export default function Sidebar() {
                 <ChevronDown size={14} style={{ transform: openGroup === group.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
               </button>
               
-              <div style={{ maxHeight: openGroup === group.id ? '1000px' : '0', overflow: 'hidden', transition: 'max-height 0.25s ease-out', paddingLeft: '8px', borderLeft: '1px solid rgba(255,255,255,0.05)', marginLeft: '18px' }}>
+              <div style={{ maxHeight: openGroup === group.id ? '1000px' : '0', overflow: 'hidden', paddingLeft: '8px', borderLeft: '1px solid rgba(255,255,255,0.05)', marginLeft: '18px' }}>
                 {group.items.map((menu, mIdx) => (
                   <SidebarLink key={mIdx} to={menu.path} icon={Icons[menu.icon] || Box} label={menu.label} isSubItem />
                 ))}
@@ -441,6 +441,7 @@ export default function Sidebar() {
             left: -320px;
             top: 0;
             height: 100vh !important;
+            overflow-y: auto !important;
             z-index: 1002;
             transition: left 0.25s ease;
             box-shadow: 2px 0 10px rgba(2,6,23,0.12);
