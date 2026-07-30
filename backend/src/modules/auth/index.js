@@ -375,7 +375,39 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'NURSE' AND m.label IN ('Dashboard', 'IPD Census', 'Bed Map')
+                    WHERE r.name = 'NURSE' AND m.label IN ('Dashboard', 'IPD Census', 'Bed Map', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue')
+                    ON CONFLICT DO NOTHING
+                  `);
+
+                  // Bootstrap Role-Menu Mappings (Receptionist)
+                  await req.prisma.$executeRawUnsafe(`
+                    INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                    SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
+                    WHERE r.name = 'RECEPTIONIST' AND m.label IN ('Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Doctor Availability and Book Appointments', 'Invoicing & Billing', 'Appointment List', 'Help & Support')
+                    ON CONFLICT DO NOTHING
+                  `);
+
+                  // Bootstrap Role-Menu Mappings (Pharmacist)
+                  await req.prisma.$executeRawUnsafe(`
+                    INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                    SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
+                    WHERE r.name = 'PHARMACIST' AND m.label IN ('Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue', 'Help & Support', 'Ticketing Management System')
+                    ON CONFLICT DO NOTHING
+                  `);
+
+                  // Bootstrap Role-Menu Mappings (Lab Assistant)
+                  await req.prisma.$executeRawUnsafe(`
+                    INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                    SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
+                    WHERE r.name = 'LAB_ASSISTANT' AND m.label IN ('Laboratory', 'Help & Support')
+                    ON CONFLICT DO NOTHING
+                  `);
+
+                  // Bootstrap Role-Menu Mappings (Support)
+                  await req.prisma.$executeRawUnsafe(`
+                    INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                    SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
+                    WHERE r.name = 'SUPPORT' AND m.label IN ('Help & Support', 'Ticketing Management System')
                     ON CONFLICT DO NOTHING
                   `);
 

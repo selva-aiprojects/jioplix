@@ -116,11 +116,23 @@ async function fixMenuSeeding() {
           WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'Doctor Availability and Book Appointments');
 
           INSERT INTO "${tenant.db_name}".rbac_menus (label, path, icon, required_plan, sort_order)
-          SELECT 'Admission Desk', '/tenant/ipd/admission-desk', 'Building', 'basic', 7
+          SELECT 'Dashboard', '/tenant/dashboard', 'LayoutDashboard', 'basic', 0
+          WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'Dashboard');
+
+          INSERT INTO "${tenant.db_name}".rbac_menus (label, path, icon, required_plan, sort_order)
+          SELECT 'Invoicing & Billing', '/billing', 'Receipt', 'basic', 17
+          WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'Invoicing & Billing');
+
+          INSERT INTO "${tenant.db_name}".rbac_menus (label, path, icon, required_plan, sort_order)
+          SELECT 'Branding & UI Settings', '/tenant/settings', 'Palette', 'basic', 18
+          WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'Branding & UI Settings');
+
+          INSERT INTO "${tenant.db_name}".rbac_menus (label, path, icon, required_plan, sort_order)
+          SELECT 'Admission Desk', '/tenant/ipd/admission-desk', 'Building', 'professional', 7
           WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'Admission Desk');
 
           INSERT INTO "${tenant.db_name}".rbac_menus (label, path, icon, required_plan, sort_order)
-          SELECT 'IPD Bed Map', '/tenant/ipd/beds', 'Map', 'basic', 8
+          SELECT 'IPD Bed Map', '/tenant/ipd/beds', 'Map', 'professional', 8
           WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'IPD Bed Map');
 
           INSERT INTO "${tenant.db_name}".rbac_menus (label, path, icon, required_plan, sort_order)
@@ -155,19 +167,115 @@ async function fixMenuSeeding() {
           SELECT 'Ticketing Management System', '/tenant/support/tickets', 'Ticket', 'basic', 16
           WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'Ticketing Management System');
 
+          INSERT INTO "${tenant.db_name}".rbac_menus (label, path, icon, required_plan, sort_order)
+          SELECT 'IPD Census & Daycare', '/tenant/ipd/admissions', 'Clipboard', 'professional', 19
+          WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'IPD Census & Daycare');
+
+          INSERT INTO "${tenant.db_name}".rbac_menus (label, path, icon, required_plan, sort_order)
+          SELECT 'Discharge Summaries', '/tenant/ipd/discharge', 'Receipt', 'professional', 20
+          WHERE NOT EXISTS (SELECT 1 FROM "${tenant.db_name}".rbac_menus WHERE label = 'Discharge Summaries');
+
           -- Benefits, Car Lease Program, Insurance Management, and Recruitment Hub have been removed
 
-          -- Link roles to menus
+          -- Link all menus to Admin
           INSERT INTO "${tenant.db_name}".rbac_role_menus (role_id, menu_id)
           SELECT r.id, m.id 
           FROM "${tenant.db_name}".rbac_roles r
           CROSS JOIN "${tenant.db_name}".rbac_menus m
-          WHERE r.name IN ('ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST')
+          WHERE r.name = 'ADMIN'
+          AND NOT EXISTS (
+            SELECT 1 FROM "${tenant.db_name}".rbac_role_menus rm 
+            WHERE rm.role_id = r.id AND rm.menu_id = m.id
+          );
+
+          -- Link clinical menus to Doctor
+          INSERT INTO "${tenant.db_name}".rbac_role_menus (role_id, menu_id)
+          SELECT r.id, m.id 
+          FROM "${tenant.db_name}".rbac_roles r
+          CROSS JOIN "${tenant.db_name}".rbac_menus m
+          WHERE r.name = 'DOCTOR'
           AND m.label IN (
-            'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Consultation Desk', 
-            'Appointment List', 'Doctor Availability and Book Appointments', 'Admission Desk', 'IPD Bed Map',
+            'Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Consultation Desk',
+            'Appointment List', 'Doctor Availability and Book Appointments',
             'Laboratory', 'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue',
-            'Staff & RBAC', 'Hospital Settings', 'Help & Support', 'Ticketing Management System'
+            'IPD Bed Map', 'IPD Census & Daycare',
+            'Help & Support', 'Ticketing Management System'
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM "${tenant.db_name}".rbac_role_menus rm 
+            WHERE rm.role_id = r.id AND rm.menu_id = m.id
+          );
+
+          -- Link clinical menus to Nurse
+          INSERT INTO "${tenant.db_name}".rbac_role_menus (role_id, menu_id)
+          SELECT r.id, m.id 
+          FROM "${tenant.db_name}".rbac_roles r
+          CROSS JOIN "${tenant.db_name}".rbac_menus m
+          WHERE r.name = 'NURSE'
+          AND m.label IN (
+            'Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue',
+            'IPD Bed Map', 'IPD Census & Daycare', 'Admission Desk', 'Discharge Summaries',
+            'Help & Support'
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM "${tenant.db_name}".rbac_role_menus rm 
+            WHERE rm.role_id = r.id AND rm.menu_id = m.id
+          );
+
+          -- Link front-desk menus to Receptionist
+          INSERT INTO "${tenant.db_name}".rbac_role_menus (role_id, menu_id)
+          SELECT r.id, m.id 
+          FROM "${tenant.db_name}".rbac_roles r
+          CROSS JOIN "${tenant.db_name}".rbac_menus m
+          WHERE r.name = 'RECEPTIONIST'
+          AND m.label IN (
+            'Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue',
+            'Appointment List', 'Doctor Availability and Book Appointments',
+            'Invoicing & Billing', 'Help & Support', 'Ticketing Management System'
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM "${tenant.db_name}".rbac_role_menus rm 
+            WHERE rm.role_id = r.id AND rm.menu_id = m.id
+          );
+
+          -- Link pharmacy menus to Pharmacist
+          INSERT INTO "${tenant.db_name}".rbac_role_menus (role_id, menu_id)
+          SELECT r.id, m.id 
+          FROM "${tenant.db_name}".rbac_roles r
+          CROSS JOIN "${tenant.db_name}".rbac_menus m
+          WHERE r.name = 'PHARMACIST'
+          AND m.label IN (
+            'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue',
+            'Help & Support', 'Ticketing Management System'
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM "${tenant.db_name}".rbac_role_menus rm 
+            WHERE rm.role_id = r.id AND rm.menu_id = m.id
+          );
+
+          -- Link lab menus to Lab Assistant
+          INSERT INTO "${tenant.db_name}".rbac_role_menus (role_id, menu_id)
+          SELECT r.id, m.id 
+          FROM "${tenant.db_name}".rbac_roles r
+          CROSS JOIN "${tenant.db_name}".rbac_menus m
+          WHERE r.name = 'LAB_ASSISTANT'
+          AND m.label IN (
+            'Laboratory', 'Help & Support', 'Ticketing Management System'
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM "${tenant.db_name}".rbac_role_menus rm 
+            WHERE rm.role_id = r.id AND rm.menu_id = m.id
+          );
+
+          -- Link support menus to Support role
+          INSERT INTO "${tenant.db_name}".rbac_role_menus (role_id, menu_id)
+          SELECT r.id, m.id 
+          FROM "${tenant.db_name}".rbac_roles r
+          CROSS JOIN "${tenant.db_name}".rbac_menus m
+          WHERE r.name = 'SUPPORT'
+          AND m.label IN (
+            'Dashboard', 'Help & Support', 'Ticketing Management System',
+            'Invoicing & Billing'
           )
           AND NOT EXISTS (
             SELECT 1 FROM "${tenant.db_name}".rbac_role_menus rm 

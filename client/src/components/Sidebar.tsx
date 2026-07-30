@@ -225,15 +225,24 @@ export default function Sidebar() {
       .filter(m => labels.some(l => l.toLowerCase() === m.label.toLowerCase()))
       .sort((a, b) => labels.findIndex(l => l.toLowerCase() === a.label.toLowerCase()) - labels.findIndex(l => l.toLowerCase() === b.label.toLowerCase()));
 
+    const isStandardEnabled = ['standard', 'professional', 'enterprise'].includes(plan);
     const isIpdEnabled = ['professional', 'enterprise'].includes(plan);
+    const isEnterpriseEnabled = plan === 'enterprise';
 
     const gs = [
-      { id: 'clinical', title: "Clinical Administration", items: getItems(clinicalFlow), icon: Stethoscope },
+      { id: 'clinical', title: "Clinical Administration", items: getItems(clinicalFlow).filter(i => {
+        if (!isStandardEnabled && ["prescription queue"].includes(i.label.toLowerCase())) return false;
+        return true;
+      }), icon: Stethoscope },
       { id: 'ipd', title: "Inpatient Operations", items: getItems(ipdFlow).filter(i => {
         if (!isIpdEnabled && ["ipd admission hub", "bed management", "discharge process"].includes(i.label.toLowerCase())) return false;
         return true;
       }), icon: Bed },
-      { id: 'services', title: "Diagnostic Services", items: getItems(serviceFlow), icon: FlaskConical },
+      { id: 'services', title: "Diagnostic Services", items: getItems(serviceFlow).filter(i => {
+        if (!isStandardEnabled && ["laboratory", "pharmacy hub", "pharmacy dashboard", "stock inventory"].includes(i.label.toLowerCase())) return false;
+        if (!isEnterpriseEnabled && ["ai lab assistant"].includes(i.label.toLowerCase())) return false;
+        return true;
+      }), icon: FlaskConical },
       { id: 'billing', title: "Finance & Revenue", items: getItems(billingFlow), icon: Receipt },
       { id: 'admin', title: "System Administration", items: getItems(adminFlow), icon: Settings }
     ];
