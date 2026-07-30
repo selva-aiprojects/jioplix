@@ -134,6 +134,7 @@ The Jioplix HIMS sidebar is dynamically provisioned by **Subscription Tier × Us
 - **Per-role menu linking**: The `fixMenuSeeding.js` script now assigns role-appropriate menus per role instead of a single group insert.
 - **Client-side plan gating**: Sidebar now enforces subscription tiers at the frontend as a secondary safety net — Lab/Pharmacy items hidden on Basic plans, AI Lab Assistant hidden except on Enterprise.
 - **Missing menus added**: Dashboard, Invoicing & Billing, Branding & UI Settings, IPD Census & Daycare, and Discharge Summaries were added to `fixMenuSeeding.js` so they properly appear in seeding for new tenants.
+- **Self-healing RBAC alignment**: The on-login schema hardening block in `auth/index.js` was refactored from a single bulk-insert to per-role INSERTS matching the dedicated role matrix. Previously, DOCTOR, NURSE, RECEPTIONIST, and LAB_ASSISTANT all received the same broad menu set (including Laboratory, Pharmacy, Staff & RBAC, and Hospital Settings) on every login, causing rogue sidebar items. Also fixed: bootstrap seed (cold-start path) now seeds all 21 menus with correct paths, plans, and per-role linking for all 7 roles.
 
 ### Appointment Booking Flow
 - Unified booking flow improvements reduce navigation friction and support more robust rescheduling and calendar alignment.

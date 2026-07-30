@@ -238,17 +238,79 @@ router.post("/login", loginLimiter, async (req, res) => {
                 WHERE r.name = 'ADMIN'
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 
-                -- Link specific Menus to other Roles
+                -- Link specific Menus to Doctor
                 INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                 SELECT r.id, m.id 
                 FROM "${schema}".rbac_roles r
                 CROSS JOIN "${schema}".rbac_menus m
-                WHERE r.name IN ('DOCTOR', 'NURSE', 'RECEPTIONIST', 'LAB_ASSISTANT')
+                WHERE r.name = 'DOCTOR'
                 AND m.label IN (
-                  'Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Consultation Desk', 
-                  'Appointment List', 'Doctor Availability and Book Appointments', 'Admission Desk', 'IPD Bed Map',
+                  'Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Consultation Desk',
+                  'Appointment List', 'Doctor Availability and Book Appointments',
                   'Laboratory', 'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue',
-                  'Staff & RBAC', 'Hospital Settings', 'Help & Support', 'Ticketing Management System'
+                  'IPD Bed Map', 'IPD Census & Daycare',
+                  'Help & Support', 'Ticketing Management System'
+                )
+                ON CONFLICT (role_id, menu_id) DO NOTHING;
+
+                -- Link specific Menus to Nurse
+                INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                SELECT r.id, m.id 
+                FROM "${schema}".rbac_roles r
+                CROSS JOIN "${schema}".rbac_menus m
+                WHERE r.name = 'NURSE'
+                AND m.label IN (
+                  'Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue',
+                  'IPD Bed Map', 'IPD Census & Daycare', 'Admission Desk', 'Discharge Summaries',
+                  'Help & Support'
+                )
+                ON CONFLICT (role_id, menu_id) DO NOTHING;
+
+                -- Link specific Menus to Receptionist
+                INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                SELECT r.id, m.id 
+                FROM "${schema}".rbac_roles r
+                CROSS JOIN "${schema}".rbac_menus m
+                WHERE r.name = 'RECEPTIONIST'
+                AND m.label IN (
+                  'Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue',
+                  'Appointment List', 'Doctor Availability and Book Appointments',
+                  'Invoicing & Billing', 'Help & Support', 'Ticketing Management System'
+                )
+                ON CONFLICT (role_id, menu_id) DO NOTHING;
+
+                -- Link specific Menus to Pharmacist
+                INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                SELECT r.id, m.id 
+                FROM "${schema}".rbac_roles r
+                CROSS JOIN "${schema}".rbac_menus m
+                WHERE r.name = 'PHARMACIST'
+                AND m.label IN (
+                  'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue',
+                  'Help & Support', 'Ticketing Management System'
+                )
+                ON CONFLICT (role_id, menu_id) DO NOTHING;
+
+                -- Link specific Menus to Lab Assistant
+                INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                SELECT r.id, m.id 
+                FROM "${schema}".rbac_roles r
+                CROSS JOIN "${schema}".rbac_menus m
+                WHERE r.name = 'LAB_ASSISTANT'
+                AND m.label IN (
+                  'Laboratory', 'Help & Support', 'Ticketing Management System'
+                )
+                ON CONFLICT (role_id, menu_id) DO NOTHING;
+
+                -- Link specific Menus to Support
+                INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
+                SELECT r.id, m.id 
+                FROM "${schema}".rbac_roles r
+                CROSS JOIN "${schema}".rbac_menus m
+                WHERE r.name = 'SUPPORT'
+                AND m.label IN (
+                  'Dashboard', 'Help & Support', 'Ticketing Management System',
+                  'Invoicing & Billing'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
               `);
@@ -337,29 +399,34 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_menus (label, path, icon, sort_order, required_plan) VALUES
                     ('Dashboard', '/tenant/dashboard', 'Dashboard', 1, 'basic'),
-                    ('OPD Registration', '/tenant/opd/registration', 'OPD', 2, 'basic'),
-                    ('Doctor''s Queue', '/tenant/opd/queue', 'Doctor', 3, 'basic'),
-                    ('Doctor Availability and Book Appointments', '/tenant/appointments/doctor-calendar', 'Calendar', 4, 'basic'),
+                    ('OPD Registration', '/tenant/opd/registration', 'Users', 2, 'basic'),
+                    ('OPD Queue', '/tenant/opd/queue', 'RefreshCw', 3, 'basic'),
+                    ('Doctor''s Queue', '/tenant/opd/doctor-queue', 'Doctor', 4, 'basic'),
+                    ('Consultation Desk', '/tenant/opd/consultation', 'Stethoscope', 5, 'basic'),
+                    ('Appointment List', '/tenant/appointments', 'Calendar', 6, 'basic'),
+                    ('Doctor Availability and Book Appointments', '/tenant/appointments/doctor-calendar', 'Calendar', 7, 'basic'),
                     ('Invoicing & Billing', '/billing', 'Billing', 10, 'basic'),
-                    ('Branding & UI Settings', '/tenant/settings', 'Dashboard', 12, 'basic'),
-                    ('Staff & RBAC', '/tenant/staff', 'Doctor', 13, 'basic'),
+                    ('Branding & UI Settings', '/tenant/settings', 'Palette', 18, 'basic'),
                     ('Help & Support', '/tenant/support', 'Receipt', 16, 'basic'),
-                    ('Laboratory', '/tenant/lab', 'Lab', 4, 'standard'),
-                    ('Pharmacy Dashboard', '/tenant/pharmacy/dashboard', 'Pharmacy', 5, 'standard'),
-                    ('Stock Inventory', '/tenant/pharmacy/inventory', 'Pill', 6, 'standard'),
-                    ('Prescription Queue', '/tenant/pharmacy/queue', 'Receipt', 7, 'standard'),
-                    ('Hospital Settings (Masters)', '/tenant/masters', 'Settings', 11, 'standard'),
-                    ('IPD Bed Map', '/tenant/ipd/beds', 'Bed', 8, 'professional'),
-                    ('IPD Admission Desk', '/tenant/ipd/admission-desk', 'Clipboard', 9, 'professional'),
-                    ('IPD Census & Daycare', '/tenant/ipd/admissions', 'Clipboard', 14, 'professional'),
-                    ('Discharge Summaries', '/tenant/ipd/discharge', 'Receipt', 15, 'professional')
+                    ('Ticketing Management System', '/tenant/support/tickets', 'Ticket', 17, 'basic'),
+                    ('Staff & RBAC', '/tenant/staff', 'Doctor', 14, 'professional'),
+                    ('Hospital Settings (Masters)', '/tenant/masters', 'Settings', 15, 'professional'),
+                    ('Laboratory', '/tenant/lab', 'Lab', 8, 'standard'),
+                    ('Pharmacy Dashboard', '/tenant/pharmacy/dashboard', 'Pharmacy', 9, 'standard'),
+                    ('Stock Inventory', '/tenant/pharmacy/inventory', 'Pill', 10, 'standard'),
+                    ('Prescription Queue', '/tenant/pharmacy/queue', 'Receipt', 11, 'standard'),
+                    ('IPD Bed Map', '/tenant/ipd/beds', 'Bed', 12, 'professional'),
+                    ('IPD Admission Desk', '/tenant/ipd/admission-desk', 'Clipboard', 13, 'professional'),
+                    ('IPD Census & Daycare', '/tenant/ipd/admissions', 'Clipboard', 19, 'professional'),
+                    ('Discharge Summaries', '/tenant/ipd/discharge', 'Receipt', 20, 'professional')
                     ON CONFLICT (label) DO NOTHING
                   `);
 
-                  // Bootstrap Role-Menu Mappings (Admin)
+                  // Bootstrap Role-Menu Mappings (Admin) - all menus
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
-                    SELECT '${roleId}', id FROM "${schema}".rbac_menus WHERE '${roleName}' = 'ADMIN'
+                    SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m
+                    WHERE r.name = 'ADMIN'
                     ON CONFLICT DO NOTHING
                   `);
 
@@ -367,15 +434,15 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'DOCTOR' AND m.label IN ('Dashboard', 'Doctor''s Queue', 'Laboratory', 'IPD Census', 'Bed Map')
+                    WHERE r.name = 'DOCTOR' AND m.label IN ('Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Consultation Desk', 'Appointment List', 'Doctor Availability and Book Appointments', 'Laboratory', 'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue', 'IPD Bed Map', 'IPD Census & Daycare', 'Help & Support', 'Ticketing Management System')
                     ON CONFLICT DO NOTHING
                   `);
                   
-                  // Bootstrap Role-Menu Mappings (Nurse/Support)
+                  // Bootstrap Role-Menu Mappings (Nurse)
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'NURSE' AND m.label IN ('Dashboard', 'IPD Census', 'Bed Map', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue')
+                    WHERE r.name = 'NURSE' AND m.label IN ('Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue', 'IPD Bed Map', 'IPD Census & Daycare', 'IPD Admission Desk', 'Discharge Summaries', 'Help & Support')
                     ON CONFLICT DO NOTHING
                   `);
 
@@ -383,7 +450,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'RECEPTIONIST' AND m.label IN ('Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Doctor Availability and Book Appointments', 'Invoicing & Billing', 'Appointment List', 'Help & Support')
+                    WHERE r.name = 'RECEPTIONIST' AND m.label IN ('Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Appointment List', 'Doctor Availability and Book Appointments', 'Invoicing & Billing', 'Help & Support', 'Ticketing Management System')
                     ON CONFLICT DO NOTHING
                   `);
 
@@ -399,7 +466,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'LAB_ASSISTANT' AND m.label IN ('Laboratory', 'Help & Support')
+                    WHERE r.name = 'LAB_ASSISTANT' AND m.label IN ('Laboratory', 'Help & Support', 'Ticketing Management System')
                     ON CONFLICT DO NOTHING
                   `);
 
@@ -407,7 +474,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'SUPPORT' AND m.label IN ('Help & Support', 'Ticketing Management System')
+                    WHERE r.name = 'SUPPORT' AND m.label IN ('Dashboard', 'Help & Support', 'Ticketing Management System', 'Invoicing & Billing')
                     ON CONFLICT DO NOTHING
                   `);
 
