@@ -134,9 +134,11 @@ const AIChatbot: React.FC = () => {
     }
   };
 
-  const isConsultationRoute = location.pathname.startsWith('/tenant/opd/consultation');
+  const role = (localStorage.getItem('role') || '').toLowerCase();
+  const isAllowedRole = role === 'doctor' || role === 'admin';
   if (
-    !isConsultationRoute ||
+    !isAllowedRole ||
+    !location.pathname.startsWith('/tenant/') ||
     location.pathname === '/' ||
     location.pathname === '/login' ||
     localStorage.getItem('isAutomation') === 'true'
