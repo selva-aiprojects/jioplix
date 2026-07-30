@@ -97,7 +97,6 @@ const normalizeLabel = (label: string) => {
     "opd registration desk": "Vital Assessment",
     "opd center": "Vital Assessment",
     "opd queue": "Consulting Mgmt.",
-    "doctor's queue": "Consulting Mgmt.",
     "consultation desk": "Consultation Desk",
     "patient scheduling": "Patient Scheduling",
     "appointment list": "Patient Scheduling",
@@ -116,8 +115,6 @@ const normalizeLabel = (label: string) => {
     "pharmacy dashboard": "Pharmacy Dashboard",
     "stock inventory": "Stock Inventory",
     "prescription queue": "Prescription Queue",
-    "ipd census & daycare": "Bed Management",
-    "ipd census": "Bed Management",
     "laboratory billing": "Central Billing",
     "pharmacy billing": "Central Billing",
     "opd billing": "Central Billing",
@@ -202,12 +199,12 @@ export default function Sidebar() {
 
     const clinicalFlow = [
       "Clinical Intelligence Hub",
-      "Doctor's Schedule", "Patient Register", "Patient Scheduling",
+      "Doctor's Schedule", "Doctor's Queue", "Patient Register", "Patient Scheduling",
       "Vital Assessment", "Consulting Mgmt.", "Consultation Desk", "Prescription Queue",
       "Clinical & Financial Archives"
     ];
     const ipdFlow = [
-      "IPD Admission Hub", "Bed Management", "Discharge Process"
+      "IPD Admission Hub", "Bed Management", "IPD Census & Daycare", "Discharge Process"
     ];
     const serviceFlow = [
       "Laboratory", "AI Lab Assistant",
@@ -238,7 +235,7 @@ export default function Sidebar() {
         return true;
       }), icon: Stethoscope },
       { id: 'ipd', title: "Inpatient Operations", items: getItems(ipdFlow).filter(i => {
-        if (!isIpdEnabled && ["ipd admission hub", "bed management", "discharge process"].includes(i.label.toLowerCase())) return false;
+        if (!isIpdEnabled && ["ipd admission hub", "bed management", "ipd census & daycare", "discharge process"].includes(i.label.toLowerCase())) return false;
         return true;
       }), icon: Bed },
       { id: 'services', title: "Diagnostic Services", items: getItems(serviceFlow).filter(i => {
