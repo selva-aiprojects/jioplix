@@ -153,17 +153,20 @@ export default function Sidebar() {
     let dm = JSON.parse(localStorage.getItem("userMenus") || "[]");
     const role = (localStorage.getItem("role") || "").toLowerCase();
     const isAdmin = role.includes("admin") || role.includes("nexus");
+    const isClinical = isAdmin || ["doctor", "nurse", "receptionist"].includes(role);
 
-    if (!dm.some((m: any) => m.label.toLowerCase().includes("patient scheduling"))) {
+    if (isClinical && !dm.some((m: any) => m.label.toLowerCase().includes("patient scheduling"))) {
       dm.push({ label: "Patient Scheduling", path: "/tenant/appointments", icon: "Calendar", sort_order: 5 });
     }
-    if (!dm.some((m: any) => m.label.toLowerCase().includes("advanced scheduling console"))) {
+    if ((isAdmin || role === "doctor") && 
+        !dm.some((m: any) => m.label.toLowerCase().includes("advanced scheduling console")) &&
+        !dm.some((m: any) => normalizeLabel(m.label) === "Doctor's Schedule")) {
       dm.push({ label: "Advanced Scheduling Console", path: "/tenant/appointments/doctor-calendar?tab=Weekly+Rules", icon: "CalendarDays", sort_order: 9 });
     }
     if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("clinical & financial archives"))) {
       dm.push({ label: "Clinical & Financial Archives", path: "/tenant/archives", icon: "History", sort_order: 10 });
     }
-    if (!dm.some((m: any) => m.label.toLowerCase().includes("patient register"))) {
+    if (isClinical && !dm.some((m: any) => m.label.toLowerCase().includes("patient register"))) {
       dm.push({ label: "Patient Register", path: "/tenant/clinical/patient-register", icon: "Patient Register", sort_order: 11 });
     }
     if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("branding settings") || m.label.toLowerCase().includes("branding & ui settings"))) {
