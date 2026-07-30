@@ -66,6 +66,14 @@ export default function DoctorAvailabilityPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(normalizedTab);
   const [showActionDrawer, setShowActionDrawer] = useState(false);
@@ -125,7 +133,7 @@ export default function DoctorAvailabilityPage() {
         setLoading(false);
       });
     }
-  }, [selectedDoctor, currentDate]);
+  }, [selectedDoctor]);
 
   const fetchDoctorStats = async () => {
     try {
@@ -136,24 +144,20 @@ export default function DoctorAvailabilityPage() {
 
   const fetchSchedulingData = async () => {
     try {
-      const start = new Date(currentDate);
-      start.setDate(start.getDate() - start.getDay());
-      const end = new Date(start);
-      end.setDate(end.getDate() + 7);
+      const [schedRes, leaveRes, overrideRes, apptRes] = await Promise.all([
+        axios.get(`${API_BASE}/api/doctors/${selectedDoctor.id}/schedules`, { headers }),
+        axios.get(`${API_BASE}/api/doctors/${selectedDoctor.id}/leaves`, { headers }),
+        axios.get(`${API_BASE}/api/doctors/${selectedDoctor.id}/overrides`, { headers }),
+        axios.get(`${API_BASE}/api/appointments?doctorId=${selectedDoctor.id}`, { headers }).catch(() => ({ data: [] }))
+      ]);
 
-      const response = await axios.get(
-        `${API_BASE}/api/doctors/${selectedDoctor.id}/availability-rules?startDate=${toLocalDateKey(start)}&endDate=${toLocalDateKey(end)}`,
-        { headers }
-      );
-
-      setAppointments(response.data.appointments || []);
-      const scheds = response.data.schedules || [];
-      setSchedules(scheds);
-      setLeaves(response.data.leaves || []);
-      setOverrides(response.data.overrides || []);
-      setDoctorStatus(response.data.status);
+      setSchedules(schedRes.data || []);
+      setLeaves(leaveRes.data || []);
+      setOverrides(overrideRes.data || []);
+      setAppointments(apptRes.data || []);
 
       // Generate dynamic time slots based on doctor's schedule
+      const scheds = schedRes.data || [];
       if (scheds.length > 0) {
         let minHour = 24;
         let maxHour = 0;
@@ -163,10 +167,7 @@ export default function DoctorAvailabilityPage() {
           if (startH < minHour) minHour = startH;
           if (endH > maxHour) maxHour = endH;
         });
-        
-        // Fallback if data is weird or span is 0
         if (minHour >= maxHour) { minHour = 8; maxHour = 20; }
-        
         const slots = [];
         for (let h = minHour; h < maxHour; h++) {
           slots.push(`${h.toString().padStart(2, '0')}:00`);
@@ -174,7 +175,6 @@ export default function DoctorAvailabilityPage() {
         }
         setTimeSlots(slots);
       } else {
-        // Default slots if no schedule defined yet
         const slots = [];
         for (let h = 8; h < 20; h++) {
           slots.push(`${h.toString().padStart(2, '0')}:00`);
@@ -188,8 +188,9 @@ export default function DoctorAvailabilityPage() {
   const updateDoctorStatus = async (status: string, delay: number = 0) => {
     try {
       await axios.post(`${API_BASE}/api/doctors/${selectedDoctor.id}/status`, { status, delay_minutes: delay }, { headers });
-      
-      // Analytics: Track status change
+
+      setDoctorStatus({ status, delay_minutes: delay });
+
       trackEvent('physician_status_changed', {
         doctor_id: selectedDoctor.id,
         new_status: status,
@@ -236,14 +237,20 @@ export default function DoctorAvailabilityPage() {
     });
   }, [timeSlots, weekDates, appointments, leaves, schedules, overrides, doctorStatus]);
 
-  if (loading) return <div className="loading-state">Initializing Clinical Engine...</div>;
-
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout" style={{ backgroundColor: "var(--app-bg)", display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh" }}>
       <Sidebar />
-      <main className="main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 20px 24px' }}>
+      <main className="main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: isMobile ? '16px' : '32px', width: '100%' }}>
         <Header title="Clinical Scheduling Command" />
 
+        {loading ? (
+          <div className="loading-state" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#475569' }}>Initializing Clinical Engine...</div>
+              <div style={{ fontSize: '13px', color: '#94a3b8' }}>Loading scheduling data & physician records</div>
+            </div>
+          </div>
+        ) : (<>
         {reschedulingAppt && (
           <div style={{ 
             background: 'rgba(79, 70, 229, 0.1)', 
@@ -527,7 +534,8 @@ export default function DoctorAvailabilityPage() {
              </div>
           </div>
         </div>
-
+        </>)}
+        
         <SlotActionDrawer 
           open={showActionDrawer} 
           onClose={() => setShowActionDrawer(false)}

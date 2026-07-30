@@ -25,6 +25,8 @@ const Icons: Record<string, any> = {
   Dashboard: LayoutDashboard,
   "OPD Center": Users,
   "OPD Queue": RefreshCw,
+  "Vital Assessment": Users,
+  "Consulting Mgmt.": RefreshCw,
   "Consultation Desk": Stethoscope,
   "IPD Admission Hub": Bed,
   "Bed Management": ClipboardList,
@@ -47,7 +49,9 @@ const normalizePath = (label: string, originalPath: string) => {
   const l = label.toLowerCase();
   const overrides: Record<string, string> = {
     "opd center": "/tenant/opd/registration",
+    "vital assessment": "/tenant/opd/registration",
     "opd queue": "/tenant/opd/queue",
+    "consulting mgmt.": "/tenant/opd/queue",
     "consultation desk": "/tenant/opd/consultation",
     "ipd admission hub": "/tenant/ipd/admission-desk",
     "bed management": "/tenant/ipd/beds",
@@ -89,10 +93,11 @@ const normalizeLabel = (label: string) => {
   if (l.includes("hospital settings")) return "Hospital Settings";
 
   const labelMap: Record<string, string> = {
-    "opd registration": "OPD Center",
-    "opd registration desk": "OPD Center",
-    "opd queue": "OPD Queue",
-    "doctor's queue": "OPD Queue",
+    "opd registration": "Vital Assessment",
+    "opd registration desk": "Vital Assessment",
+    "opd center": "Vital Assessment",
+    "opd queue": "Consulting Mgmt.",
+    "doctor's queue": "Consulting Mgmt.",
     "consultation desk": "Consultation Desk",
     "patient scheduling": "Patient Scheduling",
     "appointment list": "Patient Scheduling",
@@ -179,8 +184,8 @@ export default function Sidebar() {
     if (localStorage.getItem('isAutomation') === 'true') {
       const fallbackMenus = [
         { label: 'Central Billing', path: '/billing', icon: 'Receipt' },
-        { label: 'OPD Center', path: '/tenant/opd/registration', icon: 'Users' },
-        { label: 'OPD Queue', path: '/tenant/opd/queue', icon: 'RefreshCw' },
+        { label: 'Vital Assessment', path: '/tenant/opd/registration', icon: 'Users' },
+        { label: 'Consulting Mgmt.', path: '/tenant/opd/queue', icon: 'RefreshCw' },
         { label: 'Prescription Queue', path: '/tenant/pharmacy/queue', icon: 'Pill' },
         { label: 'Laboratory', path: '/tenant/lab', icon: 'FlaskConical' }
       ];
@@ -195,7 +200,7 @@ export default function Sidebar() {
     const clinicalFlow = [
       "Clinical Intelligence Hub",
       "Doctor's Schedule", "Patient Register", "Patient Scheduling",
-      "OPD Center", "OPD Queue", "Consultation Desk", "Prescription Queue",
+      "Vital Assessment", "Consulting Mgmt.", "Consultation Desk", "Prescription Queue",
       "Clinical & Financial Archives"
     ];
     const ipdFlow = [
@@ -212,7 +217,8 @@ export default function Sidebar() {
     const adminFlow = [
       "Staff & Access", "Branding Settings", "Hospital Settings", 
       "Message Board", "Mail & Communications", "Support & Tickets",
-      "Help & Support", "Ticketing Management System"
+      "Help & Support", "Ticketing Management System",
+      "Tenant Sensitive Configs"
     ];
 
     const getItems = (labels: string[]) => pm
@@ -222,8 +228,8 @@ export default function Sidebar() {
     const isIpdEnabled = ['professional', 'enterprise'].includes(plan);
 
     const gs = [
-      { id: 'clinical', title: "Clinical Operations", items: getItems(clinicalFlow), icon: Stethoscope },
-      { id: 'ipd', title: "IPD Processes", items: getItems(ipdFlow).filter(i => {
+      { id: 'clinical', title: "Clinical Administration", items: getItems(clinicalFlow), icon: Stethoscope },
+      { id: 'ipd', title: "Inpatient Operations", items: getItems(ipdFlow).filter(i => {
         if (!isIpdEnabled && ["ipd admission hub", "bed management", "discharge process"].includes(i.label.toLowerCase())) return false;
         return true;
       }), icon: Bed },
