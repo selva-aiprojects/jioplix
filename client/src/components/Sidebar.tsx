@@ -74,7 +74,8 @@ const normalizePath = (label: string, originalPath: string) => {
     "clinical & financial archives": "/tenant/archives",
     "patient register": "/tenant/clinical/patient-register",
     "mail & communications": "/tenant/mail",
-    "support & tickets": "/tenant/support",
+    "help & support": "/tenant/support/tickets",
+    "support & tickets": "/tenant/support/tickets",
     "ticketing management system": "/tenant/support/tickets",
     "branding settings": "/tenant/settings",
     "branding & ui settings": "/tenant/settings"
