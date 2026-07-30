@@ -12,6 +12,7 @@ export default function DischargeSummariesPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const { showToast } = useToast();
 
   const headers = {
@@ -24,10 +25,12 @@ export default function DischargeSummariesPage() {
   }, []);
 
   const fetchSummaries = async () => {
+    setDataLoading(true);
     try {
       const res = await axios.get(`${API_BASE}/api/hospital/ipd/discharges`, { headers });
       setSummaries(res.data);
     } catch (err) { console.error(err); }
+    finally { setDataLoading(false); }
   };
 
   const printSummary = () => {
@@ -64,13 +67,17 @@ export default function DischargeSummariesPage() {
     <div className="dashboard-layout print-document">
       <Sidebar />
       <main className="main-content">
-        <Header title="Discharge Summaries Hub" />
+        <Header title="Discharge Summaries" />
         
+        {dataLoading ? (
+          <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading discharge summaries...</div>
+        ) : (
+        <>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '40px', marginTop: '8px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#fef2f2', color: '#dc2626', display: 'grid', placeItems: 'center', boxShadow: '0 10px 15px -3px rgba(220, 38, 38, 0.1)' }}>
             <FileEdit size={24} />
           </div>
-          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Clinical Documentation Center</p>
+          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Discharge Documentation</p>
           <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Review, authenticate, and finalize centralized patient clinical discharge records and summaries.</p>
         </div>
 
@@ -213,6 +220,8 @@ export default function DischargeSummariesPage() {
               )}
             </div>
           )}
+          </>
+        )}
       </main>
     </div>
   );

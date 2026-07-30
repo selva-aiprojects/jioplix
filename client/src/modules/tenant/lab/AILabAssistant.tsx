@@ -10,9 +10,11 @@ export default function AILabAssistant() {
   const [selectedPatientId, setSelectedPatientId] = useState("");
   const [labFile, setLabFile] = useState<File | null>(null);
   const [isScanning, setIsScanning] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   const searchPatient = async () => {
     if (!searchTerm) return;
+    setIsSearching(true);
     const headers = { 
       Authorization: `Bearer ${localStorage.getItem("token")}`,
       "x-tenant-id": localStorage.getItem("tenant") || ""
@@ -21,6 +23,7 @@ export default function AILabAssistant() {
       const res = await axios.get(`${API_BASE}/api/patients?search=${searchTerm}`, { headers });
       setPatients(res.data);
     } catch (err) { console.error(err); }
+    finally { setIsSearching(false); }
   };
 
   const handleExternalScan = async () => {
@@ -46,7 +49,7 @@ export default function AILabAssistant() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="AI Diagnostic Assistant" />
+        <Header title="AI Lab Assistant" />
 
         <div className="manage-card" style={{ maxWidth: '800px', margin: '40px auto', background: 'linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%)', padding: '48px', borderRadius: '40px', border: '1px solid #f5d0fe', boxShadow: '0 20px 40px -10px rgba(217, 70, 239, 0.1)' }}>
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -66,7 +69,7 @@ export default function AILabAssistant() {
                       placeholder="Search by MRN or Name..." 
                       style={{ flex: 1, padding: '16px', borderRadius: '16px', border: '1px solid #f5d0fe', fontSize: '16px', background: 'white' }} 
                     />
-                    <button onClick={searchPatient} style={{ background: '#d946ef', color: 'white', border: 'none', padding: '0 32px', borderRadius: '16px', fontWeight: 800, cursor: 'pointer' }}>Search</button>
+                    <button onClick={searchPatient} disabled={isSearching} style={{ background: '#d946ef', color: 'white', border: 'none', padding: '0 32px', borderRadius: '16px', fontWeight: 800, cursor: 'pointer' }}>{isSearching ? 'Searching...' : 'Search'}</button>
                   </div>
                   {patients.length > 0 && (
                     <div style={{ marginTop: '16px', background: 'white', borderRadius: '24px', padding: '12px', maxHeight: '200px', overflowY: 'auto', border: '1px solid #f5d0fe' }}>

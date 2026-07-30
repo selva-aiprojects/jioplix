@@ -286,7 +286,7 @@ export default function StaffManagementPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Staff & RBAC" />
+        <Header title="Staff & Access" />
 
         {/* Search + Add */}
         <div className="flex-responsive" style={{ marginBottom: '24px' }}>

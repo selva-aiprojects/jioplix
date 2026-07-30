@@ -10,6 +10,7 @@ export default function AdmissionDeskPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const [patients, setPatients] = useState<any[]>([]);
   const [wards, setWards] = useState<any[]>([]);
   const [doctors, setDoctors] = useState<any[]>([]);
@@ -32,6 +33,7 @@ export default function AdmissionDeskPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setDataLoading(true);
       try {
         const [patRes, wardRes, staffRes, recRes] = await Promise.all([
           axios.get(`${API_BASE}/api/patients?limit=100`, { headers }),
@@ -44,6 +46,7 @@ export default function AdmissionDeskPage() {
         setDoctors(staffRes.data.filter((s: any) => s.role === 'DOCTOR' || s.role === 'ADMIN' || s.role === 'doctor' || s.role === 'admin'));
         setRecommendations(recRes.data || []);
       } catch (err) { console.error(err); }
+      finally { setDataLoading(false); }
     };
     fetchData();
   }, []);
@@ -81,8 +84,11 @@ export default function AdmissionDeskPage() {
     <div className="dashboard-layout" style={{ display: 'flex', minHeight: '100vh', background: 'var(--app-bg)' }}>
       <Sidebar />
       <main style={{ flex: 1, padding: '32px' }}>
-        <Header title="IPD Admission Desk" />
+        <Header title="IPD Admission Hub" />
 
+        {dataLoading ? (
+          <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading admission data...</div>
+        ) : (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '32px' }}>
           <div style={{ background: 'white', padding: '40px', borderRadius: '32px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
              <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', marginBottom: '8px' }}>Register New Admission</h2>
@@ -187,6 +193,7 @@ export default function AdmissionDeskPage() {
              </div>
           </aside>
         </div>
+        )}
       </main>
     </div>
   );

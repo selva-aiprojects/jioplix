@@ -38,7 +38,7 @@ export default function MailManagementPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Mail & Communication Management" />
+        <Header title="Mail & Communications" />
 
         <div style={{ maxWidth: '1000px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>

@@ -8,6 +8,7 @@ import { formatCurrencyFixed } from "../../../utils/currency";
 
 export default function InventoryList({ embedded = false }: { embedded?: boolean }) {
   const [inventory, setInventory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [newItem, setNewItem] = useState({ name: '', category: 'Antibiotic', quantity: '', price: '', expiryDate: '', uom: 'Tablet', batchNumber: '' });
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,6 +29,7 @@ export default function InventoryList({ embedded = false }: { embedded?: boolean
       const res = await axios.get(`${API_BASE}/api/hospital/pharmacy/inventory`, { headers });
       setInventory(res.data);
     } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   const handleAddStock = async (e: React.FormEvent) => {
@@ -115,8 +117,12 @@ export default function InventoryList({ embedded = false }: { embedded?: boolean
     <div className={embedded ? "" : "dashboard-layout"} style={{ display: 'flex', minHeight: embedded ? 'auto' : '100vh', background: 'var(--app-bg)' }}>
       {!embedded && <Sidebar />}
       <main style={{ flex: 1, padding: embedded ? '0' : '32px' }}>
-        {!embedded && <Header title="Pharmacy Inventory Management" />}
+        {!embedded && <Header title="Stock Inventory" />}
 
+        {loading ? (
+          <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading inventory...</div>
+        ) : (
+        <>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '40px', gap: '20px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#fef3c7', color: '#d97706', display: 'grid', placeItems: 'center', boxShadow: '0 10px 15px -3px rgba(217, 119, 6, 0.1)' }}>
@@ -382,6 +388,8 @@ export default function InventoryList({ embedded = false }: { embedded?: boolean
             </tbody>
           </table>
         </div>
+          </>
+        )}
       </main>
     </div>
   );

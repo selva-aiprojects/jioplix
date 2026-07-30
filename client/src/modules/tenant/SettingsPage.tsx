@@ -57,7 +57,7 @@ export default function SettingsPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Hospital Branding & UI" />
+        <Header title="Branding & UI Settings" />
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '32px', marginTop: '8px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'var(--app-bg)', color: '#0f172a', display: 'grid', placeItems: 'center', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)' }}>
@@ -66,7 +66,7 @@ export default function SettingsPage() {
               <circle cx="12" cy="12" r="3"/>
             </svg>
           </div>
-          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Global Interface Preferences</p>
+          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Branding Preferences</p>
           <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Customize the hospital branding, color palettes, and typography to align with your institution's identity.</p>
         </div>
 

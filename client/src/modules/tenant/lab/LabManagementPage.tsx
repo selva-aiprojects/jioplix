@@ -665,7 +665,7 @@ export default function LabManagementPage() {
     <div className="dashboard-layout print-document">
       <Sidebar />
       <main className="main-content">
-        <Header title="Diagnostics Command Center" />
+        <Header title="Laboratory" />
 
         <div style={{ padding: '32px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '40px' }}>

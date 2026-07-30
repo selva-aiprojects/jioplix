@@ -43,6 +43,7 @@ export default function OPDConsultationPage() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiAdvice, setAiAdvice] = useState<any>(null);
   const [showAiPanel, setShowAiPanel] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
 
   // Clinical History
   const [pastLabs, setPastLabs] = useState<any[]>([]);
@@ -66,13 +67,17 @@ export default function OPDConsultationPage() {
 
   useEffect(() => {
     if (!role) { navigate("/"); return; }
-    const data = localStorage.getItem("currentEncounter");
-    if (data) {
-      const enc = JSON.parse(data);
-      setEncounter(enc);
-      fetchPatientDetails(enc.patient_id);
-    }
-    fetchMasters();
+    const init = async () => {
+      const data = localStorage.getItem("currentEncounter");
+      if (data) {
+        const enc = JSON.parse(data);
+        setEncounter(enc);
+        await fetchPatientDetails(enc.patient_id);
+      }
+      await fetchMasters();
+      setDataLoading(false);
+    };
+    init();
   }, []);
 
   useEffect(() => {
@@ -315,7 +320,7 @@ export default function OPDConsultationPage() {
     <div className="dashboard-layout" style={{ backgroundColor: '#f1f5f9' }}>
       <Sidebar />
       <main className="main-content" style={{ padding: '32px' }}>
-        <Header title="Clinical Consultation" />
+        <Header title="Consultation Desk" />
         <div style={{ display: 'flex', minHeight: 'calc(100vh - 140px)', alignItems: 'center', justifyContent: 'center' }}>
           <div className="page-card" style={{ padding: '48px', textAlign: 'center', maxWidth: '440px' }}>
             <Info size={48} style={{ color: '#94a3b8', margin: '0 auto 24px' }} />
@@ -367,9 +372,13 @@ export default function OPDConsultationPage() {
       >
         {/* Header (no-scroll) */}
         <div style={{ flexShrink: 0, padding: '20px 24px 0 24px' }}>
-          <Header title="Clinical Consultation" compact={true} />
+          <Header title="Consultation Desk" compact={true} />
         </div>
 
+        {dataLoading ? (
+          <div style={{ flex: 1, display: 'grid', placeItems: 'center', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading patient record...</div>
+        ) : (
+        <>
         {/* ── STICKY PATIENT HUD ─────────────────────────── */}
         <div style={{
           flexShrink: 0,
@@ -716,6 +725,8 @@ export default function OPDConsultationPage() {
             </div>
           </div>
         </div>
+          </>
+        )}
       </main>
 
       {/* ── POST-CONSULTATION MODAL ─────────────────────────── */}

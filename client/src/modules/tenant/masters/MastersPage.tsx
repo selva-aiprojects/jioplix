@@ -226,7 +226,7 @@ export default function MastersPage() {
     <div className="dashboard-layout" style={{ display: 'flex', minHeight: '100vh', background: '#f4f6fb' }}>
       <Sidebar />
       <main style={{ flex: 1, padding: '32px' }}>
-        <Header title="Master Data Management" />
+        <Header title="Hospital Settings" />
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '24px', marginBottom: '40px' }}>
           <div style={{ maxWidth: '800px' }}>
@@ -234,7 +234,7 @@ export default function MastersPage() {
               <div style={{ width: '42px', height: '42px', borderRadius: '14px', background: '#e0e7ff', display: 'grid', placeItems: 'center', color: '#4338ca' }}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
               </div>
-              <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Clinical Catalog Context</p>
+              <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Master Data Catalog</p>
             </div>
             <p style={{ margin: 0, color: '#64748b', lineHeight: 1.7, fontSize: '15px' }}>Review and manage the centralized clinical operational masters aligned with the active hospital workflow.</p>
           </div>

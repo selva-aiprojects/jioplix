@@ -59,7 +59,7 @@ export default function BedManagementPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content" style={{ padding: '32px' }}>
-        <Header title="IPD Bed Management & Occupancy" />
+        <Header title="Bed Management" />
 
         {/* KPI strip */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '28px' }}>

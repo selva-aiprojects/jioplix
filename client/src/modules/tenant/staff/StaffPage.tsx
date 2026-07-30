@@ -6,6 +6,7 @@ import { API_BASE_URL as API_BASE } from "../../../config/api";
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [newStaff, setNewStaff] = useState({ name: '', email: '', role: 'doctor', password: '' });
 
@@ -18,6 +19,7 @@ export default function StaffPage() {
       const res = await axios.get(`${API_BASE}/api/hospital/staff`, { headers });
       setStaff(res.data);
     } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   useEffect(() => { fetchStaff(); }, []);
@@ -40,8 +42,12 @@ export default function StaffPage() {
     <div className="dashboard-layout" style={{ display: 'flex', minHeight: '100vh', background: 'var(--app-bg)' }}>
       <Sidebar />
       <main style={{ flex: 1, padding: '32px' }}>
-        <Header title="Hospital Staff Management" />
+        <Header title="Staff & Access" />
 
+        {loading ? (
+          <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading staff records...</div>
+        ) : (
+        <>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
            <div>
               <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', margin: 0 }}>Employee Master</h2>
@@ -112,6 +118,8 @@ export default function StaffPage() {
                  </form>
               </div>
            </div>
+        )}
+        </>
         )}
       </main>
     </div>

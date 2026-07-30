@@ -39,7 +39,7 @@ export default function ClinicalAnalyticsDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading) return <div style={{ display: 'grid', placeItems: 'center', height: '100vh', background: 'var(--app-bg)', fontSize: '18px', fontWeight: 800, color: '#4f46e5' }}>Synchronizing Live Clinical Intelligence...</div>;
+  if (loading) return <div style={{ display: 'grid', placeItems: 'center', height: '100vh', background: 'var(--app-bg)', fontSize: '18px', fontWeight: 800, color: '#4f46e5' }}>Loading clinical analytics...</div>;
   
   const metrics = data?.metrics || { consultations: 0, waitTime: 0, emergencies: 0, revenue: 0 };
 
@@ -135,7 +135,7 @@ export default function ClinicalAnalyticsDashboard() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Clinical Command Analytics" />
+        <Header title="Clinical Intelligence Hub" />
 
         <div style={{ margin: '24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>

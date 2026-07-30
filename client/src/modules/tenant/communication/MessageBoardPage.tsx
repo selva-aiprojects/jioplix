@@ -40,7 +40,7 @@ export default function MessageBoardPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Hospital Message Board" />
+        <Header title="Message Board" />
 
         <div style={{ maxWidth: '800px' }}>
           <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', marginBottom: '32px' }}>

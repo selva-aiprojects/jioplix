@@ -38,7 +38,7 @@ export default function LabBillingQueue() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Laboratory Billing Center" />
+        <Header title="Lab Billing" />
 
         <div className="manage-card" style={{ background: 'white', borderRadius: '32px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
            <div style={{ padding: '32px', background: 'var(--app-bg)', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

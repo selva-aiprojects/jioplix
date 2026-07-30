@@ -112,13 +112,13 @@ export default function OPDQueuePage() {
     <div className="dashboard-layout" style={{ backgroundColor: '#f8fafc', display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}>
       <Sidebar />
       <main className="main-content" style={{ padding: isMobile ? '16px' : '32px', flex: 1, width: '100%' }}>
-        <Header title="Live OPD Patient Queue" />
+        <Header title="Consultation Management" />
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '40px', marginTop: '8px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#ecfdf5', display: 'grid', placeItems: 'center', color: '#059669', boxShadow: '0 10px 15px -3px rgba(5, 150, 105, 0.1)' }}>
             <Clock size={24} />
           </div>
-          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Clinical Flow Surveillance</p>
+          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Outpatient Consultation Queue</p>
           <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Real-time monitoring of patient wait times, triage status, and consultation throughput across all OPD clinics.</p>
         </div>
 

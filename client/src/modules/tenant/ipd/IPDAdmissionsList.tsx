@@ -39,7 +39,7 @@ export default function IPDAdmissionsList() {
     <div className="dashboard-layout" style={{ display: 'flex', minHeight: '100vh', background: 'var(--app-bg)' }}>
       <Sidebar />
       <main className="main-content">
-        <Header title="IPD Active Census" />
+        <Header title="IPD Census & Daycare" />
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '40px', gap: '20px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>

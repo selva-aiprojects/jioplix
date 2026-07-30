@@ -307,14 +307,14 @@ export default function PatientRegisterPage() {
     <div className="dashboard-layout" style={{ backgroundColor: "var(--app-bg)", display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh" }}>
       <Sidebar />
       <main className="main-content" style={{ padding: isMobile ? "16px" : "32px", flex: 1, width: "100%" }}>
-        <Header title="Patient Registry & Archives" />
+        <Header title="Patient Registry & Clinical Archive" />
 
         {/* Hero Section */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "12px", marginBottom: "32px", marginTop: "8px" }}>
           <div style={{ width: "48px", height: "48px", borderRadius: "16px", background: "#eff6ff", display: "grid", placeItems: "center", color: "#2563eb", boxShadow: "0 10px 15px -3px rgba(37, 99, 235, 0.1)" }}>
             <User size={24} />
           </div>
-          <p style={{ margin: 0, color: "#475569", fontSize: "13px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px" }}>Clinical Directory Hub</p>
+          <p style={{ margin: 0, color: "#475569", fontSize: "13px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px" }}>Patient Information Management</p>
           <p style={{ margin: 0, color: "#64748b", fontSize: "15px", fontWeight: 500, maxWidth: "600px" }}>
             Search complete patient records, view clinical histories, check primary doctor relationships, and instantly schedule appointments.
           </p>

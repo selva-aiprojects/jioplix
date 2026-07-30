@@ -15,6 +15,7 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
   const [activePrescription, setActivePrescription] = useState<any>(null);
   const [inventory, setInventory] = useState<any[]>([]);
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
@@ -44,6 +45,7 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
       setPrescriptions(preRes.data);
       setInventory(invRes.data);
     } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   const startDispensing = async (pres: any) => {
@@ -232,13 +234,17 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
     <div className={embedded ? "" : "dashboard-layout"} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', minHeight: embedded ? 'auto' : '100vh', background: 'var(--app-bg)' }}>
       {!embedded && <Sidebar />}
       <main className="main-content" style={{ flex: 1, padding: embedded ? '0' : isMobile ? '16px' : '32px', width: '100%' }}>
-        {!embedded && <Header title="Clinical Prescription Queue" />}
+        {!embedded && <Header title="Prescription Queue" />}
 
+        {loading ? (
+          <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading prescriptions...</div>
+        ) : (
+        <>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '40px', marginTop: '8px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#fffbeb', color: '#f59e0b', display: 'grid', placeItems: 'center', boxShadow: '0 10px 15px -3px rgba(245, 158, 11, 0.1)' }}>
             <Pill size={24} />
           </div>
-          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Medication Fulfillment Command</p>
+          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Prescription Fulfillment</p>
           <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Real-time surveillance of clinical prescriptions, dispensing logistics, and inventory synchronization.</p>
         </div>
 
@@ -437,6 +443,8 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
              </aside>
            )}
         </div>
+          </>
+        )}
       </main>
     </div>
   );

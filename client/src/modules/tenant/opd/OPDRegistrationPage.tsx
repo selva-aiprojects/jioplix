@@ -67,6 +67,7 @@ export default function OPDRegistrationPage() {
   const [discoveredAbhas, setDiscoveredAbhas] = useState<any[]>([]);
   const [abhaMobile, setAbhaMobile] = useState("");
   const [abhaMessage, setAbhaMessage] = useState("");
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     fetchInitialData();
@@ -78,6 +79,7 @@ export default function OPDRegistrationPage() {
   });
 
   const fetchInitialData = async () => {
+    setDataLoading(true);
     const h = getHeaders();
     // Fetch doctors independently
     try {
@@ -99,6 +101,7 @@ export default function OPDRegistrationPage() {
       const configRes = await axios.get(`${API_BASE}/api/abha/config`, { headers: h });
       setIsAbhaMandatory(configRes.data.isAbhaMandatory);
     } catch (err) { console.warn("ABHA config fetch failed"); }
+    finally { setDataLoading(false); }
   };
 
   const handleLiveSearch = async (val: string) => {
@@ -366,13 +369,17 @@ export default function OPDRegistrationPage() {
     <div className="dashboard-layout" style={{ backgroundColor: '#f1f5f9', display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}>
       <Sidebar />
       <main className="main-content" style={{ padding: isMobile ? '16px' : '32px', flex: 1, width: '100%' }}>
-        <Header title="OPD Professional Intake Desk" />
+        <Header title="Vital Assessment & Patient Intake" />
 
+        {dataLoading ? (
+          <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading registration data...</div>
+        ) : (
+        <>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '40px', marginTop: '8px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#e0e7ff', display: 'grid', placeItems: 'center', color: '#4338ca', boxShadow: '0 10px 15px -3px rgba(67, 56, 202, 0.1)' }}>
             <UserPlus size={24} />
           </div>
-          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>High-Velocity Registration</p>
+          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Vital Signs & Registration</p>
           <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Streamlined clinical intake and token management for efficient outpatient operations.</p>
         </div>
 
@@ -809,6 +816,8 @@ export default function OPDRegistrationPage() {
              </div>
           </div>
         </div>
+          </>
+        )}
       </main>
     </div>
   );

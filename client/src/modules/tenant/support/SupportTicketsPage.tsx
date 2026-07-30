@@ -9,6 +9,7 @@ const CATEGORIES = ["Tier Upgrade", "Technical Bug", "Feature Request", "Billing
 export default function SupportTicketsPage() {
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   
   const tenantId = localStorage.getItem("tenant") || ""; 
@@ -30,10 +31,12 @@ export default function SupportTicketsPage() {
   }, []);
 
   const fetchTickets = async () => {
+    setDataLoading(true);
     try {
       const res = await axios.get(`${API_BASE}/api/nexus/tickets?tenantId=${tenantId}`, { headers: getHeaders() });
       setTickets(Array.isArray(res.data) ? res.data : []);
     } catch (err) { console.error("Ticketing fetch failed:", err); }
+    finally { setDataLoading(false); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,8 +61,12 @@ export default function SupportTicketsPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Help & Support Desk" />
+        <Header title="Help & Support" />
 
+        {dataLoading ? (
+          <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading tickets...</div>
+        ) : (
+        <>
         <div style={{ maxWidth: '1000px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
             <div>
@@ -175,6 +182,8 @@ export default function SupportTicketsPage() {
             )}
           </div>
         </div>
+          </>
+        )}
       </main>
     </div>
   );

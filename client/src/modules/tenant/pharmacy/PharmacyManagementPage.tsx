@@ -57,7 +57,7 @@ export default function PharmacyManagementPage() {
     <div className="dashboard-layout" style={{ background: 'var(--app-bg)', minHeight: '100vh' }}>
       <Sidebar />
       <main className="main-content" style={{ padding: '32px' }}>
-        <Header title="Integrated Pharmacy Management" />
+        <Header title="Pharmacy Hub" />
 
         <div style={{ display: 'flex', gap: '32px', marginTop: '8px' }}>
           {/* Navigation Sidebar-like menu inside the content for local module navigation */}

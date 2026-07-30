@@ -241,13 +241,13 @@ export default function DoctorAvailabilityPage() {
     <div className="dashboard-layout" style={{ backgroundColor: "var(--app-bg)", display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh" }}>
       <Sidebar />
       <main className="main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: isMobile ? '16px' : '32px', width: '100%' }}>
-        <Header title="Clinical Scheduling Command" />
+        <Header title="Doctor Availability & Scheduling" />
 
         {loading ? (
           <div className="loading-state" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#475569' }}>Initializing Clinical Engine...</div>
-              <div style={{ fontSize: '13px', color: '#94a3b8' }}>Loading scheduling data & physician records</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#475569' }}>Loading physician schedules...</div>
+              <div style={{ fontSize: '13px', color: '#94a3b8' }}>Syncing availability rules, leave records, and appointments</div>
             </div>
           </div>
         ) : (<>

@@ -64,7 +64,7 @@ export default function PharmacyDashboard({ embedded = false }: { embedded?: boo
     <div className={embedded ? "" : "dashboard-layout"} style={{ display: 'flex', minHeight: embedded ? 'auto' : '100vh', background: 'var(--app-bg)' }}>
       {!embedded && <Sidebar />}
       <main style={{ flex: 1, padding: embedded ? '0' : '32px' }}>
-        {!embedded && <Header title="Pharmacy Intelligence Dashboard" />}
+        {!embedded && <Header title="Pharmacy Dashboard" />}
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '40px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#eff6ff', color: '#2563eb', display: 'grid', placeItems: 'center', boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.1)' }}>

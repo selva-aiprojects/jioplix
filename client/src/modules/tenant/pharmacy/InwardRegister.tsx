@@ -10,6 +10,7 @@ export default function InwardRegister({ embedded = false }: { embedded?: boolea
   const [medicines, setMedicines] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const { showToast } = useToast();
 
   const [newEntry, setNewEntry] = useState({
@@ -54,6 +55,7 @@ export default function InwardRegister({ embedded = false }: { embedded?: boolea
       setSuppliers(supRes.data || []);
       setMedicines(medRes.data || []);
     } catch (err) { console.error(err); }
+    finally { setDataLoading(false); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,6 +84,10 @@ export default function InwardRegister({ embedded = false }: { embedded?: boolea
 
   return (
     <div style={{ padding: embedded ? '0' : '32px' }}>
+      {dataLoading ? (
+        <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading inward register...</div>
+      ) : (
+      <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
            <h2 style={{ margin: 0, fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -245,7 +251,9 @@ export default function InwardRegister({ embedded = false }: { embedded?: boolea
             </form>
           </div>
         </div>
-      )}
+          )}
+          </>
+        )}
     </div>
   );
 }

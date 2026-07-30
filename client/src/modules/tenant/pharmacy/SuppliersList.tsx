@@ -5,6 +5,7 @@ import { Truck, Plus, Mail, Phone, MapPin } from 'lucide-react';
 
 export default function SuppliersList({ embedded = false }: { embedded?: boolean }) {
   const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [newSupplier, setNewSupplier] = useState({ name: '', contact_person: '', email: '', phone: '', address: '' });
 
@@ -28,6 +29,7 @@ export default function SuppliersList({ embedded = false }: { embedded?: boolean
         { id: '2', name: 'Nexus Medical Supplies', contact_person: 'Jane Smith', email: 'jane@nexus.com', phone: '+987654321', address: 'Mumbai, India' }
       ]);
     }
+    finally { setLoading(false); }
   };
 
   const handleAddSupplier = async (e: React.FormEvent) => {
@@ -48,6 +50,10 @@ export default function SuppliersList({ embedded = false }: { embedded?: boolean
 
   return (
     <div style={{ padding: embedded ? '0' : '32px', background: 'var(--app-bg)', minHeight: '100vh' }}>
+      {loading ? (
+        <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading suppliers...</div>
+      ) : (
+      <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
           <h2 style={{ margin: 0, fontWeight: 900, fontSize: '24px', color: '#0f172a' }}>Supplier Directory</h2>
@@ -113,6 +119,8 @@ export default function SuppliersList({ embedded = false }: { embedded?: boolean
              </form>
           </div>
         </div>
+        )}
+        </>
       )}
     </div>
   );

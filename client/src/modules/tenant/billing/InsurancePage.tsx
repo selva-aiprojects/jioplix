@@ -13,6 +13,7 @@ export default function InsurancePage() {
   const [plans, setPlans] = useState<any[]>([]);
   const [patientMappings, setPatientMappings] = useState<any[]>([]);
   const [patients, setPatients] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [showProvModal, setShowProvModal] = useState(false);
   const [showPlanModal, setShowPlanModal] = useState(false);
@@ -47,6 +48,7 @@ export default function InsurancePage() {
       setPatientMappings(mapRes.data);
       setPatients(patRes.data);
     } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   const handleAddProvider = async (e: any) => {
@@ -95,11 +97,15 @@ export default function InsurancePage() {
       <main className="main-content">
         <Header title="Insurance & TPA Management" />
         
+        {loading ? (
+          <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading insurance data...</div>
+        ) : (
+        <>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '40px', marginTop: '8px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#e0f2fe', color: '#0ea5e9', display: 'grid', placeItems: 'center', boxShadow: '0 10px 15px -3px rgba(14, 165, 233, 0.1)' }}>
             <Shield size={24} />
           </div>
-          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Claims & Settlements Control</p>
+          <p style={{ margin: 0, color: '#475569', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Claims & Settlements</p>
           <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Unified command center for multi-TPA pre-authorizations, insurance claim tracking, and financial settlements.</p>
         </div>
 
@@ -353,6 +359,8 @@ export default function InsurancePage() {
               </form>
             </div>
           </div>
+          )}
+          </>
         )}
       </main>
     </div>

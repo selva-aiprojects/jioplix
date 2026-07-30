@@ -29,7 +29,7 @@ export default function SecureConfigsPage() {
   const update = (key: string, val: any) => setSettings((s: any) => ({ ...s, [key]: val }));
 
   if (loading) return (
-    <div className="dashboard-layout"><Sidebar /><main className="main-content"><Header title="Tenant Sensitive Configs" /><div style={{padding:24}}>Loading...</div></main></div>
+    <div className="dashboard-layout"><Sidebar /><main className="main-content"><Header title="Tenant Sensitive Configs" /><div style={{padding:24}}>Loading secure configurations...</div></main></div>
   );
 
   return (
