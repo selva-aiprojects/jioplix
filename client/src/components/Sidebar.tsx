@@ -151,25 +151,25 @@ export default function Sidebar() {
   
   const { groups, ungroupped } = useMemo(() => {
     let dm = JSON.parse(localStorage.getItem("userMenus") || "[]");
-    
+    const role = (localStorage.getItem("role") || "").toLowerCase();
+    const isAdmin = role.includes("admin") || role.includes("nexus");
 
-    
     if (!dm.some((m: any) => m.label.toLowerCase().includes("patient scheduling"))) {
       dm.push({ label: "Patient Scheduling", path: "/tenant/appointments", icon: "Calendar", sort_order: 5 });
     }
     if (!dm.some((m: any) => m.label.toLowerCase().includes("advanced scheduling console"))) {
       dm.push({ label: "Advanced Scheduling Console", path: "/tenant/appointments/doctor-calendar?tab=Weekly+Rules", icon: "CalendarDays", sort_order: 9 });
     }
-    if (!dm.some((m: any) => m.label.toLowerCase().includes("clinical & financial archives"))) {
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("clinical & financial archives"))) {
       dm.push({ label: "Clinical & Financial Archives", path: "/tenant/archives", icon: "History", sort_order: 10 });
     }
     if (!dm.some((m: any) => m.label.toLowerCase().includes("patient register"))) {
       dm.push({ label: "Patient Register", path: "/tenant/clinical/patient-register", icon: "Patient Register", sort_order: 11 });
     }
-    if (!dm.some((m: any) => m.label.toLowerCase().includes("branding settings") || m.label.toLowerCase().includes("branding & ui settings"))) {
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("branding settings") || m.label.toLowerCase().includes("branding & ui settings"))) {
       dm.push({ label: "Branding Settings", path: "/tenant/settings", icon: "Palette", sort_order: 12 });
     }
-    if (!dm.some((m: any) => m.label.toLowerCase().includes("tenant sensitive configs") || m.label.toLowerCase().includes("tenant configurations"))) {
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("tenant sensitive configs") || m.label.toLowerCase().includes("tenant configurations"))) {
       dm.push({ label: "Tenant Sensitive Configs", path: "/tenant/settings/secure", icon: "ShieldCheck", sort_order: 13 });
     }
 

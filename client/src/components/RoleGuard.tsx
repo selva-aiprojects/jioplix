@@ -6,25 +6,70 @@ interface RoleGuardProps {
   moduleName?: string;
 }
 
-/**
- * RoleGuard — wraps any page component and blocks access
- * if the logged-in user's role is not in allowedRoles.
- *
- * Usage:
- *   <RoleGuard allowedRoles={['lab_assistant', 'admin']} moduleName="Laboratory">
- *     <LabManagementPage />
- *   </RoleGuard>
- */
+const roleLinks: Record<string, { label: string; path: string }[]> = {
+  receptionist: [
+    { label: "OPD Registration", path: "/tenant/opd/registration" },
+    { label: "OPD Queue", path: "/tenant/opd/queue" },
+    { label: "Patient Register", path: "/tenant/clinical/patient-register" },
+    { label: "Appointments", path: "/tenant/appointments" },
+    { label: "Lab Billing", path: "/tenant/lab/billing" },
+    { label: "Support Tickets", path: "/tenant/support/tickets" },
+    { label: "Billing Desk", path: "/billing" },
+  ],
+  doctor: [
+    { label: "Consultation Desk", path: "/tenant/opd/consultation" },
+    { label: "OPD Queue", path: "/tenant/opd/queue" },
+    { label: "Appointments", path: "/tenant/appointments" },
+    { label: "Patient Register", path: "/tenant/clinical/patient-register" },
+    { label: "Laboratory", path: "/tenant/lab" },
+    { label: "Pharmacy", path: "/tenant/pharmacy" },
+    { label: "Prescription Queue", path: "/tenant/pharmacy/queue" },
+  ],
+  nurse: [
+    { label: "OPD Queue", path: "/tenant/opd/queue" },
+    { label: "Consultation Desk", path: "/tenant/opd/consultation" },
+    { label: "IPD Beds", path: "/tenant/ipd/beds" },
+    { label: "IPD Admissions", path: "/tenant/ipd/admissions" },
+    { label: "Patient Register", path: "/tenant/clinical/patient-register" },
+    { label: "Appointments", path: "/tenant/appointments" },
+  ],
+  lab_assistant: [
+    { label: "Laboratory", path: "/tenant/lab" },
+    { label: "AI Lab Assistant", path: "/tenant/lab/ai" },
+    { label: "OPD Queue", path: "/tenant/opd/queue" },
+  ],
+  lab_tech: [
+    { label: "Laboratory", path: "/tenant/lab" },
+    { label: "AI Lab Assistant", path: "/tenant/lab/ai" },
+  ],
+  pharmacist: [
+    { label: "Pharmacy Dashboard", path: "/tenant/pharmacy/dashboard" },
+    { label: "Stock Inventory", path: "/tenant/pharmacy/inventory" },
+    { label: "Prescription Queue", path: "/tenant/pharmacy/queue" },
+    { label: "Pharmacy Hub", path: "/tenant/pharmacy" },
+  ],
+  staff: [
+    { label: "Clinical Archives", path: "/tenant/archives" },
+    { label: "Lab Billing", path: "/tenant/lab/billing" },
+    { label: "Billing Desk", path: "/billing" },
+  ],
+  billing: [
+    { label: "Billing Desk", path: "/billing" },
+    { label: "Clinical Archives", path: "/tenant/archives" },
+    { label: "Lab Billing", path: "/tenant/lab/billing" },
+  ],
+};
+
 export default function RoleGuard({ allowedRoles, children, moduleName = "This Module" }: RoleGuardProps) {
   const navigate = useNavigate();
-  // Normalize to lowercase — backend seeds roles as uppercase (ADMIN, DOCTOR, etc.)
   const role = (localStorage.getItem("role") || "").toLowerCase();
   const normalizedAllowedRoles = allowedRoles.map(r => r.toLowerCase());
 
-  // Admin always bypasses all role guards
   if (role.includes("admin") || normalizedAllowedRoles.includes(role)) {
     return <>{children}</>;
   }
+
+  const suggestions = roleLinks[role] || [];
 
   return (
     <div style={{
@@ -42,9 +87,8 @@ export default function RoleGuard({ allowedRoles, children, moduleName = "This M
         borderRadius: '32px',
         border: '1px solid rgba(255, 255, 255, 0.08)',
         backdropFilter: 'blur(20px)',
-        maxWidth: '500px'
+        maxWidth: '540px'
       }}>
-        {/* Lock Icon */}
         <div style={{
           width: '80px', height: '80px',
           background: 'rgba(239, 68, 68, 0.1)',
@@ -72,7 +116,7 @@ export default function RoleGuard({ allowedRoles, children, moduleName = "This M
           background: 'rgba(59, 130, 246, 0.08)',
           borderRadius: '16px',
           border: '1px solid rgba(59, 130, 246, 0.15)',
-          marginBottom: '32px',
+          marginBottom: '24px',
           textAlign: 'left'
         }}>
           <p style={{ margin: '0 0 12px', fontSize: '11px', fontWeight: 800, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
@@ -81,16 +125,52 @@ export default function RoleGuard({ allowedRoles, children, moduleName = "This M
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ color: '#64748b', fontSize: '13px' }}>Your Role</span>
             <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '13px', textTransform: 'capitalize' }}>
-              {role.replace('_', ' ') || 'Unknown'}
+              {role.replace(/_/g, ' ')}
             </span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#64748b', fontSize: '13px' }}>Required Roles</span>
             <span style={{ color: '#10b981', fontWeight: 700, fontSize: '13px' }}>
-              {allowedRoles.map(r => r.replace('_', ' ')).join(', ')}
+              {allowedRoles.map(r => r.replace(/_/g, ' ')).join(', ')}
             </span>
           </div>
         </div>
+
+        {suggestions.length > 0 && (
+          <div style={{
+            padding: '20px 24px',
+            background: 'rgba(16, 185, 129, 0.06)',
+            borderRadius: '16px',
+            border: '1px solid rgba(16, 185, 129, 0.12)',
+            marginBottom: '24px',
+            textAlign: 'left'
+          }}>
+            <p style={{ margin: '0 0 12px', fontSize: '11px', fontWeight: 800, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              Available Pages for {role.replace(/_/g, ' ')}
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {suggestions.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => navigate(s.path)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    background: 'rgba(16, 185, 129, 0.08)',
+                    color: '#6ee7b7',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div style={{ display: 'flex', gap: '12px' }}>
           <button

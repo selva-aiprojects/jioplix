@@ -81,12 +81,13 @@ function App() {
         <Route path="/mobile" element={<MobilePreviewPortal />} />
 
         {/* Tenant Routes */}
-        <Route path="/tenant/dashboard" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Dashboard"><DashboardPage /></RoleGuard>} />
+        <Route path="/tenant/dashboard" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Dashboard"><DashboardPage /></RoleGuard>} />
         <Route path="/tenant/analytics" element={<RoleGuard allowedRoles={['admin']} moduleName="Clinical Analytics"><ClinicalAnalyticsDashboard /></RoleGuard>} />
         <Route path="/tenant/reports" element={<RoleGuard allowedRoles={['admin']} moduleName="Reports"><ClinicalAnalyticsDashboard /></RoleGuard>} />
         <Route path="/tenant/masters" element={<RoleGuard allowedRoles={['admin']} moduleName="Hospital Settings"><MastersPage /></RoleGuard>} />
         <Route path="/tenant/opd/registration" element={<RoleGuard allowedRoles={['admin', 'receptionist']} moduleName="OPD Registration"><OPDRegistrationPage /></RoleGuard>} />
         <Route path="/tenant/opd/queue" element={<RoleGuard allowedRoles={['admin', 'doctor', 'receptionist', 'nurse']} moduleName="OPD Queue"><OPDQueuePage /></RoleGuard>} />
+        <Route path="/tenant/opd/doctor-queue" element={<Navigate to="/tenant/opd/queue" replace />} />
         <Route path="/tenant/opd/consultation" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Consultation Desk"><OPDConsultationPage /></RoleGuard>} />
         <Route path="/tenant/clinical/patient-register" element={<RoleGuard allowedRoles={['admin', 'receptionist', 'doctor', 'nurse']} moduleName="Patient Register"><PatientRegisterPage /></RoleGuard>} />
         <Route path="/tenant/appointments" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Appointments"><TenantAppointmentsPage /></RoleGuard>} />
