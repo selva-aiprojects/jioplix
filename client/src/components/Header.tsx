@@ -60,7 +60,7 @@ export default function Header({ title, compact = false }: HeaderProps) {
       display: 'flex', 
       flexDirection: isMobile ? 'column' : 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justify: 'space-between',
       padding: compact ? '12px 24px' : '24px 32px',
       width: '100%',
       marginBottom: compact ? '12px' : '32px',
@@ -100,12 +100,15 @@ export default function Header({ title, compact = false }: HeaderProps) {
         <p style={{ margin: compact ? '2px 0 6px' : '4px 0 12px', color: 'rgba(255, 255, 255, 0.8)', fontSize: compact ? '12px' : '14px', fontWeight: 500 }}>
           {getTaglineForPage(title)}
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginTop: '2px' }}>
-          <span className="tenant-brand-text" style={{ fontSize: '13px' }}>
-            {tenantName}
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginTop: '4px' }}>
+          <div className="magic-tenant-badge" style={{ padding: '4px 12px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 6px #34d399', animation: 'pulse 2s infinite' }} />
+            <span className="magic-tenant-text" style={{ fontSize: '11px' }}>
+              🏥 {tenantName}
+            </span>
+          </div>
           <div style={{ width: '1px', height: '14px', background: 'rgba(255, 255, 255, 0.15)' }} />
-          <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', fontWeight: 600 }}>{userName}</span>
+          <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', fontWeight: 600 }}>{userName}</span>
         </div>
       </div>
 

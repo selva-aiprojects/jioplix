@@ -645,6 +645,12 @@ export default function DashboardPage() {
         }}>
           {/* Left Welcome Text */}
           <div style={{ zIndex: 2 }}>
+            <div className="magic-tenant-badge" style={{ marginBottom: '10px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 8px #34d399', animation: 'pulse 2s infinite' }} />
+              <span className="magic-tenant-text">
+                🏥 {tenantName}
+              </span>
+            </div>
             <h1 style={{ 
               fontSize: '28px', 
               fontWeight: 900, 
@@ -656,27 +662,6 @@ export default function DashboardPage() {
             <p style={{ margin: '4px 0 12px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontWeight: 500 }}>
               Let's make today a productive day for HIMS. Here is your clinic status overview.
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.75)', fontWeight: 700 }}>Session: {userName}</span>
-              <div style={{ width: '1px', height: '12px', background: 'rgba(255, 255, 255, 0.2)' }} />
-              <span style={{ 
-                fontSize: '10px', 
-                fontWeight: 800, 
-                color: '#ffffff', 
-                backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                padding: '2px 8px',
-                borderRadius: '6px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}>
-                <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#34d399' }} />
-                {tenantName}
-              </span>
-            </div>
           </div>
 
           {/* Right Action Blocks */}
