@@ -21,6 +21,7 @@ import IPDBedMap from './modules/tenant/ipd/IPDBedMap';
 import IPDAdmissionsList from './modules/tenant/ipd/IPDAdmissionsList';
 import IPDPatientView from './modules/tenant/ipd/IPDPatientView';
 import AdmissionDeskPage from './modules/tenant/ipd/AdmissionDeskPage';
+import DischargeSummariesPage from './modules/tenant/ipd/DischargeSummariesPage';
 import LabManagementPage from './modules/tenant/lab/LabManagementPage';
 import LabBillingQueue from './modules/tenant/lab/LabBillingQueue';
 import AILabAssistant from './modules/tenant/lab/AILabAssistant';
