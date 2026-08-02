@@ -1,0 +1,21 @@
+{
+  "watch": [
+    "backend/src",
+    "backend/index.js",
+    "index.js",
+    "api"
+  ],
+  "ext": "js,mjs,cjs,json,sql",
+  "ignore": [
+    "client/*",
+    "client/**/*",
+    "node_modules/*",
+    ".git/*",
+    ".vercel/*",
+    "test-results/*",
+    "uploads/*",
+    "*.log",
+    "*.apk"
+  ],
+  "delay": 1000
+}
