@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import BrandLogo from "../../components/BrandLogo";
 import { API_BASE_URL as API_BASE } from "../../config/api";
 import { applyTheme, setNamespacedItem } from "../../config/theme";
+import { Shield, Building2, Lock, Mail, Eye, EyeOff, Sparkles, Activity, CheckCircle, ArrowRight } from "lucide-react";
 
 const RESERVED_SUBDOMAINS = ['dev', 'staging', 'stage', 'test', 'www', 'api', 'app', 'mail', 'admin', 'support', 'help', 'docs', 'status', 'uat', 'qa'];
 
@@ -14,6 +15,32 @@ function getSubdomain(): string | null {
   if (parts.length >= 3 && !parts[0].startsWith("www") && !RESERVED_SUBDOMAINS.includes(parts[0])) return parts[0];
   return null;
 }
+
+const LOGIN_CSS = `
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(20px, -20px) scale(1.1); }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  .login-input-box {
+    transition: all 0.25s ease;
+    border: 1.5px solid #e2e8f0;
+  }
+  .login-input-box:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    background: #ffffff !important;
+  }
+  .role-pill-btn {
+    transition: all 0.2s ease;
+  }
+  .role-pill-btn:hover {
+    transform: translateY(-1px);
+  }
+`;
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -27,8 +54,13 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
   useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = LOGIN_CSS;
+    document.head.appendChild(style);
+
     axios.get(`${API_BASE}/api/nexus/tenants/public`).then(res => {
       const list: any[] = res.data;
       setFacilities(list);
@@ -42,14 +74,13 @@ export default function LoginPage() {
         }
       }
     });
-  }, []);
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-
-  useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      document.head.removeChild(style);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -61,7 +92,7 @@ export default function LoginPage() {
       const { data } = await axios.post(`${API_BASE}/api/auth/login`, {
         email, password, type, facility, landingPage
       });
-      
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("tenant", data.tenantId);
       localStorage.setItem("tenantName", data.tenantName || "Jioplix Hospital");
@@ -71,11 +102,11 @@ export default function LoginPage() {
       localStorage.setItem("role", data.role || "");
       localStorage.setItem("userName", data.userName || "User");
       localStorage.setItem("userId", data.userId || "");
-      
+
       // Save dynamic RBAC data
       localStorage.setItem("userMenus", JSON.stringify(data.menus || []));
       localStorage.setItem("userPermissions", JSON.stringify(data.permissions || []));
-      
+
       // Save branding configuration (namespaced per-tenant)
       if (data.uiSettings) {
         if (data.uiSettings.primaryDark) setNamespacedItem('theme_primary_dark', data.uiSettings.primaryDark);
@@ -89,191 +120,272 @@ export default function LoginPage() {
         if (data.uiSettings.sidebarText) setNamespacedItem('theme_sidebar_text', data.uiSettings.sidebarText);
       }
 
-      // Apply theme immediately after saving to localStorage
       applyTheme();
-
       navigate(data.landingPage);
     } catch (err: any) {
-      setError(err.response?.data?.error || "Login failed");
+      setError(err.response?.data?.error || "Login failed. Please verify your credentials.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-      fontFamily: "'Inter', sans-serif"
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justify: 'center',
+      background: 'radial-gradient(ellipse 80% 80% at 50% -20%, rgba(37, 99, 235, 0.12) 0%, rgba(248, 250, 252, 1) 100%)',
+      padding: '20px',
+      fontFamily: "'Plus Jakarta Sans', sans-serif"
     }}>
-      <div style={{ 
-        width: isMobile ? '90%' : '1040px', 
-        maxWidth: '1040px',
-        height: isMobile ? 'auto' : '640px',
-        display: 'flex', 
+      <div style={{
+        width: '100%',
+        maxWidth: '1080px',
+        minHeight: isMobile ? 'auto' : '660px',
+        display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
-        background: 'white', 
-        borderRadius: isMobile ? '24px' : '32px', 
+        background: '#ffffff',
+        borderRadius: '32px',
         overflow: 'hidden',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)',
-        margin: isMobile ? '20px 0' : '0'
+        boxShadow: '0 32px 64px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(226, 232, 240, 0.8)',
       }}>
-        {!isMobile && (
-          <div style={{ 
-            flex: 1, 
-            background: 'linear-gradient(135deg, #003870 0%, #0056A8 100%)', 
-            padding: '60px', 
-            display: 'flex', 
-            flexDirection: 'column',
-            justifyContent: 'center',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            {/* Subtle Background Pattern */}
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.1, pointerEvents: 'none' }}>
-              <svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" /></svg>
-            </div>
 
-            <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* LEFT PANEL: Sleek Dark Glass & Floating Orbs */}
+        {!isMobile && (
+          <div style={{
+            flex: 1.1,
+            background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)',
+            padding: '56px',
+            display: 'flex',
+            flexDirection: 'column',
+            justify: 'space-between',
+            position: 'relative',
+            overflow: 'hidden',
+            color: 'white'
+          }}>
+            {/* Glowing Orb Effects */}
+            <div style={{
+              position: 'absolute', top: '-60px', left: '-60px', width: '260px', height: '260px',
+              borderRadius: '50%', background: 'radial-gradient(circle, rgba(37, 99, 235, 0.4), transparent 70%)',
+              filter: 'blur(30px)', animation: 'orbFloat 8s ease-in-out infinite'
+            }} />
+            <div style={{
+              position: 'absolute', bottom: '-80px', right: '-80px', width: '300px', height: '300px',
+              borderRadius: '50%', background: 'radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 70%)',
+              filter: 'blur(40px)', animation: 'orbFloat 10s ease-in-out infinite'
+            }} />
+
+            {/* Grid Pattern Overlay */}
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px)', backgroundSize: '36px 36px', pointerEvents: 'none' }} />
+
+            <div style={{ position: 'relative', zIndex: 2 }}>
               <div style={{ marginBottom: '40px' }}>
-                 <BrandLogo size="md" forcePlatformLogo />
+                <BrandLogo size="lg" forcePlatformLogo />
               </div>
 
-              <h1 style={{ color: 'white', fontSize: '48px', fontWeight: 900, lineHeight: 1.1, marginBottom: '24px', fontFamily: "'Poppins', sans-serif" }}>
-                Precision Care <br/>
-                <span style={{ background: 'linear-gradient(135deg, #00C897, #0078FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Intelligence Platform.</span>
-              </h1>
-              
-              <p style={{ color: '#94a3b8', fontSize: '18px', lineHeight: 1.6, marginBottom: '48px', maxWidth: '400px' }}>
-                Empowering healthcare providers with modern EMR solutions and unified hospital orchestration.
-              </p>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px', background: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', marginBottom: '20px' }}>
+                <Sparkles size={14} color="#60a5fa" />
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#93c5fd' }}>Jioplix AI Clinical Suite 2026</span>
+              </div>
 
-              <div style={{ display: 'flex', gap: '20px' }}>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94b8d4', fontSize: '12px', fontWeight: 700 }}>
-                    <div style={{ width: '6px', height: '6px', background: '#00C897', borderRadius: '50%' }}></div>
-                    HIPAA COMPLIANT
-                 </div>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94b8d4', fontSize: '12px', fontWeight: 700 }}>
-                    <div style={{ width: '6px', height: '6px', background: '#0078FF', borderRadius: '50%' }}></div>
-                    SOC 2 CERTIFIED
-                 </div>
+              <h1 style={{ fontSize: '38px', fontWeight: 900, lineHeight: 1.15, letterSpacing: '-1px', margin: '0 0 16px 0' }}>
+                Precision Care &amp; Hospital Intelligence.
+              </h1>
+
+              <p style={{ color: '#94a3b8', fontSize: '15px', lineHeight: 1.6, maxWidth: '380px', margin: 0 }}>
+                Unified EMR, OPD Voice Dictation, Executive WhatsApp Automation &amp; Dynamic Hourly Bed Billing.
+              </p>
+            </div>
+
+            {/* Status Badges */}
+            <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.25)', color: '#34d399', fontSize: '11px', fontWeight: 700 }}>
+                  <CheckCircle size={13} /> ABDM Certified
+                </span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', background: 'rgba(59, 130, 246, 0.12)', border: '1px solid rgba(59, 130, 246, 0.25)', color: '#60a5fa', fontSize: '11px', fontWeight: 700 }}>
+                  <Shield size={13} /> HIPAA &amp; FHIR R4
+                </span>
+              </div>
+
+              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
+                Powered by <strong style={{ color: '#38bdf8' }}>Cybelinx Technologies</strong>
               </div>
             </div>
           </div>
         )}
 
-        {/* RIGHT: Login Form */}
-        <div style={{ 
-          width: isMobile ? '100%' : '480px', 
-          padding: isMobile ? '40px 24px' : '60px', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          justifyContent: 'center' 
+        {/* RIGHT PANEL: Modern Authentication Form */}
+        <div style={{
+          flex: 1,
+          padding: isMobile ? '32px 24px' : '48px 56px',
+          display: 'flex',
+          flexDirection: 'column',
+          justify: 'center',
+          background: '#ffffff'
         }}>
           {isMobile && (
-            <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
               <BrandLogo size="md" forcePlatformLogo />
             </div>
           )}
-          <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>Welcome Back</h2>
-            <p style={{ color: '#64748b', fontSize: '14px' }}>Sign in to access your healthcare workspace</p>
+
+          <div style={{ marginBottom: '28px' }}>
+            <h2 style={{ fontSize: '26px', fontWeight: 900, color: '#0f172a', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>
+              Welcome Back
+            </h2>
+            <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>
+              Sign in to your clinical workspace
+            </p>
           </div>
 
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Workspace Type</label>
-              <select 
-                value={type} 
-                onChange={(e: any) => setType(e.target.value)}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #f1f5f9', background: 'var(--app-bg)', fontWeight: 600, outline: 'none' }}
-              >
-                <option value="tenant">Hospital Facility</option>
-                <option value="nexus">Nexus Administration</option>
-              </select>
-            </div>
+          {/* Workspace Type Selector */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', padding: '4px', background: '#f1f5f9', borderRadius: '14px', marginBottom: '24px' }}>
+            <button
+              type="button"
+              className="role-pill-btn"
+              onClick={() => setType("tenant")}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                padding: '10px', borderRadius: '10px', border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer',
+                background: type === "tenant" ? '#ffffff' : 'transparent',
+                color: type === "tenant" ? '#0f172a' : '#64748b',
+                boxShadow: type === "tenant" ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'
+              }}
+            >
+              <Building2 size={15} color={type === "tenant" ? '#2563eb' : '#64748b'} /> Hospital Facility
+            </button>
 
+            <button
+              type="button"
+              className="role-pill-btn"
+              onClick={() => setType("nexus")}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                padding: '10px', borderRadius: '10px', border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer',
+                background: type === "nexus" ? '#ffffff' : 'transparent',
+                color: type === "nexus" ? '#0f172a' : '#64748b',
+                boxShadow: type === "nexus" ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'
+              }}
+            >
+              <Shield size={15} color={type === "nexus" ? '#059669' : '#64748b'} /> Nexus Admin
+            </button>
+          </div>
+
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            
+            {/* Hospital Facility Selector */}
             {type === "tenant" && (
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Select Hospital</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Hospital Facility *
+                </label>
+
                 {domainFacility && domainName ? (
-                  <div style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #0d9488', background: '#f0fdfa', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ color: '#0d9488', fontSize: '14px' }}>&#10003;</span>
-                    {domainName}
-                    <span style={{ marginLeft: 'auto', fontSize: '11px', color: '#64748b' }}>via domain</span>
+                  <div style={{ padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #10b981', background: '#ecfdf5', fontWeight: 700, color: '#065f46', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckCircle size={16} color="#10b981" />
+                    <span>{domainName}</span>
+                    <span style={{ marginLeft: 'auto', fontSize: '11px', color: '#047857', background: '#d1fae5', padding: '2px 8px', borderRadius: '6px' }}>Auto Domain</span>
                   </div>
                 ) : (
-                  <select 
-                    required
-                    value={facility} 
-                    onChange={(e) => setFacility(e.target.value)}
-                    style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #f1f5f9', background: 'var(--app-bg)', fontWeight: 600, outline: 'none' }}
-                  >
-                    <option value="">Choose your facility...</option>
-                    {facilities.map(f => <option key={f.id} value={f.id}>{f.name}{f.domain ? ` (${f.domain})` : ''}</option>)}
-                  </select>
+                  <div className="login-input-box" style={{ borderRadius: '12px', background: '#f8fafc', overflow: 'hidden' }}>
+                    <select
+                      required
+                      value={facility}
+                      onChange={(e) => setFacility(e.target.value)}
+                      style={{ width: '100%', padding: '12px 16px', border: 'none', background: 'transparent', fontWeight: 600, fontSize: '14px', outline: 'none', color: '#0f172a' }}
+                    >
+                      <option value="">Select your facility...</option>
+                      {facilities.map(f => (
+                        <option key={f.id} value={f.id}>{f.name}{f.domain ? ` (${f.domain})` : ''}</option>
+                      ))}
+                    </select>
+                  </div>
                 )}
               </div>
             )}
 
+            {/* Email Input */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Email Address</label>
-              <input 
-                required
-                type="email" 
-                placeholder="name@hospital.com" 
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #f1f5f9', background: 'var(--app-bg)', fontWeight: 600, outline: 'none' }}
-              />
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Email Address *
+              </label>
+              <div className="login-input-box" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 14px', borderRadius: '12px', background: '#f8fafc' }}>
+                <Mail size={18} color="#94a3b8" />
+                <input
+                  required
+                  type="email"
+                  placeholder="doctor@hospital.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  style={{ width: '100%', padding: '12px 0', border: 'none', background: 'transparent', fontWeight: 600, fontSize: '14px', outline: 'none', color: '#0f172a' }}
+                />
+              </div>
             </div>
 
+            {/* Password Input */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Password</label>
-                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ background: 'none', border: 'none', color: '#0d9488', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
-                  {showPassword ? "HIDE" : "SHOW"}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Password *
+                </label>
+              </div>
+              <div className="login-input-box" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 14px', borderRadius: '12px', background: '#f8fafc' }}>
+                <Lock size={18} color="#94a3b8" />
+                <input
+                  required
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  style={{ width: '100%', padding: '12px 0', border: 'none', background: 'transparent', fontWeight: 600, fontSize: '14px', outline: 'none', color: '#0f172a' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#64748b' }}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              <input 
-                required
-                type={showPassword ? "text" : "password"} 
-                placeholder="••••••••" 
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #f1f5f9', background: 'var(--app-bg)', fontWeight: 600, outline: 'none' }}
-              />
             </div>
 
-            {error && <div style={{ color: '#ef4444', fontSize: '13px', fontWeight: 600, textAlign: 'center', padding: '12px', background: '#fef2f2', borderRadius: '10px' }}>{error}</div>}
+            {error && (
+              <div style={{ color: '#b91c1c', fontSize: '13px', fontWeight: 600, padding: '12px', background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '10px', textAlign: 'center' }}>
+                {error}
+              </div>
+            )}
 
-            <button 
-              type="submit" 
+            {/* Submit Button */}
+            <button
+              type="submit"
               disabled={loading}
-              style={{ 
-                width: '100%', 
-                padding: '16px', 
-                borderRadius: '14px', 
-                background: 'linear-gradient(135deg, #0056A8 0%, #003870 100%)', 
-                color: 'white', 
-                border: 'none', 
-                fontWeight: 800, 
-                fontSize: '16px', 
-                cursor: 'pointer',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                boxShadow: '0 4px 14px rgba(0, 86, 168, 0.35)',
-                fontFamily: "'Poppins', sans-serif"
+              style={{
+                width: '100%',
+                padding: '16px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%)',
+                color: 'white',
+                border: 'none',
+                fontWeight: 800,
+                fontSize: '15px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: '0 8px 20px rgba(30, 64, 175, 0.3)',
+                transition: 'all 0.2s ease',
+                marginTop: '4px'
               }}
             >
-              {loading ? "AUTHENTICATING..." : "SIGN IN TO WORKSPACE"}
+              {loading ? (
+                "Authenticating Session..."
+              ) : (
+                <>Sign In to Workspace <ArrowRight size={18} /></>
+              )}
             </button>
-
-            <div style={{ textAlign: 'center', marginTop: '10px' }}>
-               <p style={{ fontSize: '12px', color: '#94b8d4', fontWeight: 600 }}>POWERED BY <span style={{ color: '#00C897', fontWeight: 900 }}>CYBELINX</span></p>
-            </div>
           </form>
         </div>
       </div>
