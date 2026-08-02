@@ -280,19 +280,19 @@ const AIChatbot: React.FC = () => {
         .chatbot-grip:active { cursor: grabbing; }
         .listening-btn { animation: pulse-red 1.5s infinite; background-color: #ef4444 !important; }
         .pill-btn {
-          background: #eff6ff;
-          color: #2563eb;
-          border: 1px solid #bfdbfe;
+          background: #e0f2fe;
+          color: #0056A8;
+          border: 1px solid #7dd3fc;
           border-radius: 20px;
           padding: 5px 11px;
           font-size: 11px;
-          font-weight: 500;
+          font-weight: 600;
           cursor: pointer;
           transition: all 0.2s ease;
           white-space: nowrap;
         }
         .pill-btn:hover {
-          background: #dbeafe;
+          background: #bae6fd;
           transform: translateY(-1px);
         }
       `}</style>
@@ -305,11 +305,11 @@ const AIChatbot: React.FC = () => {
             width: '390px',
             height: '550px',
             borderRadius: '20px',
-            boxShadow: '0 14px 48px rgba(0,0,0,0.22)',
+            boxShadow: '0 14px 48px rgba(0,86,168,0.25)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #cbd5e1',
             marginBottom: '16px'
           }}>
             {/* Header */}
@@ -317,7 +317,7 @@ const AIChatbot: React.FC = () => {
               onMouseDown={onMouseDown}
               className="chatbot-grip"
               style={{
-                background: 'linear-gradient(135deg, #4f46e5 0%, #2563eb 100%)',
+                background: 'linear-gradient(135deg, #0056A8 0%, #0078FF 100%)',
                 padding: '14px 16px',
                 display: 'flex',
                 alignItems: 'center',
@@ -326,13 +326,13 @@ const AIChatbot: React.FC = () => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', pointerEvents: 'none' }}>
-                <GripVertical size={16} style={{ opacity: 0.7 }} />
+                <GripVertical size={16} style={{ opacity: 0.8 }} />
                 <MessageSquare size={18} />
                 <div>
                   <div style={{ fontWeight: '700', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     Jioplix AI <Sparkles size={13} style={{ color: '#fbbf24' }} />
                   </div>
-                  <div style={{ fontSize: '10px', opacity: 0.85 }}>⠿ Drag to reposition window</div>
+                  <div style={{ fontSize: '10px', opacity: 0.9 }}>⠿ Drag to reposition window</div>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -340,7 +340,7 @@ const AIChatbot: React.FC = () => {
                   onMouseDown={e => e.stopPropagation()}
                   onClick={resetChat}
                   title="Reset conversation"
-                  style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '4px', opacity: 0.85 }}
+                  style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '4px', opacity: 0.9 }}
                 >
                   <RotateCcw size={16} />
                 </button>
@@ -362,10 +362,10 @@ const AIChatbot: React.FC = () => {
               {messages.map((m, i) => (
                 <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
                   <div style={{
-                    backgroundColor: m.role === 'user' ? '#2563eb' : '#ffffff',
+                    background: m.role === 'user' ? 'linear-gradient(135deg, #0056A8 0%, #0078FF 100%)' : '#ffffff',
                     color: m.role === 'user' ? '#ffffff' : '#334155',
                     padding: '10px 14px', borderRadius: '14px', fontSize: '13px', maxWidth: '88%',
-                    boxShadow: m.role === 'user' ? 'none' : '0 1px 3px rgba(0,0,0,0.06)',
+                    boxShadow: m.role === 'user' ? '0 4px 14px rgba(0,120,255,0.25)' : '0 1px 3px rgba(0,0,0,0.06)',
                     border: m.role === 'user' ? 'none' : '1px solid #e2e8f0', lineHeight: 1.5,
                     whiteSpace: 'pre-line'
                   }}>
@@ -419,9 +419,9 @@ const AIChatbot: React.FC = () => {
               )}
 
               {isLoading && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '12px', fontStyle: 'italic', padding: '6px 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0056A8', fontSize: '12px', fontStyle: 'italic', padding: '6px 0', fontWeight: 600 }}>
                   <Loader2 size={14} className="animate-spin" />
-                  Analyzing clinical context & dual AI engine...
+                  Analyzing clinical context & Jioplix AI...
                 </div>
               )}
             </div>
@@ -434,7 +434,7 @@ const AIChatbot: React.FC = () => {
                     backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px',
                     padding: '3px 8px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '6px'
                   }}>
-                    <FileText size={12} style={{ color: '#2563eb' }} />
+                    <FileText size={12} style={{ color: '#0056A8' }} />
                     <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{att.name}</span>
                     <X size={12} style={{ cursor: 'pointer', color: '#94a3b8' }} onClick={() => removeAttachment(idx)} />
                   </div>
@@ -493,10 +493,10 @@ const AIChatbot: React.FC = () => {
                   onClick={handleSend}
                   disabled={isLoading || (!input.trim() && attachments.length === 0)}
                   style={{
-                    padding: '9px 13px', backgroundColor: '#2563eb', color: 'white',
+                    padding: '9px 13px', background: 'linear-gradient(135deg, #0056A8 0%, #0078FF 100%)', color: 'white',
                     border: 'none', borderRadius: '10px', cursor: 'pointer',
                     opacity: (isLoading || (!input.trim() && attachments.length === 0)) ? 0.5 : 1,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,120,255,0.3)'
                   }}
                 >
                   <Send size={16} />
@@ -518,18 +518,18 @@ const AIChatbot: React.FC = () => {
                 top: '-22px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                background: 'rgba(79,70,229,0.15)',
+                background: 'rgba(0, 120, 255, 0.15)',
                 borderRadius: '6px 6px 0 0',
                 padding: '3px 12px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '3px',
                 whiteSpace: 'nowrap',
-                border: '1px solid rgba(79,70,229,0.2)'
+                border: '1px solid rgba(0, 86, 168, 0.25)'
               }}
             >
-              <GripVertical size={13} style={{ color: '#4f46e5' }} />
-              <span style={{ fontSize: '9px', color: '#4f46e5', fontWeight: 700 }}>DRAG</span>
+              <GripVertical size={13} style={{ color: '#0056A8' }} />
+              <span style={{ fontSize: '9px', color: '#0056A8', fontWeight: 700 }}>DRAG</span>
             </div>
 
             <button
@@ -540,10 +540,10 @@ const AIChatbot: React.FC = () => {
               style={{
                 width: '64px',
                 height: '64px',
-                background: 'linear-gradient(135deg, #4f46e5 0%, #2563eb 100%)',
+                background: 'linear-gradient(135deg, #0056A8 0%, #0078FF 100%)',
                 borderRadius: '50%',
                 border: 'none',
-                boxShadow: '0 8px 28px rgba(37,99,235,0.4)',
+                boxShadow: '0 8px 28px rgba(0, 86, 168, 0.45)',
                 color: 'white',
                 cursor: isDragging ? 'grabbing' : 'pointer',
                 display: 'flex',
