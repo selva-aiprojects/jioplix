@@ -15,6 +15,8 @@ const publicRoutes = require("../modules/public");
 
 const hospitalRoutes = require("../modules/hospital");
 
+const remindersRoutes = require("../modules/communication/reminders");
+
 const router = express.Router();
 
 router.use("/auth", authRoutes);
@@ -29,6 +31,7 @@ router.use("/insurance", auth, tenant, insuranceRoutes);
 router.use("/doctor", auth, tenant, doctorRoutes);
 router.use("/doctors", auth, tenant, doctorRoutes);
 router.use("/abha", auth, tenant, abhaRoutes);
+router.use("/reminders", auth, tenant, remindersRoutes);
 // Public endpoints that require tenant identification but no user auth
 router.use('/public', tenant, publicRoutes);
 router.get("/health-db", async (req, res) => {

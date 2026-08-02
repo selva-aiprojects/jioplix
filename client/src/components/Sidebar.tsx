@@ -70,6 +70,8 @@ const normalizePath = (label: string, originalPath: string) => {
     "hospital settings": "/tenant/masters",
     "staff & access": "/tenant/staff",
     "message board": "/tenant/communication",
+    "whatsapp reminders": "/tenant/reminders",
+    "follow-up center": "/tenant/reminders",
     "clinical archives": "/tenant/archives",
     "clinical & financial archives": "/tenant/archives",
     "patient register": "/tenant/clinical/patient-register",

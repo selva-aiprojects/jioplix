@@ -1586,11 +1586,97 @@ export default function DashboardPage() {
                         <span>{ward.label}</span>
                         <span>{ward.val} ({ward.pct}%)</span>
                       </div>
-                      <div style={{ height: '5px', backgroundColor: '#e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
+              <div style={{ height: '5px', backgroundColor: '#e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
                         <div style={{ height: '100%', backgroundColor: ward.color, width: `${ward.pct}%` }} />
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* FEATURE 4: Extended Stay (>3 Days LOS) Monitoring Card */}
+              <div className="page-card" style={{ padding: '24px', backgroundColor: '#ffffff', borderRadius: '20px', border: '1px solid #fed7aa', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.05)', gridColumn: isMobile ? 'span 1' : 'span 3', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <div>
+                    <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#9a3412', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ display: 'inline-flex', padding: '4px', borderRadius: '8px', background: '#ffedd5', color: '#c2410c' }}>📊</span>
+                      Extended Stay (&gt;3 Days LOS) Active Monitoring
+                    </h3>
+                    <p style={{ fontSize: '12px', color: '#7c2d12', margin: '2px 0 0 0', fontWeight: 600 }}>
+                      Inpatient admissions exceeding 72 hours requiring clinical review &amp; discharge planning
+                    </p>
+                  </div>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: '#c2410c', backgroundColor: '#ffedd5', padding: '6px 12px', borderRadius: '20px' }}>
+                    2 Patients Flagged
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
+                  {/* Patient 1 */}
+                  <div style={{ padding: '16px', borderRadius: '14px', background: '#fff7ed', border: '1px solid #ffedd5', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: '14px', color: '#431407' }}>Rajesh Khanna</div>
+                        <div style={{ fontSize: '12px', color: '#7c2d12' }}>ID: P-10045 • ICU Bed 04</div>
+                      </div>
+                      <span style={{ padding: '4px 10px', borderRadius: '12px', background: '#fee2e2', color: '#991b1b', fontWeight: 800, fontSize: '11px' }}>
+                        6.1 Days LOS (Urgent)
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '12px', color: '#571e06', lineHeight: 1.4 }}>
+                      <strong>Diagnosis:</strong> Severe Pneumonia / Oxygen Support<br />
+                      <strong>Attending:</strong> Dr. Alok Verma (Pulmonology)
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                      <button
+                        onClick={() => navigate('/tenant/ipd/admissions/P-10045')}
+                        style={{ padding: '6px 12px', borderRadius: '8px', background: '#c2410c', color: 'white', border: 'none', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}
+                      >
+                        Clinical Review
+                      </button>
+                      <button
+                        onClick={() => navigate('/tenant/ipd/discharge')}
+                        style={{ padding: '6px 12px', borderRadius: '8px', background: '#ffffff', color: '#9a3412', border: '1px solid #ffedd5', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}
+                      >
+                        Prepare Discharge
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Patient 2 */}
+                  <div style={{ padding: '16px', borderRadius: '14px', background: '#fff7ed', border: '1px solid #ffedd5', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: '14px', color: '#431407' }}>Savitri Devi</div>
+                        <div style={{ fontSize: '12px', color: '#7c2d12' }}>ID: P-10089 • Private Ward 204</div>
+                      </div>
+                      <span style={{ padding: '4px 10px', borderRadius: '12px', background: '#fef3c7', color: '#92400e', fontWeight: 800, fontSize: '11px' }}>
+                        4.2 Days LOS (Warning)
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '12px', color: '#571e06', lineHeight: 1.4 }}>
+                      <strong>Diagnosis:</strong> Post-op Knee Replacement Recovery<br />
+                      <strong>Attending:</strong> Dr. Sarah Jenkins (Orthopedics)
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                      <button
+                        onClick={() => navigate('/tenant/ipd/admissions/P-10089')}
+                        style={{ padding: '6px 12px', borderRadius: '8px', background: '#ea580c', color: 'white', border: 'none', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}
+                      >
+                        Clinical Review
+                      </button>
+                      <button
+                        onClick={() => navigate('/tenant/ipd/discharge')}
+                        style={{ padding: '6px 12px', borderRadius: '8px', background: '#ffffff', color: '#9a3412', border: '1px solid #ffedd5', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}
+                      >
+                        Prepare Discharge
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 

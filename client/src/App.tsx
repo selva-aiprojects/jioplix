@@ -46,9 +46,9 @@ import NexusTicketingPage from './modules/nexus/NexusTicketingPage';
 import NexusCommunicationPage from './modules/nexus/NexusCommunicationPage';
 import NexusUtilizationPage from './modules/nexus/NexusUtilizationPage';
 import InsurancePage from './modules/tenant/billing/InsurancePage';
-import DischargeSummariesPage from './modules/tenant/ipd/DischargeSummariesPage';
 import MessageBoardPage from './modules/tenant/communication/MessageBoardPage';
 import MailManagementPage from './modules/tenant/communication/MailManagementPage';
+import ReminderTrackerPage from './modules/tenant/communication/ReminderTrackerPage';
 import { useEffect } from 'react';
 import SettingsPage from './modules/tenant/SettingsPage';
 import SecureConfigsPage from './modules/tenant/SecureConfigsPage';
@@ -116,6 +116,8 @@ function App() {
         <Route path="/tenant/support" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Support"><SupportTicketsPage /></RoleGuard>} />
         <Route path="/tenant/communication" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Message Board"><MessageBoardPage /></RoleGuard>} />
         <Route path="/tenant/mail" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Mail Management"><MailManagementPage /></RoleGuard>} />
+        <Route path="/tenant/reminders" element={<RoleGuard allowedRoles={['admin', 'doctor', 'receptionist', 'nurse']} moduleName="Executive Follow-up"><ReminderTrackerPage /></RoleGuard>} />
+        <Route path="/reminders" element={<Navigate to="/tenant/reminders" replace />} />
         <Route path="/tenant/support" element={<Navigate to="/tenant/support/tickets" replace />} />
         <Route path="/tenant/support/tickets" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Support"><SupportTicketsPage /></RoleGuard>} />
         <Route path="/billing" element={<RoleGuard allowedRoles={['admin', 'receptionist', 'staff', 'billing']} moduleName="Billing Desk"><BillingPage /></RoleGuard>} />
