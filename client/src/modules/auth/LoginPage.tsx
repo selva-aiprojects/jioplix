@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import BrandLogo from "../../components/BrandLogo";
 import { API_BASE_URL as API_BASE } from "../../config/api";
 import { applyTheme, setNamespacedItem } from "../../config/theme";
-import { Shield, Building2, Lock, Mail, Eye, EyeOff, Sparkles, Activity, CheckCircle, ArrowRight } from "lucide-react";
+import { Shield, Building2, Lock, Mail, Eye, EyeOff, Sparkles, CheckCircle, ArrowRight } from "lucide-react";
 
 const RESERVED_SUBDOMAINS = ['dev', 'staging', 'stage', 'test', 'www', 'api', 'app', 'mail', 'admin', 'support', 'help', 'docs', 'status', 'uat', 'qa'];
 
@@ -21,13 +21,9 @@ const LOGIN_CSS = `
     0%, 100% { transform: translate(0px, 0px) scale(1); }
     50% { transform: translate(20px, -20px) scale(1.1); }
   }
-  @keyframes pulseGlow {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.8; }
-  }
   .login-input-box {
     transition: all 0.25s ease;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid #cbd5e1;
   }
   .login-input-box:focus-within {
     border-color: #2563eb;
@@ -62,7 +58,7 @@ export default function LoginPage() {
     document.head.appendChild(style);
 
     axios.get(`${API_BASE}/api/nexus/tenants/public`).then(res => {
-      const list: any[] = res.data;
+      const list: any[] = res.data || [];
       setFacilities(list);
       const subdomain = getSubdomain();
       if (subdomain) {
@@ -71,8 +67,15 @@ export default function LoginPage() {
           setFacility(matched.id);
           setDomainFacility(matched.id);
           setDomainName(matched.name);
+          return;
         }
       }
+      // Default to first facility if not set
+      if (list.length > 0) {
+        setFacility(list[0].id);
+      }
+    }).catch(err => {
+      console.error("[AUTH] Error loading facilities:", err);
     });
 
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -87,10 +90,17 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
+
+    const selectedFacility = facility || (facilities.length > 0 ? facilities[0].id : "");
+
     try {
       const landingPage = type === "nexus" ? "/nexus/dashboard" : "/tenant/dashboard";
       const { data } = await axios.post(`${API_BASE}/api/auth/login`, {
-        email, password, type, facility, landingPage
+        email: email.trim(),
+        password,
+        type,
+        facility: selectedFacility,
+        landingPage
       });
 
       localStorage.setItem("token", data.token);
@@ -123,6 +133,7 @@ export default function LoginPage() {
       applyTheme();
       navigate(data.landingPage);
     } catch (err: any) {
+      console.error("[LOGIN_ERROR]", err);
       setError(err.response?.data?.error || "Login failed. Please verify your credentials.");
     } finally {
       setLoading(false);
@@ -132,23 +143,26 @@ export default function LoginPage() {
   return (
     <div style={{
       minHeight: '100vh',
+      width: '100vw',
       display: 'flex',
       alignItems: 'center',
-      justify: 'center',
+      justifyContent: 'center',
       background: 'radial-gradient(ellipse 80% 80% at 50% -20%, rgba(37, 99, 235, 0.12) 0%, rgba(248, 250, 252, 1) 100%)',
-      padding: '20px',
+      padding: '24px',
+      boxSizing: 'border-box',
       fontFamily: "'Plus Jakarta Sans', sans-serif"
     }}>
       <div style={{
         width: '100%',
         maxWidth: '1080px',
-        minHeight: isMobile ? 'auto' : '660px',
+        margin: '0 auto',
+        minHeight: isMobile ? 'auto' : '640px',
         display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
         background: '#ffffff',
         borderRadius: '32px',
         overflow: 'hidden',
-        boxShadow: '0 32px 64px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(226, 232, 240, 0.8)',
+        boxShadow: '0 32px 64px -12px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(226, 232, 240, 0.8)',
       }}>
 
         {/* LEFT PANEL: Sleek Dark Glass & Floating Orbs */}
@@ -222,7 +236,7 @@ export default function LoginPage() {
           padding: isMobile ? '32px 24px' : '48px 56px',
           display: 'flex',
           flexDirection: 'column',
-          justify: 'center',
+          justifyContent: 'center',
           background: '#ffffff'
         }}>
           {isMobile && (
