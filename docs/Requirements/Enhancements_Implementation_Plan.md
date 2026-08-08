@@ -3,32 +3,33 @@
 **Scope:** Helpdesk, Analytics, Mobile App, AI Assistant, HRMS, Payroll, Procurement, CRM, Finance, Inventory
 **Platform:** Jioplix HIMS (PostgreSQL schema-per-tenant, Express backend, React+Vite web, Flutter mobile)
 **Last Updated:** 2026-08-08
+**Status:** ✅ Modules 1–2 & 5–10 (Helpdesk, Analytics, HRMS, Payroll, Procurement, CRM, Finance, Inventory) **implemented end-to-end** — see `progress.md` milestones 11–18. Remaining: Module 3 (Mobile), Module 4 (AI Assistant).
 
 ---
 
 ## 0. Executive Summary & Sequencing
 
-| Priority | Module | Effort | Recommended order |
-|---|---|---|---|
-| 1 | Helpdesk | Low–Medium | **Phase A** (1–2 wks) |
-| 2 | Analytics | Medium | **Phase A** (2–3 wks) |
-| 3 | AI Assistant | High | **Phase B** (start with 3 high-ROI use cases, 3–4 wks) |
-| 4 | Mobile App | High | **Phase C** (4–6 wks, parallelizable) |
-| 5 | HRMS | Medium | **Phase D** (2–3 wks) |
-| 6 | Payroll | Low–Medium | **Phase D** (2 wks) |
-| 7 | Procurement | Medium | **Phase D** (2–3 wks) |
-| 8 | CRM (Patient) | Medium | **Phase E** (2–3 wks) |
-| 9 | Finance (Billing) | Medium–High | **Phase E** (3 wks) |
-| 10 | Inventory (Pharmacy) | Medium | **Phase E** (2–3 wks) |
+| Priority | Module | Effort | Recommended order | Status |
+|---|---|---|---|---|
+| 1 | Helpdesk | Low–Medium | **Phase A** (1–2 wks) | ✅ Done |
+| 2 | Analytics | Medium | **Phase A** (2–3 wks) | ✅ Done |
+| 3 | AI Assistant | High | **Phase B** (start with 3 high-ROI use cases, 3–4 wks) | ⏳ Planned |
+| 4 | Mobile App | High | **Phase C** (4–6 wks, parallelizable) | ⏳ Planned (Flutter skeleton + biometric auth exists) |
+| 5 | HRMS | Medium | **Phase D** (2–3 wks) | ✅ Done |
+| 6 | Payroll | Low–Medium | **Phase D** (2 wks) | ✅ Done |
+| 7 | Procurement | Medium | **Phase D** (2–3 wks) | ✅ Done |
+| 8 | CRM (Patient) | Medium | **Phase E** (2–3 wks) | ✅ Done |
+| 9 | Finance (Billing) | Medium–High | **Phase E** (3 wks) | ✅ Done |
+| 10 | Inventory (Pharmacy) | Medium | **Phase E** (2–3 wks) | ✅ Done |
 
 **Sequencing rationale:** Helpdesk and Analytics are pure wins — they surface existing data (tickets, metrics) through new screens and need no AI or new platform. AI Assistant must wait for the Analytics layer so its operational queries/alerts read from trusted aggregates. Mobile reuses the same backend endpoints and benefits from the finalized Analytics/AI APIs. **HRMS, Payroll, Procurement (Phase D)** are staffing-and-cost domains built on existing shard data. **CRM, Finance, Inventory (Phase E)** sit on top of the OPD/billing/pharmacy core — Finance consumes the Payroll `doctor-share` driver, Inventory's auto-reorder hooks into Procurement PRs, and CRM's consent/identifier data feeds dedup at registration. Phases D/E can overlap with B/C where backend endpoints are stable.
 
 **Phasing:**
-- **Phase A (v14):** Helpdesk + Analytics (operational dashboards + doctor/specialty performance + predictive alerts).
-- **Phase B (v15):** AI Assistant — conversational operational queries, discharge summary draft polish, drug-interaction + differential-diagnosis panel.
-- **Phase C (v16):** Mobile — Doctor app first, then Nurse, then Admin, then offline capability.
-- **Phase D (v17):** HRMS (rosters, credentials, attendance, on-call) → Payroll (incentives, allowances, statutory) → Procurement (rate contracts, auto-PR, GRN+QC, three-way match).
-- **Phase E (v18):** CRM (smart scheduling, dedup, referrals/corporate, DPDP consent, family accounts) → Finance (packages, surgery billing, insurance eligibility, GST/e-invoice, payments) → Inventory (indents, narcotics, auto-reorder, expiry/dead-stock analytics).
+- **Phase A (v14):** ✅ Helpdesk + Analytics (operational dashboards + doctor/specialty performance + predictive alerts).
+- **Phase B (v15):** ⏳ AI Assistant — conversational operational queries, discharge summary draft polish, drug-interaction + differential-diagnosis panel.
+- **Phase C (v16):** ⏳ Mobile — Doctor app first, then Nurse, then Admin, then offline capability.
+- **Phase D (v17):** ✅ HRMS (rosters, credentials, attendance, on-call) → Payroll (incentives, allowances, statutory) → Procurement (rate contracts, auto-PR, GRN+QC, three-way match).
+- **Phase E (v18):** ✅ CRM (smart scheduling, dedup, referrals/corporate, DPDP consent, family accounts) → Finance (packages, surgery billing, insurance eligibility, GST/e-invoice, payments) → Inventory (indents, narcotics, auto-reorder, expiry/dead-stock analytics).
 
 ---
 
@@ -46,6 +47,8 @@ Every new feature in this codebase must follow these established patterns or it 
 ---
 
 ## 2. Module 1 — Helpdesk (Patient Grievance + Internal Ticketing)
+
+> **✅ Status: IMPLEMENTED (Phase A).** Backend `backend\src\modules\helpdesk` mounted at `/api/helpdesk`; web screens `client\src\modules\tenant\helpdesk` → `/tenant/helpdesk`. H1–H4 done: tables + SLA engine + escalation sweep + Resend emails + RBAC + UI + grievance channel (`PATIENT_GRIEVANCE`) + `/analytics` endpoint.
 
 **Existing state:** SaaS-level `nexus.support_tickets` (open/support-ticket flow with Resend emails) + `client\src\modules\tenant\support\SupportTicketsPage.tsx` + `client\src\modules\nexus\NexusTicketingPage.tsx`. There is **no per-tenant internal ticket system** with categories, SLAs, escalation, or links to patient/equipment/department.
 
@@ -112,6 +115,8 @@ Reuse: `backend\src\modules\public` `POST /patients/:id/complaints` can gain a m
 ---
 
 ## 3. Module 2 — Analytics (Operational Intelligence)
+
+> **✅ Status: IMPLEMENTED (Phase A).** Backend `backend\src\modules\analytics` mounted at `/api/analytics` (opd-load, bed-occupancy, pharmacy-risk, revenue, performance/doctors & specialties, alerts ack/resolve, targets CRUD, alerts/run sweep). Web `client\src\modules\tenant\analytics\AnalyticsPage.tsx` → `/tenant/analytics/ops|performance|alerts`.
 
 **Existing state:** `GET /hospital/metrics/stats` and `GET /hospital/metrics/clinical-command-overview` (in `backend\src\modules\hospital\metrics.js`) already return KPIs, predictive complexity, utilization, ward stats, and a 24h ops feed. `client\src\modules\tenant\analytics\ClinicalAnalyticsDashboard.tsx` (admin-only, 30s poll) + `DashboardPage.tsx` + `PharmacyDashboard.tsx` render them. **Gaps:** no live OPD-load page, no real-time bed occupancy board, no pharmacy stock-out risk scoring, no revenue-vs-target tracking (no target configuration), no doctor/specialty performance screens, no push-style predictive alerts.
 
@@ -280,6 +285,8 @@ Ship **a single Flutter app** (one bundle) that routes to a role-specific home s
 
 ## 7. Module 5 — HRMS (Rosters, Credentials, Attendance, On-Call)
 
+> **✅ Status: IMPLEMENTED (Phase D).** Backend `backend\src\modules\hrms` mounted at `/api/hrms`; web `client\src\modules\tenant\hrms\HrmsPage.tsx` → `/tenant/hrms`. R1–R4 done (roster + conflict detection + swaps, attendance, credentials/privileges, on-call ledger + UI + RBAC menus).
+
 **Existing state:** `users` (staff incl. `specialization`, `department`, `employment_type`, `is_manager`, `vendor_id`), `departments`, `designations`, `specialities`; doctor scheduling (`doctor_schedules`, `doctor_leaves`, `doctor_overrides`, `doctor_status`); `employee_leaves` (CASUAL/Pending flow with approve endpoint); staff CRUD at `backend\src\modules\hospital\index.js` (`/staff`, `/staff/vendors`, `/staff/leaves`); HR recruitment (`resource_requisitions`, `candidates`, `requisition_matches`). **Gaps:** no structured duty roster, no conflict detection, no attendance clocking, no credential/privilege register, no on-call/emergency duty ledger.
 
 ### 7.1 Data Model (per-tenant schema; append to `SHARD_Base_Schema.sql` + ensure-helper)
@@ -344,6 +351,8 @@ RBAC: new permissions `HRMS_MANAGE` (admin/HR), `ROSTER_VIEW` (nurses see own), 
 
 ## 8. Module 6 — Payroll (Incentives, Allowances, Statutory)
 
+> **✅ Status: IMPLEMENTED (Phase D).** Backend `backend\src\modules\payroll` mounted at `/api/payroll`; web `client\src\modules\tenant\payroll\PayrollPage.tsx` → `/tenant/payroll`. P1–P4 done (rules, statutory, run generate/finalize, payslip PDF via `createPayslipPDF`).
+
 **Existing state:** `users` (doctor/staff with `is_manager`, `employment_type`), billing attribution chain `billing_queue` (per-line `source_module`/`source_id`) → `invoices`/`invoice_items` (amount, tax) → encounters carry `doctor_id`; `invoice_items.source_queue_id` links back. Pharmacy dispensing also pushes `billing_queue` rows. **Gaps:** no incentive computation, no allowance rules, no payroll runs, no statutory (PF/ESI/professional tax) config, no payslip output.
 
 ### 8.1 Data Model (per-tenant)
@@ -399,6 +408,8 @@ RBAC: new permissions `HRMS_MANAGE` (admin/HR), `ROSTER_VIEW` (nurses see own), 
 ---
 
 ## 9. Module 7 — Procurement (Rate Contracts, Auto-PR, GRN+QC, Three-Way Match)
+
+> **✅ Status: IMPLEMENTED (Phase D).** Backend `backend\src\modules\procurement` mounted at `/api/procurement`; web `client\src\modules\tenant\procurement\ProcurementPage.tsx` → `/tenant/procurement`. G1–G4 done (rate contracts + compare, PR/PO lifecycle, GRN + QC, three-way match).
 
 **Existing state:** `suppliers` (pharmacy supplier registry + `/masters/suppliers` hub), `medicines` (with stock levels), `pharmacy_inwards` (GRN-style inward receipt with `batch_number`, `expiry_date`, `is_blocked`), `pharmacy_orders` (simple replenishment order — single-line, `status` Ordered/Received, no PO numbering, no QC, no match). **Gaps:** no vendor rate contracts or price comparison, no reorder-level auto PR, no quality-check/quarantine workflow, no three-way match (PO–GRN–Invoice), no multi-line POs.
 
@@ -462,6 +473,8 @@ RBAC: `PROCUREMENT_MANAGE` (admin/purchase), `PROCUREMENT_APPROVE` (accounts for
 
 ## 10. Module 8 — CRM (Patient) — Scheduling, Dedup, Referrals, Consent, Family
 
+> **✅ Status: IMPLEMENTED (Phase E).** Backend `backend\src\modules\crm` mounted at `/api/crm`; web `client\src\modules\tenant\crm\CrmPage.tsx` → `/tenant/crm`. C1–C5 done (identifiers + dedup/merge, groups/links, consents + export, referrals, corporate accounts, slot engine + booking).
+
 **Existing state:** `patients` (`mrn`, name, phone, guardian, medical_history, allergies, `ai_summary`, plus ABHA columns added dynamically); `/api/patients` search/pagination/timeline; ABHA/ABDM module (Aadhaar OTP, UHID discovery, consent via PHR/Aarogya Setu); `appointments` (patient_id, doctor_id, appointment_time, status — single doctor, no location/token); `doctor_availability` + `doctor_schedules` (already carry `location`, `slot_duration`, `consultation_type`); `patient_insurance`/`insurance_patient_mapping` (policy mapping); `visits`. **Gaps:** no multi-doctor/multi-location slot engine with token+time hybrid, no smart dedup (Aadhaar/mobile/UHID), no referral or corporate/TPA account handling, no DPDP consent register, no family/linked accounts.
 
 ### 10.1 Data Model (per-tenant; append to `SHARD_Base_Schema.sql` + ensure-helper)
@@ -524,6 +537,8 @@ Also `ALTER appointments ADD location VARCHAR(255), token_number INT, schedule_r
 
 ## 11. Module 9 — Finance (Billing) — Packages, Surgery Billing, Insurance, GST, Payments
 
+> **✅ Status: IMPLEMENTED (Phase E).** Backend `backend\src\modules\finance` mounted at `/api/finance`; web `client\src\modules\tenant\finance\FinancePage.tsx` → `/tenant/finance`. F1–F5 done (package/surgery billing, advances/refunds/write-offs, GST config + e-invoice sandbox, insurance eligibility + claim tracking, doctor-share report).
+
 **Existing state:** `billing_queue` (per-line `source_module`/`source_id`, tax, discountable), `invoices`/`invoice_items` (tax_percent, discount_amount, insurance split, status), `payments` (amount, payment_mode), insurance module (`providers`, `plans`, `claims`, `patient_insurance`, eligibility guardrails that deduct `remaining_limit` at billing), `treatments` master (`price`, `cpt_code`), `bed_category_rates`. **Gaps:** no package/surgery component billing, no real-time insurance/TPA eligibility + claim status tracking, no GSTIN/e-invoice (IRN) flow, no advance/refund/write-off/partial-payment ledger, no visible doctor-share report (Payroll P2 computes it — Finance just surfaces it).
 
 ### 11.1 Data Model (per-tenant)
@@ -585,6 +600,8 @@ Also `ALTER appointments ADD location VARCHAR(255), token_number INT, schedule_r
 
 ## 12. Module 10 — Inventory (Pharmacy) — Indents, Narcotics, Auto-Reorder, Analytics
 
+> **✅ Status: IMPLEMENTED (Phase E).** Backend `backend\src\modules\inventory` mounted at `/api/inventory`; web `client\src\modules\tenant\inventory\InventoryPage.tsx` → `/tenant/inventory`. I1–I5 done (indents + issues, narcotic register append-only, reorder config + sweep, expiry/dead-stock/consumption analytics).
+
 **Existing state:** `medicines` (stock_quantity, batch_number, expiry_date, unit_price, is_active — **no reorder columns**), `pharmacy_inwards` (batch/expiry, `is_blocked`), `pharmacy_batches`, `pharmacy_dispenses`/`pharmacy_dispense_items`, `pharmacy_orders`, `drug_categories/generics/brands`, `suppliers`; stock Critical/Low visual alerts; FEFO batch decrement at dispense; PharmacyDashboard + CSV import/export. **Gaps:** ward/OT/ICU indent & issue workflow, narcotic & Schedule-H register, consumption-linked auto-reorder, near-expiry & dead-stock analytics (Alert engine in Analytics A4 partially covers expiry — this module makes it operational).
 
 ### 12.1 Data Model (per-tenant; `ALTER` existing + new tables)
@@ -643,10 +660,10 @@ Also `ALTER appointments ADD location VARCHAR(255), token_number INT, schedule_r
 
 ## 13. Suggested Rollout Order (Consolidated)
 
-1. **Week 1–2 (Phase A):** Helpdesk H1–H3 → Analytics A1–A4.
-2. **Week 3–4 (Phase A):** Helpdesk H4 + Analytics A5 (screens) + sweep helper.
-3. **Week 5–7 (Phase B):** AI B1 → B2 → B3.
-4. **Week 8–13 (Phase C):** Mobile M1→M6 (can start M1 in parallel with Phase B once backend endpoints freeze).
-5. **Week 9–16 (Phase D, parallel with C):** HRMS R1–R4 → Payroll P1–P4 (depends on R3 attendance) → Procurement G1–G4.
-6. **Week 14–20 (Phase E, after D):** CRM C1–C5 → Finance F1–F5 (needs Payroll P2 `doctor-share`) → Inventory I1–I5 (needs Procurement G1 `requisitions/generate`).
-7. **Continuous:** update `progress.md` after each milestone; run Playwright regression suite per `docs\Regression_Automation_Guide.md`.
+> **✅ Phases A, D, E complete as of 2026-08-08.** Remaining: Phase B (AI Assistant) and Phase C (Mobile).
+
+1. **Week 1–4 (Phase A):** ✅ Helpdesk H1–H4 + Analytics A1–A5 — delivered.
+2. **Week 5–7 (Phase B):** ⏳ AI B1 → B2 → B3.
+3. **Week 8–13 (Phase C):** ⏳ Mobile M1→M6 (can start M1 in parallel with Phase B once backend endpoints freeze).
+4. **Week 9–20 (Phase D & E):** ✅ HRMS R1–R4 → Payroll P1–P4 → Procurement G1–G4 → CRM C1–C5 → Finance F1–F5 → Inventory I1–I5 — delivered.
+5. **Continuous:** update `progress.md` after each milestone; run Playwright regression suite per `docs\Regression_Automation_Guide.md`.

@@ -67,8 +67,22 @@ const normalizePath = (label: string, originalPath: string) => {
     "stock inventory": "/tenant/pharmacy/inventory",
     "central billing": "/billing",
     "invoicing & billing": "/billing",
+    "opd billing & revenue center": "/billing",
+    "laboratory billing": "/billing",
+    "pharmacy billing": "/billing",
+    "ipd & discharge billing": "/billing",
     "hospital settings": "/tenant/masters",
     "staff & access": "/tenant/staff",
+    "payroll": "/tenant/payroll",
+    "hrms": "/tenant/hrms",
+    "duty roster": "/tenant/hrms",
+    "operations analytics": "/tenant/analytics/ops",
+    "performance insights": "/tenant/analytics/performance",
+    "alert center": "/tenant/analytics/alerts",
+    "procurement": "/tenant/procurement",
+    "patient crm": "/tenant/crm",
+    "finance & compliance": "/tenant/finance",
+    "pharmacy inventory": "/tenant/inventory",
     "message board": "/tenant/communication",
     "whatsapp reminders": "/tenant/reminders",
     "follow-up center": "/tenant/reminders",
@@ -179,12 +193,33 @@ export default function Sidebar() {
     if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("tenant sensitive configs") || m.label.toLowerCase().includes("tenant configurations"))) {
       dm.push({ label: "Tenant Sensitive Configs", path: "/tenant/settings/secure", icon: "ShieldCheck", sort_order: 13 });
     }
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("payroll"))) {
+      dm.push({ label: "Payroll", path: "/tenant/payroll", icon: "Receipt", sort_order: 14 });
+    }
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("hrms") || m.label.toLowerCase().includes("duty roster"))) {
+      dm.push({ label: "HRMS", path: "/tenant/hrms", icon: "ClipboardList", sort_order: 15 });
+    }
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("operations analytics"))) {
+      dm.push({ label: "Operations Analytics", path: "/tenant/analytics/ops", icon: "TrendingUp", sort_order: 16 });
+    }
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("procurement"))) {
+      dm.push({ label: "Procurement", path: "/tenant/procurement", icon: "Box", sort_order: 17 });
+    }
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("patient crm"))) {
+      dm.push({ label: "Patient CRM", path: "/tenant/crm", icon: "Users", sort_order: 18 });
+    }
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("finance & compliance"))) {
+      dm.push({ label: "Finance & Compliance", path: "/tenant/finance", icon: "Receipt", sort_order: 19 });
+    }
+    if (isAdmin && !dm.some((m: any) => m.label.toLowerCase().includes("pharmacy inventory"))) {
+      dm.push({ label: "Pharmacy Inventory", path: "/tenant/inventory", icon: "Box", sort_order: 20 });
+    }
 
     const uniqueMap = new Map();
     dm.forEach((m: any) => {
       const mappedLabel = normalizeLabel(m.label);
       const nPath = normalizePath(m.label, m.path);
-      if (!uniqueMap.has(nPath)) uniqueMap.set(nPath, { ...m, label: mappedLabel, path: nPath });
+      if (!uniqueMap.has(mappedLabel)) uniqueMap.set(mappedLabel, { ...m, label: mappedLabel, path: nPath });
     });
     const pm = Array.from(uniqueMap.values());
 
@@ -227,6 +262,10 @@ export default function Sidebar() {
       "Help & Support", "Ticketing Management System",
       "Tenant Sensitive Configs"
     ];
+    const nonClinicalFlow = [
+      "HRMS", "Payroll", "Operations Analytics", "Performance Insights", "Alert Center",
+      "Procurement", "Patient CRM", "Finance & Compliance", "Pharmacy Inventory"
+    ];
 
     const getItems = (labels: string[]) => pm
       .filter(m => labels.some(l => l.toLowerCase() === m.label.toLowerCase()))
@@ -251,6 +290,7 @@ export default function Sidebar() {
         return true;
       }), icon: FlaskConical },
       { id: 'billing', title: "Finance & Revenue", items: getItems(billingFlow), icon: Receipt },
+      { id: 'nonclinical', title: "Non-Clinical Operations", items: getItems(nonClinicalFlow), icon: Box },
       { id: 'admin', title: "System Administration", items: getItems(adminFlow), icon: Settings }
     ];
 

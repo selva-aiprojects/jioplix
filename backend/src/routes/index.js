@@ -17,6 +17,13 @@ const publicRoutes = require("../modules/public");
 const hospitalRoutes = require("../modules/hospital");
 
 const remindersRoutes = require("../modules/communication/reminders");
+const payrollRoutes = require("../modules/payroll");
+const hrmsRoutes = require("../modules/hrms");
+const analyticsRoutes = require("../modules/analytics");
+const procurementRoutes = require("../modules/procurement");
+const crmRoutes = require("../modules/crm");
+const financeRoutes = require("../modules/finance");
+const inventoryRoutes = require("../modules/inventory");
 
 const router = express.Router();
 
@@ -34,6 +41,13 @@ router.use("/doctors", auth, tenant, doctorRoutes);
 router.use("/abha", auth, tenant, abhaRoutes);
 router.use("/reminders", auth, tenant, remindersRoutes);
 router.use("/helpdesk", auth, tenant, helpdeskRoutes);
+router.use("/payroll", auth, tenant, payrollRoutes);
+router.use("/hrms", auth, tenant, hrmsRoutes);
+router.use("/analytics", auth, tenant, analyticsRoutes);
+router.use("/procurement", auth, tenant, procurementRoutes);
+router.use("/crm", auth, tenant, crmRoutes);
+router.use("/finance", auth, tenant, financeRoutes);
+router.use("/inventory", auth, tenant, inventoryRoutes);
 // Public endpoints that require tenant identification but no user auth
 router.use('/public', tenant, publicRoutes);
 router.get("/health-db", async (req, res) => {

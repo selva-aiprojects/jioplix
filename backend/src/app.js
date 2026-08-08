@@ -365,7 +365,7 @@ app.get("/api/nexus/fix-system-menus", requireNexusAuth, async (req, res) => {
     
     for (const t of tenants) {
       const schema = t.db_name;
-
+      try {
       // 0. Ensure Communications table exists
       await prisma.$executeRawUnsafe(`
         CREATE TABLE IF NOT EXISTS "${schema}".communications (
@@ -388,6 +388,15 @@ app.get("/api/nexus/fix-system-menus", requireNexusAuth, async (req, res) => {
         { label: 'AI Lab Assistant', path: '/tenant/lab/ai', icon: 'Lab', sort: 9, plan: 'professional' },
         { label: 'Consultation Desk', path: '/tenant/opd/consultation', icon: 'Doctor', sort: 5, plan: 'basic' },
         { label: 'Staff & RBAC', path: '/tenant/staff', icon: 'Settings', sort: 20, plan: 'basic' },
+        { label: 'Payroll', path: '/tenant/payroll', icon: 'Receipt', sort: 21, plan: 'basic' },
+        { label: 'HRMS', path: '/tenant/hrms', icon: 'ClipboardList', sort: 22, plan: 'basic' },
+        { label: 'Operations Analytics', path: '/tenant/analytics/ops', icon: 'TrendingUp', sort: 23, plan: 'basic' },
+        { label: 'Performance Insights', path: '/tenant/analytics/performance', icon: 'TrendingUp', sort: 24, plan: 'professional' },
+        { label: 'Alert Center', path: '/tenant/analytics/alerts', icon: 'TrendingUp', sort: 25, plan: 'basic' },
+        { label: 'Procurement', path: '/tenant/procurement', icon: 'Box', sort: 26, plan: 'professional' },
+        { label: 'Patient CRM', path: '/tenant/crm', icon: 'Users', sort: 27, plan: 'professional' },
+        { label: 'Finance & Compliance', path: '/tenant/finance', icon: 'Receipt', sort: 28, plan: 'professional' },
+        { label: 'Pharmacy Inventory', path: '/tenant/inventory', icon: 'Box', sort: 29, plan: 'professional' },
       ];
 
       for (const menu of menusToAdd) {
@@ -424,6 +433,9 @@ app.get("/api/nexus/fix-system-menus", requireNexusAuth, async (req, res) => {
       `);
 
       updated++;
+      } catch (shardErr) {
+        console.error(`Failed to sync menus for shard ${schema}:`, shardErr.message);
+      }
     }
     res.json({ message: `Successfully synchronized system menus and tables for ${updated} shards. Please LOGOUT and LOGIN again to see changes.` });
   } catch (err) {

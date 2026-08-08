@@ -31,6 +31,13 @@ import InventoryList from './modules/tenant/pharmacy/InventoryList';
 import PrescriptionQueue from './modules/tenant/pharmacy/PrescriptionQueue';
 import StaffManagementPage from './modules/tenant/staff/StaffManagementPage';
 import RecruitmentHubPage from './modules/tenant/staff/RecruitmentHubPage';
+import PayrollPage from './modules/tenant/payroll/PayrollPage';
+import HrmsPage from './modules/tenant/hrms/HrmsPage';
+import AnalyticsPage from './modules/tenant/analytics/AnalyticsPage';
+import ProcurementPage from './modules/tenant/procurement/ProcurementPage';
+import CrmPage from './modules/tenant/crm/CrmPage';
+import FinancePage from './modules/tenant/finance/FinancePage';
+import InventoryPage from './modules/tenant/inventory/InventoryPage';
 import BillingPage from './modules/billing/BillingPage';
 import RoleGuard from './components/RoleGuard';
 import AppointmentsPage from './modules/appointments/AppointmentsPage';
@@ -113,6 +120,15 @@ function App() {
         <Route path="/tenant/pharmacy/inventory" element={<RoleGuard allowedRoles={['admin', 'pharmacist']} moduleName="Stock Inventory"><InventoryList /></RoleGuard>} />
         <Route path="/tenant/pharmacy/queue" element={<RoleGuard allowedRoles={['admin', 'pharmacist']} moduleName="Prescription Queue"><PrescriptionQueue /></RoleGuard>} />
         <Route path="/tenant/staff" element={<RoleGuard allowedRoles={['admin']} moduleName="Staff Management"><StaffManagementPage /></RoleGuard>} />
+        <Route path="/tenant/payroll" element={<RoleGuard allowedRoles={['admin']} moduleName="Payroll"><PayrollPage /></RoleGuard>} />
+        <Route path="/tenant/hrms" element={<RoleGuard allowedRoles={['admin', 'nurse', 'doctor']} moduleName="HRMS"><HrmsPage /></RoleGuard>} />
+        <Route path="/tenant/analytics/ops" element={<RoleGuard allowedRoles={['admin', 'nurse', 'doctor']} moduleName="Operations Analytics"><AnalyticsPage /></RoleGuard>} />
+        <Route path="/tenant/analytics/performance" element={<RoleGuard allowedRoles={['admin']} moduleName="Performance Insights"><AnalyticsPage /></RoleGuard>} />
+        <Route path="/tenant/analytics/alerts" element={<RoleGuard allowedRoles={['admin', 'nurse']} moduleName="Alert Center"><AnalyticsPage /></RoleGuard>} />
+        <Route path="/tenant/procurement" element={<RoleGuard allowedRoles={['admin', 'nurse']} moduleName="Procurement"><ProcurementPage /></RoleGuard>} />
+        <Route path="/tenant/crm" element={<RoleGuard allowedRoles={['admin', 'receptionist', 'nurse']} moduleName="Patient CRM"><CrmPage /></RoleGuard>} />
+        <Route path="/tenant/finance" element={<RoleGuard allowedRoles={['admin']} moduleName="Finance & Compliance"><FinancePage /></RoleGuard>} />
+        <Route path="/tenant/inventory" element={<RoleGuard allowedRoles={['admin', 'pharmacist']} moduleName="Pharmacy Inventory"><InventoryPage /></RoleGuard>} />
         <Route path="/tenant/settings" element={<RoleGuard allowedRoles={['admin']} moduleName="Settings"><SettingsPage /></RoleGuard>} />
         <Route path="/tenant/settings/secure" element={<RoleGuard allowedRoles={['admin']} moduleName="Secure Configs"><SecureConfigsPage /></RoleGuard>} />
         <Route path="/tenant/support" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Support"><SupportTicketsPage /></RoleGuard>} />

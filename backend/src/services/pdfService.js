@@ -313,8 +313,102 @@ function createLabReportPDF(tenantName, labOrder, patient, results) {
   });
 }
 
+function createPayslipPDF(tenantName, employee, run, slipItems) {
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({ margin: 50, size: 'A4' });
+      const buffers = [];
+      doc.on('data', buffers.push.bind(buffers));
+      doc.on('end', () => {
+        const pdfData = Buffer.concat(buffers);
+        resolve(pdfData);
+      });
+
+      // --- HEADER ---
+      doc.fontSize(22).font('Helvetica-Bold').fillColor('#0f172a').text(tenantName || 'JIOPLIX HIMS', { align: 'left' });
+      doc.fontSize(10).font('Helvetica').fillColor('#64748b').text('Payslip for the month of ' + (run?.run_month || ''), { align: 'left' });
+
+      doc.y = 50;
+      doc.fontSize(14).font('Helvetica-Bold').fillColor('#3b82f6').text('PAY SLIP', { align: 'right' });
+      doc.fontSize(9).font('Helvetica').fillColor('#64748b').text('Status: ' + (run?.status || 'DRAFT'), { align: 'right' });
+      doc.moveDown(1.5);
+
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#cbd5e1').stroke();
+      doc.moveDown(1.5);
+
+      // --- EMPLOYEE INFO CARD ---
+      const infoY = doc.y;
+      doc.rect(50, infoY, 495, 90).fillAndStroke('#f8fafc', '#e2e8f0');
+      doc.fillColor('#0f172a');
+
+      doc.font('Helvetica-Bold').fontSize(9).fillColor('#64748b').text('EMPLOYEE NAME', 65, infoY + 12);
+      doc.font('Helvetica-Bold').fontSize(11).fillColor('#0f172a').text(employee?.staff_name || 'N/A', 65, infoY + 24);
+
+      doc.font('Helvetica-Bold').fontSize(9).fillColor('#64748b').text('ROLE', 290, infoY + 12);
+      doc.font('Helvetica-Bold').fontSize(11).fillColor('#0f172a').text((employee?.staff_role || 'N/A').toUpperCase(), 290, infoY + 24);
+
+      doc.font('Helvetica-Bold').fontSize(9).fillColor('#64748b').text('EMAIL', 65, infoY + 48);
+      doc.font('Helvetica').fontSize(9).fillColor('#334155').text(employee?.email || 'N/A', 65, infoY + 60);
+
+      doc.font('Helvetica-Bold').fontSize(9).fillColor('#64748b').text('DEPARTMENT', 290, infoY + 48);
+      doc.font('Helvetica').fontSize(9).fillColor('#334155').text(employee?.department || 'N/A', 290, infoY + 60);
+
+      doc.font('Helvetica-Bold').fontSize(9).fillColor('#64748b').text('NET PAY', 420, infoY + 12);
+      doc.font('Helvetica-Bold').fontSize(14).fillColor('#059669').text('₹' + Number(employee?.net_amount || 0).toLocaleString('en-IN'), 420, infoY + 24, { width: 115 });
+
+      doc.y = infoY + 105;
+
+      // --- EARNINGS & DEDUCTIONS ---
+      const earnings = (slipItems || []).filter((i) => i.type === 'EARNING');
+      const deductions = (slipItems || []).filter((i) => i.type === 'DEDUCTION');
+
+      doc.fontSize(11).font('Helvetica-Bold').fillColor('#0f172a').text('Earnings', 50, doc.y);
+      doc.text('Deductions', 320, doc.y);
+      const tableY = doc.y + 18;
+      doc.moveTo(50, tableY - 5).lineTo(230, tableY - 5).strokeColor('#cbd5e1').stroke();
+      doc.moveTo(320, tableY - 5).lineTo(500, tableY - 5).strokeColor('#cbd5e1').stroke();
+
+      const maxRows = Math.max(earnings.length, deductions.length, 1);
+      let rowY = tableY;
+      doc.fontSize(9).font('Helvetica');
+      for (let i = 0; i < maxRows; i++) {
+        const e = earnings[i];
+        const d = deductions[i];
+        if (e) {
+          doc.font('Helvetica').fillColor('#334155').text(e.label, 50, rowY);
+          doc.font('Helvetica-Bold').fillColor('#0f172a').text('₹' + Number(e.amount || 0).toLocaleString('en-IN'), 180, rowY, { align: 'right', width: 50 });
+        }
+        if (d) {
+          doc.font('Helvetica').fillColor('#334155').text(d.label, 320, rowY);
+          doc.font('Helvetica-Bold').fillColor('#0f172a').text('-₹' + Number(d.amount || 0).toLocaleString('en-IN'), 450, rowY, { align: 'right', width: 50 });
+        }
+        rowY += 16;
+      }
+
+      // --- TOTALS ---
+      doc.y = rowY + 10;
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#cbd5e1').stroke();
+      doc.moveDown(1);
+      doc.fontSize(10).font('Helvetica-Bold').fillColor('#0f172a');
+      doc.text('GROSS: ₹' + Number(employee?.gross_amount || 0).toLocaleString('en-IN'), 50, doc.y);
+      doc.text('DEDUCTIONS: ₹' + Number(employee?.deduction_amount || 0).toLocaleString('en-IN'), 220, doc.y);
+      doc.text('NET PAY: ₹' + Number(employee?.net_amount || 0).toLocaleString('en-IN'), 380, doc.y);
+
+      // --- FOOTER ---
+      doc.y = doc.page.height - 120;
+      doc.moveTo(350, doc.y).lineTo(500, doc.y).strokeColor('#64748b').stroke();
+      doc.fontSize(9).font('Helvetica').fillColor('#64748b').text('Authorized Signature', 350, doc.y + 5, { align: 'center', width: 150 });
+
+      doc.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 module.exports = {
   createDischargeSummaryPDF,
   createPrescriptionPDF,
-  createLabReportPDF
+  createLabReportPDF,
+  createPayslipPDF
 };
