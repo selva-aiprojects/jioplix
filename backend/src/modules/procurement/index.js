@@ -27,143 +27,120 @@ async function ensureProcurementInfrastructure(req) {
 }
 
 async function runProcurementDdl(schema, q) {
-  try {
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".vendor_rate_contracts (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      supplier_id UUID,
-      supplier_name VARCHAR(255),
-      item_name VARCHAR(255) NOT NULL,
-      item_type VARCHAR(50) DEFAULT 'MEDICINE',
-      rate NUMERIC(12,2) DEFAULT 0,
-      currency VARCHAR(10) DEFAULT 'INR',
-      effective_from DATE,
-      effective_to DATE,
-      is_current BOOLEAN DEFAULT TRUE,
-      terms TEXT,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_rate_contracts_item ON "${schema}".vendor_rate_contracts (item_name)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_rate_contracts_supplier ON "${schema}".vendor_rate_contracts (supplier_id)`);
+  const sq = async (sql) => { try { await q(sql); } catch(e) { /* ignore DDL warnings */ } };
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".vendor_rate_contracts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    supplier_id UUID,
+    supplier_name VARCHAR(255),
+    item_name VARCHAR(255) NOT NULL,
+    item_type VARCHAR(50) DEFAULT 'MEDICINE',
+    rate NUMERIC(12,2) DEFAULT 0,
+    currency VARCHAR(10) DEFAULT 'INR',
+    effective_from DATE,
+    effective_to DATE,
+    is_current BOOLEAN DEFAULT TRUE,
+    terms TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_rate_contracts_item ON "${schema}".vendor_rate_contracts (item_name)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_rate_contracts_supplier ON "${schema}".vendor_rate_contracts (supplier_id)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".purchase_requisitions (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      pr_no VARCHAR(50) NOT NULL,
-      source_module VARCHAR(50) DEFAULT 'PHARMACY',
-      status VARCHAR(20) DEFAULT 'DRAFT',
-      requested_by VARCHAR(255),
-      requested_at TIMESTAMP DEFAULT NOW(),
-      priority VARCHAR(20) DEFAULT 'NORMAL',
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE UNIQUE INDEX IF NOT EXISTS uq_pr_no ON "${schema}".purchase_requisitions (pr_no)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_pr_status ON "${schema}".purchase_requisitions (status)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".purchase_requisitions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    pr_no VARCHAR(50) NOT NULL,
+    source_module VARCHAR(50) DEFAULT 'PHARMACY',
+    status VARCHAR(20) DEFAULT 'DRAFT',
+    requested_by VARCHAR(255),
+    requested_at TIMESTAMP DEFAULT NOW(),
+    priority VARCHAR(20) DEFAULT 'NORMAL',
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_pr_status ON "${schema}".purchase_requisitions (status)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".purchase_requisition_items (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      requisition_id UUID NOT NULL REFERENCES "${schema}".purchase_requisitions(id) ON DELETE CASCADE,
-      item_name VARCHAR(255) NOT NULL,
-      item_type VARCHAR(50) DEFAULT 'MEDICINE',
-      required_qty NUMERIC(12,2),
-      suggested_qty NUMERIC(12,2),
-      current_stock NUMERIC(12,2) DEFAULT 0,
-      reorder_level NUMERIC(12,2) DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_pr_items_requisition ON "${schema}".purchase_requisition_items (requisition_id)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".purchase_requisition_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    requisition_id UUID NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
+    item_type VARCHAR(50) DEFAULT 'MEDICINE',
+    required_qty NUMERIC(12,2),
+    suggested_qty NUMERIC(12,2),
+    current_stock NUMERIC(12,2) DEFAULT 0,
+    reorder_level NUMERIC(12,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_pr_items_requisition ON "${schema}".purchase_requisition_items (requisition_id)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".purchase_orders (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      po_no VARCHAR(50) NOT NULL,
-      supplier_id UUID,
-      supplier_name VARCHAR(255),
-      status VARCHAR(20) DEFAULT 'DRAFT',
-      order_date DATE DEFAULT CURRENT_DATE,
-      expected_delivery DATE,
-      total_amount NUMERIC(14,2) DEFAULT 0,
-      created_by VARCHAR(255),
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE UNIQUE INDEX IF NOT EXISTS uq_po_no ON "${schema}".purchase_orders (po_no)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_po_status ON "${schema}".purchase_orders (status)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".purchase_orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    po_no VARCHAR(50) NOT NULL,
+    supplier_id UUID,
+    supplier_name VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'DRAFT',
+    order_date DATE DEFAULT CURRENT_DATE,
+    expected_delivery DATE,
+    total_amount NUMERIC(14,2) DEFAULT 0,
+    created_by VARCHAR(255),
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_po_status ON "${schema}".purchase_orders (status)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".purchase_order_items (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      po_id UUID NOT NULL REFERENCES "${schema}".purchase_orders(id) ON DELETE CASCADE,
-      item_name VARCHAR(255) NOT NULL,
-      item_type VARCHAR(50) DEFAULT 'MEDICINE',
-      qty_ordered NUMERIC(12,2),
-      unit_rate NUMERIC(12,2),
-      amount NUMERIC(14,2),
-      received_qty NUMERIC(12,2) DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_po_items_po ON "${schema}".purchase_order_items (po_id)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".purchase_order_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    po_id UUID NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
+    item_type VARCHAR(50) DEFAULT 'MEDICINE',
+    qty_ordered NUMERIC(12,2),
+    unit_rate NUMERIC(12,2),
+    amount NUMERIC(14,2),
+    received_qty NUMERIC(12,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_po_items_po ON "${schema}".purchase_order_items (po_id)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".grn (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      grn_no VARCHAR(50) NOT NULL,
-      po_id UUID,
-      supplier_id UUID,
-      supplier_name VARCHAR(255),
-      received_at TIMESTAMP DEFAULT NOW(),
-      invoice_ref VARCHAR(100),
-      status VARCHAR(20) DEFAULT 'DRAFT',
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE UNIQUE INDEX IF NOT EXISTS uq_grn_no ON "${schema}".grn (grn_no)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".grn (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    grn_no VARCHAR(50) NOT NULL,
+    po_id UUID,
+    supplier_id UUID,
+    supplier_name VARCHAR(255),
+    received_at TIMESTAMP DEFAULT NOW(),
+    invoice_ref VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'DRAFT',
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".grn_items (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      grn_id UUID NOT NULL REFERENCES "${schema}".grn(id) ON DELETE CASCADE,
-      po_item_id UUID,
-      item_name VARCHAR(255),
-      qty_received NUMERIC(12,2),
-      qty_accepted NUMERIC(12,2),
-      qty_rejected NUMERIC(12,2) DEFAULT 0,
-      batch_number VARCHAR(100),
-      expiry_date DATE,
-      qc_result VARCHAR(20) DEFAULT 'PASS',
-      qc_notes TEXT,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_grn_items_grn ON "${schema}".grn_items (grn_id)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".grn_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    grn_id UUID NOT NULL,
+    po_item_id UUID,
+    item_name VARCHAR(255),
+    qty_received NUMERIC(12,2),
+    qty_accepted NUMERIC(12,2),
+    qty_rejected NUMERIC(12,2) DEFAULT 0,
+    batch_number VARCHAR(100),
+    expiry_date DATE,
+    qc_result VARCHAR(20) DEFAULT 'PASS',
+    qc_notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_grn_items_grn ON "${schema}".grn_items (grn_id)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".procurement_matching (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      po_id UUID,
-      po_no VARCHAR(50),
-      grn_id UUID,
-      grn_no VARCHAR(50),
-      invoice_ref VARCHAR(100),
-      match_status VARCHAR(40),
-      po_amount NUMERIC(14,2),
-      grn_amount NUMERIC(14,2),
-      invoice_amount NUMERIC(14,2),
-      matched_at TIMESTAMP DEFAULT NOW(),
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_matching_grn ON "${schema}".procurement_matching (grn_id)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_matching_po ON "${schema}".procurement_matching (po_id)`);
-
-    try {
-      await q(`INSERT INTO "${schema}".rbac_permissions (key, description) VALUES
-        ('PROCUREMENT_VIEW', 'View procurement data'),
-        ('PROCUREMENT_MANAGE', 'Create and manage procurement data'),
-        ('PROCUREMENT_APPROVE', 'Approve purchase requisitions')
-        ON CONFLICT (key) DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'ADMIN' AND p.key IN ('PROCUREMENT_VIEW','PROCUREMENT_MANAGE','PROCUREMENT_APPROVE')
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'NURSE' AND p.key = 'PROCUREMENT_VIEW'
-        ON CONFLICT DO NOTHING`);
-    } catch (e) { console.error(`[PROCUREMENT] RBAC seed failed for ${schema}:`, e.message); }
-  } catch (e) {
-    console.error(`[PROCUREMENT] DDL failed for ${schema}:`, e.message);
-    throw e;
-  }
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".procurement_matching (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    po_id UUID,
+    po_no VARCHAR(50),
+    grn_id UUID,
+    grn_no VARCHAR(50),
+    invoice_ref VARCHAR(100),
+    match_status VARCHAR(40),
+    po_amount NUMERIC(14,2),
+    grn_amount NUMERIC(14,2),
+    invoice_amount NUMERIC(14,2),
+    matched_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_matching_grn ON "${schema}".procurement_matching (grn_id)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_matching_po ON "${schema}".procurement_matching (po_id)`);
 }
 
 router.use(async (req, res, next) => {

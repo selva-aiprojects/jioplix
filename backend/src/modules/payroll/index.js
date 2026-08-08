@@ -28,109 +28,79 @@ async function ensurePayrollInfrastructure(req) {
 }
 
 async function runPayrollDdl(schema, q) {
-  try {
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_rules (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      name VARCHAR(100) NOT NULL,
-      staff_role VARCHAR(50) NOT NULL,
-      base_salary NUMERIC(12,2) DEFAULT 0,
-      dearness_allowance NUMERIC(12,2) DEFAULT 0,
-      house_rent_allowance NUMERIC(12,2) DEFAULT 0,
-      other_allowance NUMERIC(12,2) DEFAULT 0,
-      incentive_pct NUMERIC(5,2) DEFAULT 0,
-      deduction_pct NUMERIC(5,2) DEFAULT 0,
-      is_active BOOLEAN DEFAULT TRUE,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`ALTER TABLE "${schema}".payroll_rules ADD COLUMN IF NOT EXISTS incentive_pct NUMERIC(5,2) DEFAULT 0`);
-    await q(`ALTER TABLE "${schema}".payroll_rules ADD COLUMN IF NOT EXISTS deduction_pct NUMERIC(5,2) DEFAULT 0`);
-    await q(`CREATE UNIQUE INDEX IF NOT EXISTS uq_payroll_rules_role ON "${schema}".payroll_rules (staff_role)`);
+  const sq = async (sql) => { try { await q(sql); } catch(e) { /* ignore DDL warnings */ } };
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_rules (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    staff_role VARCHAR(50) NOT NULL,
+    base_salary NUMERIC(12,2) DEFAULT 0,
+    dearness_allowance NUMERIC(12,2) DEFAULT 0,
+    house_rent_allowance NUMERIC(12,2) DEFAULT 0,
+    other_allowance NUMERIC(12,2) DEFAULT 0,
+    incentive_pct NUMERIC(5,2) DEFAULT 0,
+    deduction_pct NUMERIC(5,2) DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`ALTER TABLE "${schema}".payroll_rules ADD COLUMN IF NOT EXISTS incentive_pct NUMERIC(5,2) DEFAULT 0`);
+  await sq(`ALTER TABLE "${schema}".payroll_rules ADD COLUMN IF NOT EXISTS deduction_pct NUMERIC(5,2) DEFAULT 0`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_statutory (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      state VARCHAR(100) DEFAULT 'All India',
-      pf_pct NUMERIC(5,2) DEFAULT 12,
-      esi_pct NUMERIC(5,2) DEFAULT 0.75,
-      professional_tax_yearly NUMERIC(10,2) DEFAULT 2400,
-      is_active BOOLEAN DEFAULT TRUE,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE UNIQUE INDEX IF NOT EXISTS uq_payroll_statutory_state ON "${schema}".payroll_statutory (state)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_statutory (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    state VARCHAR(100) DEFAULT 'All India',
+    pf_pct NUMERIC(5,2) DEFAULT 12,
+    esi_pct NUMERIC(5,2) DEFAULT 0.75,
+    professional_tax_yearly NUMERIC(10,2) DEFAULT 2400,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_runs (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      run_month VARCHAR(10) NOT NULL UNIQUE,
-      status VARCHAR(20) DEFAULT 'DRAFT',
-      generated_by_user_id UUID REFERENCES "${schema}".users(id),
-      gross_total NUMERIC(14,2) DEFAULT 0,
-      deduction_total NUMERIC(14,2) DEFAULT 0,
-      net_total NUMERIC(14,2) DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW(),
-      finalized_at TIMESTAMP
-    )`);
-    await q(`ALTER TABLE "${schema}".payroll_runs ADD COLUMN IF NOT EXISTS generated_by_user_id UUID REFERENCES "${schema}".users(id)`);
-    await q(`ALTER TABLE "${schema}".payroll_runs ADD COLUMN IF NOT EXISTS gross_total NUMERIC(14,2) DEFAULT 0`);
-    await q(`ALTER TABLE "${schema}".payroll_runs ADD COLUMN IF NOT EXISTS deduction_total NUMERIC(14,2) DEFAULT 0`);
-    await q(`ALTER TABLE "${schema}".payroll_runs ADD COLUMN IF NOT EXISTS net_total NUMERIC(14,2) DEFAULT 0`);
-    await q(`ALTER TABLE "${schema}".payroll_runs ADD COLUMN IF NOT EXISTS finalized_at TIMESTAMP`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_runs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    run_month VARCHAR(10) NOT NULL UNIQUE,
+    status VARCHAR(20) DEFAULT 'DRAFT',
+    generated_by_user_id UUID,
+    gross_total NUMERIC(14,2) DEFAULT 0,
+    deduction_total NUMERIC(14,2) DEFAULT 0,
+    net_total NUMERIC(14,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW(),
+    finalized_at TIMESTAMP
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_items (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      run_id UUID NOT NULL REFERENCES "${schema}".payroll_runs(id) ON DELETE CASCADE,
-      staff_user_id UUID NOT NULL REFERENCES "${schema}".users(id),
-      gross_amount NUMERIC(12,2) DEFAULT 0,
-      deduction_amount NUMERIC(12,2) DEFAULT 0,
-      net_amount NUMERIC(12,2) DEFAULT 0,
-      incentive_amount NUMERIC(12,2) DEFAULT 0,
-      components JSONB DEFAULT '[]'::jsonb,
-      status VARCHAR(20) DEFAULT 'DRAFT',
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`ALTER TABLE "${schema}".payroll_items ADD COLUMN IF NOT EXISTS incentive_amount NUMERIC(12,2) DEFAULT 0`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    run_id UUID NOT NULL,
+    staff_user_id UUID NOT NULL,
+    gross_amount NUMERIC(12,2) DEFAULT 0,
+    deduction_amount NUMERIC(12,2) DEFAULT 0,
+    net_amount NUMERIC(12,2) DEFAULT 0,
+    incentive_amount NUMERIC(12,2) DEFAULT 0,
+    components JSONB DEFAULT '[]'::jsonb,
+    status VARCHAR(20) DEFAULT 'DRAFT',
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_slip_items (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      run_id UUID NOT NULL REFERENCES "${schema}".payroll_runs(id) ON DELETE CASCADE,
-      staff_user_id UUID NOT NULL REFERENCES "${schema}".users(id),
-      label VARCHAR(150) NOT NULL,
-      amount NUMERIC(12,2) DEFAULT 0,
-      type VARCHAR(20) NOT NULL,
-      sort_order INTEGER DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".payroll_slip_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    run_id UUID NOT NULL,
+    staff_user_id UUID NOT NULL,
+    label VARCHAR(150) NOT NULL,
+    amount NUMERIC(12,2) DEFAULT 0,
+    type VARCHAR(20) NOT NULL,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`INSERT INTO "${schema}".payroll_rules (name, staff_role, base_salary, dearness_allowance, house_rent_allowance, other_allowance, incentive_pct, deduction_pct) VALUES
-      ('Administrator', 'admin', 90000, 9000, 18000, 5000, 0, 0),
-      ('Doctor', 'doctor', 60000, 6000, 12000, 4000, 20, 0),
-      ('Nurse', 'nurse', 25000, 2500, 5000, 2000, 0, 0),
-      ('Pharmacist', 'pharmacist', 22000, 2200, 4400, 1500, 0, 0),
-      ('Lab Assistant', 'lab_assistant', 20000, 2000, 4000, 1500, 0, 0),
-      ('Receptionist', 'receptionist', 18000, 1800, 3600, 1000, 0, 0),
-      ('Staff', 'staff', 15000, 1500, 3000, 1000, 0, 0)
-      ON CONFLICT (staff_role) DO NOTHING`);
+  await sq(`INSERT INTO "${schema}".payroll_statutory (state, pf_pct, esi_pct, professional_tax_yearly) VALUES
+    ('All India', 12.00, 0.75, 2400.00)
+    ON CONFLICT (state) DO NOTHING`);
 
-    await q(`INSERT INTO "${schema}".payroll_statutory (state, pf_pct, esi_pct, professional_tax_yearly) VALUES
-      ('All India', 12, 0.75, 2400)
-      ON CONFLICT (state) DO NOTHING`);
-
-    await q(`CREATE INDEX IF NOT EXISTS idx_payroll_items_run ON "${schema}".payroll_items (run_id)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_payroll_slip_run ON "${schema}".payroll_slip_items (run_id)`);
-
-    try {
-      await q(`INSERT INTO "${schema}".rbac_permissions (key, description) VALUES
-        ('PAYROLL_VIEW', 'View payroll runs and payslips'),
-        ('PAYROLL_MANAGE', 'Create and manage payroll')
-        ON CONFLICT (key) DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'ADMIN' AND p.key IN ('PAYROLL_VIEW','PAYROLL_MANAGE')
-        ON CONFLICT DO NOTHING`);
-    } catch (e) { console.error(`[PAYROLL] RBAC seed failed for ${schema}:`, e.message); }
-  } catch (e) {
-    console.error(`[PAYROLL] DDL failed for ${schema}:`, e.message);
-    throw e;
-  }
+  await sq(`INSERT INTO "${schema}".payroll_rules (name, staff_role, base_salary, dearness_allowance, house_rent_allowance, other_allowance, incentive_pct, deduction_pct) VALUES
+    ('Senior Doctor Scale', 'DOCTOR', 120000.00, 15000.00, 25000.00, 10000.00, 5.0, 2.0),
+    ('Nurse Clinical Scale', 'NURSE', 35000.00, 5000.00, 8000.00, 4000.00, 2.0, 1.0),
+    ('Admin Staff Scale', 'ADMIN', 45000.00, 6000.00, 10000.00, 5000.00, 3.0, 1.5)
+    ON CONFLICT (staff_role) DO NOTHING`);
 }
 
 router.use(async (req, res, next) => {

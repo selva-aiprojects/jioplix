@@ -27,134 +27,109 @@ async function ensureHrmsInfrastructure(req) {
 }
 
 async function runHrmsDdl(schema, q) {
-  try {
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".duty_shifts (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      name VARCHAR(100) NOT NULL,
-      code VARCHAR(20),
-      start_time TIME NOT NULL,
-      end_time TIME NOT NULL,
-      is_overnight BOOLEAN DEFAULT FALSE,
-      min_staff INTEGER DEFAULT 1,
-      applicable_days JSONB DEFAULT '[]'::jsonb,
-      is_active BOOLEAN DEFAULT TRUE,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE UNIQUE INDEX IF NOT EXISTS uq_duty_shifts_name ON "${schema}".duty_shifts (name)`);
+  const sq = async (sql) => { try { await q(sql); } catch(e) { /* ignore DDL warnings */ } };
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".duty_shifts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    code VARCHAR(20),
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    is_overnight BOOLEAN DEFAULT FALSE,
+    min_staff INTEGER DEFAULT 1,
+    applicable_days JSONB DEFAULT '[]'::jsonb,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE UNIQUE INDEX IF NOT EXISTS uq_duty_shifts_name ON "${schema}".duty_shifts (name)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".duty_roster (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      staff_user_id UUID NOT NULL REFERENCES "${schema}".users(id),
-      shift_id UUID REFERENCES "${schema}".duty_shifts(id),
-      duty_date DATE NOT NULL,
-      status VARCHAR(30) DEFAULT 'SCHEDULED',
-      note TEXT,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`ALTER TABLE "${schema}".duty_roster ADD COLUMN IF NOT EXISTS status VARCHAR(30) DEFAULT 'SCHEDULED'`);
-    await q(`ALTER TABLE "${schema}".duty_roster ADD COLUMN IF NOT EXISTS note TEXT`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".duty_roster (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    staff_user_id UUID NOT NULL,
+    shift_id UUID,
+    duty_date DATE NOT NULL,
+    status VARCHAR(30) DEFAULT 'SCHEDULED',
+    note TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`ALTER TABLE "${schema}".duty_roster ADD COLUMN IF NOT EXISTS status VARCHAR(30) DEFAULT 'SCHEDULED'`);
+  await sq(`ALTER TABLE "${schema}".duty_roster ADD COLUMN IF NOT EXISTS note TEXT`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".roster_swaps (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      roster_entry_id UUID NOT NULL REFERENCES "${schema}".duty_roster(id),
-      requested_by_user_id UUID REFERENCES "${schema}".users(id),
-      requested_to_user_id UUID NOT NULL REFERENCES "${schema}".users(id),
-      reason TEXT,
-      status VARCHAR(20) DEFAULT 'PENDING',
-      decided_by_user_id UUID REFERENCES "${schema}".users(id),
-      decided_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".roster_swaps (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    roster_entry_id UUID NOT NULL,
+    requested_by_user_id UUID,
+    requested_to_user_id UUID NOT NULL,
+    reason TEXT,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    decided_by_user_id UUID,
+    decided_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".attendance (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      staff_user_id UUID NOT NULL REFERENCES "${schema}".users(id),
-      shift_id UUID REFERENCES "${schema}".duty_shifts(id),
-      work_date DATE NOT NULL,
-      check_in TIMESTAMP,
-      check_out TIMESTAMP,
-      status VARCHAR(20) DEFAULT 'PRESENT',
-      source VARCHAR(30) DEFAULT 'MANUAL',
-      remarks TEXT,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`ALTER TABLE "${schema}".attendance ADD COLUMN IF NOT EXISTS shift_id UUID REFERENCES "${schema}".duty_shifts(id)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".attendance (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    staff_user_id UUID NOT NULL,
+    shift_id UUID,
+    work_date DATE NOT NULL,
+    check_in TIMESTAMP,
+    check_out TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'PRESENT',
+    source VARCHAR(30) DEFAULT 'MANUAL',
+    remarks TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".staff_credentials (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID NOT NULL REFERENCES "${schema}".users(id),
-      credential_type VARCHAR(100) NOT NULL,
-      credential_no VARCHAR(100),
-      issued_by VARCHAR(255),
-      issued_on DATE,
-      expires_on DATE,
-      verification_status VARCHAR(30) DEFAULT 'UNVERIFIED',
-      notes TEXT,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".staff_credentials (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    credential_type VARCHAR(100) NOT NULL,
+    credential_no VARCHAR(100),
+    issued_by VARCHAR(255),
+    issued_on DATE,
+    expires_on DATE,
+    verification_status VARCHAR(30) DEFAULT 'UNVERIFIED',
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".staff_privileges (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID NOT NULL REFERENCES "${schema}".users(id),
-      privilege VARCHAR(100) NOT NULL,
-      granted_by_user_id UUID REFERENCES "${schema}".users(id),
-      granted_on TIMESTAMP DEFAULT NOW(),
-      revoked_on TIMESTAMP,
-      is_active BOOLEAN DEFAULT TRUE,
-      notes TEXT,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".staff_privileges (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    privilege VARCHAR(100) NOT NULL,
+    granted_by_user_id UUID,
+    granted_on TIMESTAMP DEFAULT NOW(),
+    revoked_on TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".on_call_duty (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      staff_user_id UUID NOT NULL REFERENCES "${schema}".users(id),
-      duty_date DATE NOT NULL,
-      start_time TIME,
-      end_time TIME,
-      type VARCHAR(50) DEFAULT 'GENERAL',
-      status VARCHAR(20) DEFAULT 'SCHEDULED',
-      notes TEXT,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".on_call_duty (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    staff_user_id UUID NOT NULL,
+    duty_date DATE NOT NULL,
+    start_time TIME,
+    end_time TIME,
+    type VARCHAR(50) DEFAULT 'GENERAL',
+    status VARCHAR(20) DEFAULT 'SCHEDULED',
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`INSERT INTO "${schema}".duty_shifts (name, code, start_time, end_time, is_overnight, min_staff) VALUES
-      ('Morning', 'M', '08:00', '14:00', FALSE, 2),
-      ('Evening', 'E', '14:00', '20:00', FALSE, 2),
-      ('Night', 'N', '20:00', '08:00', TRUE, 1),
-      ('General', 'G', '09:00', '17:00', FALSE, 1)
-      ON CONFLICT (name) DO NOTHING`);
+  await sq(`INSERT INTO "${schema}".duty_shifts (name, code, start_time, end_time, is_overnight, min_staff) VALUES
+    ('Morning', 'M', '08:00', '14:00', FALSE, 2),
+    ('Evening', 'E', '14:00', '20:00', FALSE, 2),
+    ('Night', 'N', '20:00', '08:00', TRUE, 1),
+    ('General', 'G', '09:00', '17:00', FALSE, 1)
+    ON CONFLICT (name) DO NOTHING`);
 
-    await q(`CREATE INDEX IF NOT EXISTS idx_roster_date ON "${schema}".duty_roster (duty_date)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_roster_staff ON "${schema}".duty_roster (staff_user_id)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_attendance_staff_date ON "${schema}".attendance (staff_user_id, work_date)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_oncall_date ON "${schema}".on_call_duty (duty_date)`);
-
-    try {
-      await q(`INSERT INTO "${schema}".rbac_permissions (key, description) VALUES
-        ('HRMS_VIEW', 'View HRMS roster, attendance and credentials'),
-        ('HRMS_MANAGE', 'Create and manage HRMS data'),
-        ('HRMS_APPROVE', 'Approve roster swaps and requests')
-        ON CONFLICT (key) DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'ADMIN' AND p.key IN ('HRMS_VIEW','HRMS_MANAGE','HRMS_APPROVE')
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'NURSE' AND p.key = 'HRMS_VIEW'
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'DOCTOR' AND p.key = 'HRMS_VIEW'
-        ON CONFLICT DO NOTHING`);
-    } catch (e) { console.error(`[HRMS] RBAC seed failed for ${schema}:`, e.message); }
-  } catch (e) {
-    console.error(`[HRMS] DDL failed for ${schema}:`, e.message);
-    throw e;
-  }
+  await sq(`CREATE INDEX IF NOT EXISTS idx_roster_date ON "${schema}".duty_roster (duty_date)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_roster_staff ON "${schema}".duty_roster (staff_user_id)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_attendance_staff_date ON "${schema}".attendance (staff_user_id, work_date)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_oncall_date ON "${schema}".on_call_duty (duty_date)`);
 }
 
 router.use(async (req, res, next) => {

@@ -8,9 +8,12 @@ export default function MailManagementPage() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const headers = {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-    "x-tenant-id": localStorage.getItem("tenant") || ""
+  const getHeaders = () => {
+    const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
+    return {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "x-tenant-id": tenantId
+    };
   };
 
   useEffect(() => {
@@ -19,26 +22,23 @@ export default function MailManagementPage() {
 
   const fetchLogs = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/hospital/mail-logs`, { headers });
+      const res = await axios.get(`${API_BASE}/api/hospital/mail-logs`, { headers: getHeaders() });
       setLogs(res.data);
     } catch (err) { 
       console.error("Mail logs fetch failed:", err);
     } finally { setLoading(false); }
   };
 
-  if (loading) {
-    return (
-      <div style={{ display: "grid", placeItems: "center", height: "100vh", background: "var(--app-bg)", fontSize: "18px", fontWeight: 800, color: "#0f172a" }}>
-        Loading Communication Logs...
-      </div>
-    );
-  }
-
   return (
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
         <Header title="Mail & Communications" />
+        {loading ? (
+          <div style={{ padding: '60px', textAlign: 'center', fontWeight: 600, color: '#64748b' }}>
+            Loading Communication Logs...
+          </div>
+        ) : (
 
         <div style={{ maxWidth: '1000px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
@@ -102,6 +102,7 @@ export default function MailManagementPage() {
             )}
           </div>
         </div>
+        )}
       </main>
     </div>
   );

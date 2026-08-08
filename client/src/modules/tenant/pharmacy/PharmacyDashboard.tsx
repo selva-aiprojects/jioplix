@@ -4,7 +4,6 @@ import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
-import { Activity } from 'lucide-react';
 import { formatCurrency } from "../../../utils/currency";
 
 
@@ -38,9 +37,10 @@ export default function PharmacyDashboard({ embedded = false }: { embedded?: boo
   };
 
   const fetchStats = async () => {
+    const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
     const headers = { 
       Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "x-tenant-id": localStorage.getItem("tenant") || ""
+      "x-tenant-id": tenantId
     };
     try {
       const [invRes, preRes, statRes] = await Promise.all([
@@ -63,27 +63,31 @@ export default function PharmacyDashboard({ embedded = false }: { embedded?: boo
   return (
     <div className={embedded ? "" : "dashboard-layout"} style={{ display: 'flex', minHeight: embedded ? 'auto' : '100vh', background: 'var(--app-bg)' }}>
       {!embedded && <Sidebar />}
-      <main style={{ flex: 1, padding: embedded ? '0' : '32px' }}>
-        {!embedded && <Header title="Pharmacy Dashboard" />}
+      <main className="main-content" style={{ flex: 1, padding: embedded ? '0' : '24px' }}>
+        {!embedded && <Header title="Pharmacy Inventory & Stock Control" />}
         
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', marginBottom: '40px' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#eff6ff', color: '#2563eb', display: 'grid', placeItems: 'center', boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.1)' }}>
-            <Activity size={24} />
-          </div>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Real-time inventory metrics, low-stock surveillance, and medication dispensing throughput intelligence.</p>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px', marginBottom: '40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '18px', marginBottom: '24px' }}>
           {[
-            { label: 'Total Stock items', value: stats.totalItems, color: '#3b82f6', icon: '📦' },
-            { label: 'Low stock alerts', value: stats.lowStock, color: '#ef4444', icon: '⚠️' },
-            { label: 'Pending Orders', value: stats.pendingPrescriptions, color: '#f59e0b', icon: '📋' },
-            { label: 'Revenue (Today)', value: formatCurrency(stats.todaysSales), color: '#10b981', icon: '💰' }
+            { label: 'Total Stock Items', value: stats.totalItems, color: '#0056A8', bg: 'rgba(0, 86, 168, 0.08)', icon: '📦' },
+            { label: 'Low Stock Alerts', value: stats.lowStock, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)', icon: '⚠️' },
+            { label: 'Pending Dispenses', value: stats.pendingPrescriptions, color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.08)', icon: '📋' },
+            { label: 'Revenue (Today)', value: formatCurrency(stats.todaysSales), color: '#00C897', bg: 'rgba(0, 200, 151, 0.08)', icon: '💰' }
           ].map((s, i) => (
-            <div key={i} style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-               <div style={{ fontSize: '24px', marginBottom: '12px' }}>{s.icon}</div>
-               <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</p>
-               <p style={{ margin: '8px 0 0', fontSize: '32px', fontWeight: 900, color: s.color }}>{loading ? '...' : s.value}</p>
+            <div key={i} style={{ 
+              background: 'white', 
+              padding: '20px 24px', 
+              borderRadius: '20px', 
+              border: '1px solid #e2e8f0', 
+              boxShadow: '0 4px 16px -4px rgba(0,0,0,0.04)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: s.color }} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</span>
+                <span style={{ width: '36px', height: '36px', borderRadius: '10px', background: s.bg, display: 'grid', placeItems: 'center', fontSize: '18px' }}>{s.icon}</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '28px', fontWeight: 800, color: '#0f172a' }}>{loading ? '...' : s.value}</p>
             </div>
           ))}
         </div>

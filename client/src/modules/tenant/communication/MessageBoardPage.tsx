@@ -9,9 +9,12 @@ export default function MessageBoardPage() {
   const [loading, setLoading] = useState(true);
   const [newMessage, setNewMessage] = useState("");
 
-  const headers = {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-    "x-tenant-id": localStorage.getItem("tenant") || ""
+  const getHeaders = () => {
+    const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
+    return {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "x-tenant-id": tenantId
+    };
   };
 
   useEffect(() => {
@@ -20,8 +23,7 @@ export default function MessageBoardPage() {
 
   const fetchMessages = async () => {
     try {
-      // For now, we use a simple audit-style fetch or specific communications table
-      const res = await axios.get(`${API_BASE}/api/hospital/communications`, { headers });
+      const res = await axios.get(`${API_BASE}/api/hospital/communications`, { headers: getHeaders() });
       setMessages(res.data);
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
@@ -30,7 +32,7 @@ export default function MessageBoardPage() {
   const handlePost = async () => {
     if (!newMessage) return;
     try {
-      await axios.post(`${API_BASE}/api/hospital/communications`, { content: newMessage }, { headers });
+      await axios.post(`${API_BASE}/api/hospital/communications`, { content: newMessage }, { headers: getHeaders() });
       setNewMessage("");
       fetchMessages();
     } catch (err) { alert("Failed to post message."); }

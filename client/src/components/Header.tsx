@@ -91,14 +91,23 @@ export default function Header({ title }: HeaderProps) {
           </div>
         )}
         <h1 style={{ 
-          fontSize: isMobile ? '22px' : '26px', 
-          fontWeight: 900, 
+          fontSize: isMobile ? '18px' : '22px', 
+          fontWeight: 700, 
           color: '#ffffff', 
           margin: 0,
-          letterSpacing: '-0.02em',
-          textShadow: '0 2px 10px rgba(0,0,0,0.15)'
+          letterSpacing: '-0.01em',
+          lineHeight: '1.25'
         }}>{title}</h1>
-        <p style={{ margin: '4px 0 10px', color: 'rgba(255, 255, 255, 0.85)', fontSize: '13px', fontWeight: 500, lineHeight: 1.4 }}>
+        
+        <p style={{ 
+          fontSize: isMobile ? '12px' : '13px', 
+          color: 'rgba(255, 255, 255, 0.85)', 
+          marginTop: '6px', 
+          marginBottom: 0,
+          fontWeight: 400,
+          maxWidth: '650px',
+          lineHeight: '1.4'
+        }}>
           {getTaglineForPage(title)}
         </p>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginTop: '4px' }}>

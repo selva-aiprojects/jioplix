@@ -193,8 +193,16 @@ export default function CrmPage() {
                 key={t.id}
                 onClick={() => setTab(t.id)}
                 style={{
-                  padding: "9px 14px", borderRadius: "10px", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 700,
-                  background: tab === t.id ? "#1e3a8a" : "#e2e8f0", color: tab === t.id ? "white" : "#334155",
+                  padding: "8px 16px", 
+                  borderRadius: "12px", 
+                  border: "none", 
+                  cursor: "pointer", 
+                  fontSize: "13px", 
+                  fontWeight: 700,
+                  transition: "all 0.2s ease",
+                  background: tab === t.id ? "linear-gradient(135deg, #0056A8 0%, #003870 100%)" : "#f1f5f9", 
+                  color: tab === t.id ? "white" : "#475569",
+                  boxShadow: tab === t.id ? "0 4px 12px rgba(0, 86, 168, 0.2)" : "none"
                 }}
               >
                 {t.label}

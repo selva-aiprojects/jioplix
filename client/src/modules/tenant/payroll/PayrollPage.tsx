@@ -162,8 +162,18 @@ export default function PayrollPage() {
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className="button-primary"
-                style={{ background: tab === t ? "#1e3a8a" : "#e2e8f0", color: tab === t ? "white" : "#334155", border: "none" }}
+                style={{ 
+                  padding: "8px 18px",
+                  borderRadius: "12px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  transition: "all 0.2s ease",
+                  background: tab === t ? "linear-gradient(135deg, #0056A8 0%, #003870 100%)" : "#f1f5f9", 
+                  color: tab === t ? "white" : "#475569",
+                  boxShadow: tab === t ? "0 4px 12px rgba(0, 86, 168, 0.2)" : "none"
+                }}
               >
                 {t === "runs" ? "Payroll Runs" : t === "rules" ? "Salary Rules" : "Statutory Config"}
               </button>
@@ -171,7 +181,7 @@ export default function PayrollPage() {
           </div>
 
           {loading ? (
-            <div className="stat-card" style={{ textAlign: "center", color: "#64748b" }}>Loading payroll data…</div>
+            <div style={{ padding: "40px", textAlign: "center", color: "#64748b", fontWeight: 600 }}>Loading payroll data…</div>
           ) : tab === "runs" ? (
             <>
               {/* Generate run */}

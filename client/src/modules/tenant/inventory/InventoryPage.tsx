@@ -180,8 +180,16 @@ export default function InventoryPage() {
                 key={t.id}
                 onClick={() => setTab(t.id)}
                 style={{
-                  padding: "9px 14px", borderRadius: "10px", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 700,
-                  background: tab === t.id ? "#1e3a8a" : "#e2e8f0", color: tab === t.id ? "white" : "#334155",
+                  padding: "8px 16px", 
+                  borderRadius: "12px", 
+                  border: "none", 
+                  cursor: "pointer", 
+                  fontSize: "13px", 
+                  fontWeight: 700,
+                  transition: "all 0.2s ease",
+                  background: tab === t.id ? "linear-gradient(135deg, #0056A8 0%, #003870 100%)" : "#f1f5f9", 
+                  color: tab === t.id ? "white" : "#475569",
+                  boxShadow: tab === t.id ? "0 4px 12px rgba(0, 86, 168, 0.2)" : "none"
                 }}
               >
                 {t.label}
@@ -190,16 +198,35 @@ export default function InventoryPage() {
           </div>
 
           {loading ? (
-            <div className="stat-card" style={{ textAlign: "center", color: "#64748b" }}>Loading…</div>
+            <div style={{ padding: "40px", textAlign: "center", color: "#64748b", fontWeight: 600 }}>Loading Inventory metrics…</div>
           ) : (
             <>
               {tab === "dashboard" && (
-                <div className="grid-responsive" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px" }}>
-                  <div className="stat-card"><div style={{ fontSize: "12px", color: "#64748b" }}>Pending Indents</div><div style={{ fontSize: "24px", fontWeight: 900 }}>{dash.pendingIndents ?? 0}</div></div>
-                  <div className="stat-card"><div style={{ fontSize: "12px", color: "#64748b" }}>Issues</div><div style={{ fontSize: "24px", fontWeight: 900 }}>{dash.issues ?? 0}</div></div>
-                  <div className="stat-card"><div style={{ fontSize: "12px", color: "#64748b" }}>Narcotic Entries</div><div style={{ fontSize: "24px", fontWeight: 900 }}>{dash.narcotics ?? 0}</div></div>
-                  <div className="stat-card"><div style={{ fontSize: "12px", color: "#64748b" }}>Low Stock Items</div><div style={{ fontSize: "24px", fontWeight: 900, color: (dash.lowStock ?? 0) > 0 ? "#b91c1c" : "inherit" }}>{dash.lowStock ?? 0}</div></div>
-                  <div className="stat-card"><div style={{ fontSize: "12px", color: "#64748b" }}>Expiring Soon</div><div style={{ fontSize: "24px", fontWeight: 900, color: (dash.expiringSoon ?? 0) > 0 ? "#b45309" : "inherit" }}>{dash.expiringSoon ?? 0}</div></div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+                  {[
+                    { label: "Pending Indents", value: dash.pendingIndents ?? 0, color: "#0056A8", bg: "rgba(0, 86, 168, 0.08)", icon: "📋" },
+                    { label: "Stock Issues", value: dash.issues ?? 0, color: "#00C897", bg: "rgba(0, 200, 151, 0.08)", icon: "🔄" },
+                    { label: "Narcotic Entries", value: dash.narcotics ?? 0, color: "#0078FF", bg: "rgba(0, 120, 255, 0.08)", icon: "🔒" },
+                    { label: "Low Stock Items", value: dash.lowStock ?? 0, color: "#ef4444", bg: "rgba(239, 68, 68, 0.08)", icon: "⚠️" },
+                    { label: "Expiring Soon", value: dash.expiringSoon ?? 0, color: "#f59e0b", bg: "rgba(245, 158, 11, 0.08)", icon: "⌛" }
+                  ].map((s, i) => (
+                    <div key={i} style={{
+                      background: "white",
+                      padding: "20px 24px",
+                      borderRadius: "20px",
+                      border: "1px solid #e2e8f0",
+                      boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)",
+                      position: "relative",
+                      overflow: "hidden"
+                    }}>
+                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: s.color }} />
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                        <span style={{ fontSize: "12px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.04em" }}>{s.label}</span>
+                        <span style={{ width: "36px", height: "36px", borderRadius: "10px", background: s.bg, display: "grid", placeItems: "center", fontSize: "18px" }}>{s.icon}</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: "28px", fontWeight: 800, color: "#0f172a" }}>{s.value}</p>
+                    </div>
+                  ))}
                 </div>
               )}
 
