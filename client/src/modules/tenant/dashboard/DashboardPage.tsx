@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactECharts from 'echarts-for-react';
 import Sidebar from "../../../components/Sidebar";
+import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 import { 
   Users, Calendar, FileText, Pill, Activity, TrendingUp, 
-  AlertCircle, ChevronRight, HeartPulse, BarChart3, Clock, FlaskConical, Zap, LogOut, ChevronDown, Bed, FileCheck, Stethoscope
+  AlertCircle, ChevronRight, HeartPulse, BarChart3, Clock, FlaskConical, Zap, Bed, FileCheck, Stethoscope
 } from 'lucide-react';
 
 import DoctorDashboardPage from "./DoctorDashboardPage";
@@ -21,7 +22,6 @@ export default function DashboardPage() {
   }
 
   const plan = (localStorage.getItem("tenantPlan") || "basic").toLowerCase();
-  const tenantName = localStorage.getItem("tenantName") || "Jioplix Hospital";
   const [userName] = useState(localStorage.getItem("userName") || "Dr. Mrutyunjaya");
   const [stats, setStats] = useState<any>({
     metrics: { 
@@ -199,11 +199,6 @@ export default function DashboardPage() {
     const interval = setInterval(fetchQueue, 15000);
     return () => clearInterval(interval);
   }, []);
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
-  };
 
   // --- CHART OPTIONS ---
   const getRevenueColor = (type: string) => {
@@ -624,39 +619,10 @@ export default function DashboardPage() {
       <main className="main-content" style={{ padding: isMobile ? '16px' : '32px 40px', flex: 1, overflowX: 'hidden', zIndex: 1 }}>
         
         {/* TOP BRANDING HEADER BAR */}
-        <div className="dashboard-header" style={{
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '24px 32px',
-          width: '100%',
-          marginBottom: '24px',
-          gap: isMobile ? '20px' : '0'
-        }}>
-          {/* Left Welcome Text */}
-          <div style={{ zIndex: 2 }}>
-            <div className="magic-tenant-badge" style={{ marginBottom: '10px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 8px #34d399', animation: 'pulse 2s infinite' }} />
-              <span className="magic-tenant-text">
-                🏥 {tenantName}
-              </span>
-            </div>
-            <h1 style={{ 
-              fontSize: '28px', 
-              fontWeight: 900, 
-              color: '#ffffff', 
-              margin: 0,
-              letterSpacing: '-0.02em',
-              textShadow: '0 2px 10px rgba(0,0,0,0.15)'
-            }}>Welcome, {userName}</h1>
-            <p style={{ margin: '4px 0 12px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontWeight: 500 }}>
-              Let's make today a productive day for HIMS. Here is your clinic status overview.
-            </p>
-          </div>
-
-          {/* Right Action Blocks */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', zIndex: 2 }}>
+        <Header 
+          title={`Welcome, ${userName}`} 
+          subtitle="Let's make today a productive day for HIMS. Here is your clinic status overview."
+          actions={
             <div style={{ 
               display: 'flex', 
               alignItems: 'center', 
@@ -664,60 +630,18 @@ export default function DashboardPage() {
               backgroundColor: 'rgba(255, 255, 255, 0.15)', 
               backdropFilter: 'blur(10px)',
               border: '1px solid rgba(255, 255, 255, 0.25)', 
-              borderRadius: '12px', 
-              padding: '8px 16px', 
-              fontSize: '13px', 
+              borderRadius: '10px', 
+              padding: '8px 14px', 
+              fontSize: '12px', 
               fontWeight: 700, 
               color: '#ffffff', 
-              cursor: 'pointer',
               boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
             }}>
-              <Calendar size={16} />
+              <Calendar size={14} />
               <span>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-              <ChevronDown size={14} />
             </div>
-
-            <div
-              aria-label="Jioplix"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                height: '36px',
-                padding: '6px 10px',
-                background: 'rgba(255, 255, 255, 0.96)',
-                border: '1px solid rgba(255, 255, 255, 0.55)',
-                borderRadius: '10px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
-              }}
-            >
-              <img src="/logo.png" alt="Jioplix" style={{ height: '19px', width: 'auto', display: 'block' }} />
-            </div>
-
-            <button 
-              onClick={handleLogout}
-              className="button-secondary"
-              style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '6px',
-                padding: '10px 18px',
-                fontSize: '11px',
-                fontWeight: 800,
-                borderRadius: '12px',
-                cursor: 'pointer',
-                backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
-                color: '#ffffff',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <LogOut size={12} />
-              LOGOUT
-            </button>
-          </div>
-        </div>
+          }
+        />
 
         {/* ========================================================================= */}
         {/* BASIC TIER VIEW */}

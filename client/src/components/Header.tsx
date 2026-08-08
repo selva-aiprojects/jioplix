@@ -1,13 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { applyTheme, getNamespacedItem } from "../config/theme";
 
-interface HeaderProps {
+export interface HeaderProps {
   title: string;
+  subtitle?: string;
   compact?: boolean;
+  actions?: ReactNode;
 }
 
-export default function Header({ title }: HeaderProps) {
+export function HeroBanner({ title, subtitle, actions }: HeaderProps) {
+  return <Header title={title} subtitle={subtitle} actions={actions} />;
+}
+
+export default function Header({ title, subtitle, actions }: HeaderProps) {
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName") || "User";
   const tenantName = getNamespacedItem('tenantName') || localStorage.getItem("tenantName") || "Jioplix Hospital";
@@ -26,33 +32,20 @@ export default function Header({ title }: HeaderProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const getTaglineForPage = (title: string) => {
-    switch (title.toLowerCase()) {
-      case 'staff':
-      case 'staff addition':
-      case 'staff management':
-        return 'Manage credentials, schedules, and administrative permissions for your clinic staff.';
-      case 'billing':
-      case 'billing & queue':
-      case 'billing & invoicing':
-        return 'Process patient payments, generate invoices, and manage billing queues efficiently.';
-      case 'pharmacy':
-      case 'pharmacy management':
-      case 'inventory':
-      case 'pharmacy inventory':
-        return 'Track medicine stocks, monitor batch expirations, and fulfill prescriptions.';
-      case 'lab orders':
-      case 'laboratory':
-        return 'Monitor lab test orders, update diagnostic results, and track patient pathology files.';
-      case 'settings':
-      case 'hospital branding & ui':
-        return 'Customize hospital metadata, UI branding, theme colors, and layout presets.';
-      case 'patients':
-      case 'patient management':
-        return 'Register patients, track diagnostics history, and oversee clinic consultation queues.';
-      default:
-        return `Monitor, configure, and manage your ${title} operations with high precision.`;
-    }
+  const getTaglineForPage = (t: string) => {
+    if (subtitle) return subtitle;
+    const l = t.toLowerCase();
+    if (l.includes('staff')) return 'Manage credentials, schedules, and administrative permissions for your clinic staff.';
+    if (l.includes('billing')) return 'Process patient payments, generate invoices, and manage billing queues efficiently.';
+    if (l.includes('pharmacy') || l.includes('inventory')) return 'Track medicine stocks, monitor batch expirations, and fulfill prescriptions.';
+    if (l.includes('lab') || l.includes('diagnostic')) return 'Monitor lab test orders, update diagnostic results, and track patient pathology files.';
+    if (l.includes('settings') || l.includes('branding')) return 'Customize hospital metadata, UI branding, theme colors, and layout presets.';
+    if (l.includes('patient') || l.includes('crm')) return 'Register patients, track diagnostics history, and oversee clinic consultation queues.';
+    if (l.includes('hrms') || l.includes('human resource')) return 'Manage staff rosters, shifts, attendance, on-call schedules, and credentials.';
+    if (l.includes('procurement')) return 'Manage rate contracts, purchase requisitions, PO approval workflows, and 3-way matching.';
+    if (l.includes('payroll')) return 'Compute monthly staff salaries, statutory PF/ESI/PT deductions, and payslip releases.';
+    if (l.includes('finance')) return 'Oversee surgery billing packages, advance deposits, refunds, write-offs, and e-Invoicing.';
+    return `Monitor, configure, and manage your ${t} operations with high precision.`;
   };
 
   return (
@@ -126,11 +119,13 @@ export default function Header({ title }: HeaderProps) {
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '16px', 
+        gap: '12px', 
         zIndex: 2,
         width: isMobile ? '100%' : 'auto',
-        justifyContent: isMobile ? 'center' : 'flex-end'
+        justifyContent: isMobile ? 'center' : 'flex-end',
+        flexWrap: 'wrap'
       }}>
+        {actions}
         {!isMobile && <JioplixMark />}
         <button 
           onClick={handleLogout}

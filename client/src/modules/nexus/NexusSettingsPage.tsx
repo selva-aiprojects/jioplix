@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NexusSidebar from "../../components/NexusSidebar";
+import Header from "../../components/Header";
 
 export default function NexusSettingsPage() {
   const navigate = useNavigate();
@@ -16,12 +17,10 @@ export default function NexusSettingsPage() {
     <div className="dashboard-layout">
       <NexusSidebar />
       <main className="main-content">
-        <header className="dashboard-header">
-          <div className="welcome-msg">
-            <h1 style={{ fontSize: '24px', fontWeight: 800 }}>Nexus Configuration</h1>
-            <p>Global platform settings and API integrations.</p>
-          </div>
-        </header>
+        <Header 
+          title="Nexus Configuration" 
+          subtitle="Global platform settings and API integrations."
+        />
 
         <div style={{ background: 'white', padding: '32px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
           <h3 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px' }}>System Integrations</h3>

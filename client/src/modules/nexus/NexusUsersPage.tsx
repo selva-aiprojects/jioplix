@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NexusSidebar from "../../components/NexusSidebar";
+import Header from "../../components/Header";
 
 export default function NexusUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -22,13 +23,11 @@ export default function NexusUsersPage() {
     <div className="dashboard-layout">
       <NexusSidebar />
       <main className="main-content">
-        <header className="dashboard-header">
-          <div className="welcome-msg">
-            <h1 style={{ fontSize: '24px', fontWeight: 800 }}>Super Admin Management</h1>
-            <p>Control platform-wide access and permissions.</p>
-          </div>
-          <button className="button-primary">+ Add Admin</button>
-        </header>
+        <Header 
+          title="Super Admin Management" 
+          subtitle="Control platform-wide access and permissions."
+          actions={<button className="button-primary">+ Add Admin</button>}
+        />
 
         <div className="page-card">
           <table className="card-table">
