@@ -593,15 +593,6 @@ export default function DashboardPage() {
       }} />
 
       <style>{`
-        body, div, span, p, a, button, input, select, textarea, label, td, th, strong, em, li, ul, ol {
-          font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-        }
-        h1, h2, h3, h4, h5, h6, .outfit-font {
-          font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-        }
-        code, pre, .font-mono, [style*="monospace"] {
-          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
-        }
         @keyframes shimmer {
           0% { background-position: -200px 0; }
           100% { background-position: calc(200px + 100%) 0; }

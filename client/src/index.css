@@ -1,8 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
 
 :root {
+  /* ── Typography Tokens ── */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-brand: 'Outfit', 'Inter', sans-serif;
+
   /* ── Jioplix Brand Colors ── */
   --brand-medical-blue: #0056A8;
   --brand-sky-blue: #0078FF;
@@ -91,15 +96,18 @@
   box-sizing: border-box;
 }
 
-body, div, span, p, a, button, input, select, textarea, label, td, th, strong, em, li, ul, ol {
-  font-family: 'Open Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+body, html, input, button, select, textarea {
+  font-family: var(--font-sans) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 body {
   font-size: var(--base-font-size, 14px);
   background-color: var(--app-bg, #f8fafc);
   color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
 }
 
 /* Sidebar & Responsive Layout */
@@ -113,8 +121,13 @@ body {
   overflow-y: auto;
 }
 
-h1, h2, h3, h4, h5, h6, .outfit-font {
-  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading) !important;
+  letter-spacing: -0.02em;
+}
+
+.brand-font, .outfit-font {
+  font-family: var(--font-brand) !important;
 }
 
 code, pre, .font-mono, [style*="monospace"] {

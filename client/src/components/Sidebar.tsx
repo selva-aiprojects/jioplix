@@ -467,7 +467,7 @@ export default function Sidebar() {
     const gs = [
       {
         id: 'opd',
-        title: "OPD & Clinical",
+        title: "Outpatient Department (OPD)",
         items: getItems(opdFlow).filter(i => {
           // Doctor's Schedule visible to doctor + admin
           if (i.label === "Doctor's Schedule" && !isDoctor) return false;
@@ -478,7 +478,7 @@ export default function Sidebar() {
       },
       {
         id: 'ipd',
-        title: "Inpatient (IPD) Management",
+        title: "Inpatient Department (IPD)",
         items: getItems(ipdFlow).filter(() => {
           if (!atLeastProfessional) return false;
           if (!isClinical) return false;
