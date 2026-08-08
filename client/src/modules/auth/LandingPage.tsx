@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BrandLogo from '../../components/BrandLogo';
 import {
-  Shield, ArrowLeftRight, BookOpen, Lock, Monitor, Bed, Pill, CreditCard,
-  Mic, Sparkles, Activity, CheckCircle, Smartphone, Download, Star,
-  Clock, HeartPulse, FileText, MessageSquare, Phone, Mail, ArrowRight,
-  Zap, AlertTriangle, Tag, Check, Send, Users, ChevronRight, BarChart3
+  Shield, ArrowLeftRight, Lock, Bed, Pill, CreditCard,
+  Mic, CheckCircle, Star, HeartPulse, MessageSquare, Phone, Mail, ArrowRight,
+  Zap, AlertTriangle, Users, BarChart3,
+  Stethoscope, Calendar, FlaskConical, Headset, Bot, Settings,
+  Ticket, Wrench, Gauge
 } from 'lucide-react';
 
 const GLOBAL_CSS = `
@@ -89,9 +90,44 @@ const GLOBAL_CSS = `
   ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
 `;
 
+const MODULES = [
+  { icon: Stethoscope, title: 'OPD & Consultation', desc: 'Registration, doctor queues, consultation desk with inline vitals, chief-complaint bar & voice dictation.', color: '#0284c7', bg: '#e0f2fe' },
+  { icon: Calendar, title: 'Appointments & Scheduling', desc: 'Doctor availability, weekly rules, advanced scheduling console and patient self-booking.', color: '#7c3aed', bg: '#ede9fe' },
+  { icon: Bed, title: 'IPD / Admission', desc: 'Admission desk, live bed map, census & daycare, discharge summaries and hourly/daily bed billing.', color: '#d97706', bg: '#fef3c7' },
+  { icon: FlaskConical, title: 'Laboratory', desc: 'Lab billing queue, work-order management, results workflow and AI-assisted lab assistant.', color: '#059669', bg: '#d1fae5' },
+  { icon: Pill, title: 'Pharmacy', desc: 'Dashboard, stock inventory, inward register, order management and prescription queue.', color: '#dc2626', bg: '#fee2e2' },
+  { icon: CreditCard, title: 'Billing & Invoicing', desc: 'Central billing desk, insurance processing and real-time financial reconciliation.', color: '#2563eb', bg: '#dbeafe' },
+  { icon: BarChart3, title: 'Clinical Analytics', desc: 'Extended-stay (>3 days) LOS monitor, dashboards and trend analytics for smarter decisions.', color: '#0d9488', bg: '#ccfbf1' },
+  { icon: Headset, title: 'Help Desk & Ticketing', desc: 'Staff & patient-grievance tickets with SLA policies, auto-escalation and equipment register.', color: '#9333ea', bg: '#f3e8ff' },
+  { icon: MessageSquare, title: 'Communication Suite', desc: 'Message board, mail management, reminder tracker and executive WhatsApp automation center.', color: '#16a34a', bg: '#dcfce7' },
+  { icon: Bot, title: 'AI Co-Pilot', desc: 'Multi-tenant RAG chatbot, voice dictation (STT), vision OCR, text-to-action and audio TTS.', color: '#4f46e5', bg: '#e0e7ff' },
+  { icon: Users, title: 'Staff & RBAC', desc: 'HIPAA-compliant roles, PII masking tiers, granular permissions and audit trails.', color: '#ea580c', bg: '#ffedd5' },
+  { icon: Settings, title: 'Masters & Settings', desc: 'Hospital master data, branding & UI theming and encrypted tenant-sensitive configurations.', color: '#475569', bg: '#f1f5f9' },
+];
+
+const FEATURES = [
+  { icon: MessageSquare, color: '#16a34a', bg: '#dcfce7', title: 'Executive WhatsApp Automation Center', desc: 'Automate OPD follow-up reminders, lab report notifications and medicine refill alerts via the official WhatsApp Cloud API with delivery webhooks and audit logs.' },
+  { icon: Mic, color: '#0284c7', bg: '#e0f2fe', title: 'Voice Dictation & Clinical Formatter', desc: 'Hands-free speech-to-text at the consultation desk. Auto-expands medical shorthand (c/o, h/o, bp) into structured notes in seconds.' },
+  { icon: Bed, color: '#d97706', bg: '#fef3c7', title: 'Hourly & Daily Bed Category Billing', desc: 'Flexible rate engine billing ICU, Deluxe and General ward beds per hour or per day based on exact admission and discharge timestamps.' },
+  { icon: BarChart3, color: '#c2410c', bg: '#ffedd5', title: 'Extended Stay (>3 Days LOS) Monitor', desc: 'Flags inpatients exceeding 72 hours on the dashboard for clinical review, discharge clearance and length-of-stay trend analysis.' },
+  { icon: HeartPulse, color: '#9333ea', bg: '#f3e8ff', title: 'Compact Inline Vitals & Consultation Flow', desc: 'Space-saving BP, HR, Temp, SpO2, Resp rate and BMI display paired with a step-by-step 4-stage consultation assessment flow.' },
+  { icon: CheckCircle, color: '#0d9488', bg: '#ccfbf1', title: 'Chief Complaints Bar & Validation', desc: 'Sticky OPD complaints header with rapid symptom tags, per-field validation and rich interactive toast feedback.' },
+  { icon: Headset, color: '#7c3aed', bg: '#ede9fe', title: 'Help Desk with SLA & Escalation', desc: 'Categorized tickets, configurable response/resolution SLAs, automatic multi-level escalation and a full hospital equipment register.' },
+  { icon: Bot, color: '#4f46e5', bg: '#e0e7ff', title: 'AI Co-Pilot Across Every Module', desc: 'Context-aware assistant with RAG lookups, real-time metrics, OCR document reading, voice commands and text-to-action execution.' },
+  { icon: Shield, color: '#059669', bg: '#d1fae5', title: 'HIPAA RBAC & PII Masking', desc: 'Seven-tier roles, full/masked/de-identified PII views, audit-ready access controls and emergency override.' },
+];
+
+const TABS = [
+  { id: 'whatsapp', label: '📱 WhatsApp Automation', color: '#25D366' },
+  { id: 'dictation', label: '🎙️ Voice Dictation EMR', color: '#2563eb' },
+  { id: 'beds', label: '🛏️ Bed Billing & LOS', color: '#d97706' },
+  { id: 'helpdesk', label: '🎫 Help Desk & SLA', color: '#9333ea' },
+  { id: 'vitals', label: '🩺 Vitals & Complaints', color: '#0d9488' },
+];
+
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'whatsapp' | 'dictation' | 'beds' | 'vitals'>('whatsapp');
+  const [activeTab, setActiveTab] = useState<string>('whatsapp');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [scrolled, setScrolled] = useState(false);
 
@@ -116,7 +152,7 @@ export default function LandingPage() {
       {/* ── 1. NAVBAR ─────────────────────────────────────────────────────────── */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 200,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backgroundColor: 'rgba(255, 255, 255, 0.92)',
         backdropFilter: 'blur(12px)',
         borderBottom: scrolled ? '1px solid #e2e8f0' : '1px solid transparent',
         transition: 'all 0.3s ease',
@@ -126,10 +162,12 @@ export default function LandingPage() {
           <BrandLogo size="lg" />
 
           {!isMobile && (
-            <nav style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+            <nav style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
+              <a href="#modules" className="nav-link">Modules</a>
               <a href="#features" className="nav-link">Platform Features</a>
-              <a href="#showcase" className="nav-link">Live Interactive Demo</a>
-              <a href="#compliance" className="nav-link">Clinical Compliance</a>
+              <a href="#helpdesk" className="nav-link">Help Desk</a>
+              <a href="#showcase" className="nav-link">Live Demo</a>
+              <a href="#compliance" className="nav-link">Compliance</a>
               <a href="#contact" className="nav-link">Sales & Onboarding</a>
             </nav>
           )}
@@ -161,20 +199,20 @@ export default function LandingPage() {
         background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37,99,235,0.08) 0%, transparent 70%), #ffffff'
       }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', gap: '56px' }}>
-          
+
           {/* Left Hero Sales Pitch */}
           <div style={{ flex: 1.1, display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeInUp 0.6s ease both' }}>
             <div style={{ display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: '8px', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '6px 14px', borderRadius: '999px' }}>
               <span style={{ background: '#2563eb', color: 'white', fontSize: '10px', fontWeight: 800, padding: '2px 8px', borderRadius: '999px' }}>2026 RELEASE</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e40af' }}>WhatsApp Automation + Voice Dictation + Smart Billing</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e40af' }}>12+ Clinical Modules · AI Co-Pilot · Help Desk SLA</span>
             </div>
 
-            <h1 className="sales-hero-title" style={{ fontSize: isMobile ? '36px' : '56px', fontWeight: 900, lineHeight: 1.15, letterSpacing: '-1.5px', margin: 0 }}>
+            <h1 className="sales-hero-title" style={{ fontSize: isMobile ? '36px' : '54px', fontWeight: 900, lineHeight: 1.12, letterSpacing: '-1.5px', margin: 0 }}>
               The Complete Next-Gen Clinical Operating System for Modern Hospitals.
             </h1>
 
-            <p style={{ fontSize: isMobile ? '16px' : '18px', color: '#475569', lineHeight: 1.6, margin: 0 }}>
-              Transform OPD consultations, automate patient WhatsApp follow-ups, streamline hourly/daily bed billing, and monitor length-of-stay analytics in real time.
+            <p style={{ fontSize: isMobile ? '16px' : '18px', color: '#475569', lineHeight: 1.65, margin: 0 }}>
+              One platform covering OPD, IPD, Laboratory, Pharmacy, Billing and Appointments — supercharged with WhatsApp automation, voice dictation, an AI Co-Pilot and a full Help Desk with SLA-driven escalation.
             </p>
 
             {/* Core Feature Badges */}
@@ -182,7 +220,8 @@ export default function LandingPage() {
               <span style={{ background: '#dcfce7', color: '#15803d', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>📱 WhatsApp Center</span>
               <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🎙️ Voice Dictation</span>
               <span style={{ background: '#fef3c7', color: '#b45309', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🛏️ Hourly/Daily Billing</span>
-              <span style={{ background: '#fae8ff', color: '#86198f', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>📊 &gt;3D LOS Monitor</span>
+              <span style={{ background: '#f3e8ff', color: '#7e22ce', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🎫 Help Desk & SLA</span>
+              <span style={{ background: '#e0e7ff', color: '#4338ca', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🤖 AI Co-Pilot</span>
             </div>
 
             {/* Action Buttons */}
@@ -220,7 +259,7 @@ export default function LandingPage() {
           {/* Right Hero Interactive Mockup */}
           <div style={{ flex: 1, position: 'relative', width: '100%', animation: 'floatCard 6s ease-in-out infinite' }}>
             <div style={{ background: '#0f172a', borderRadius: '24px', padding: '24px', border: '1px solid #334155', boxShadow: '0 32px 64px rgba(15, 23, 42, 0.25)', color: 'white' }}>
-              
+
               {/* Header Bar */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '14px', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -229,7 +268,7 @@ export default function LandingPage() {
                   <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
                   <span style={{ fontSize: '12px', color: '#94a3b8', fontFamily: 'monospace', marginLeft: '8px' }}>Jioplix HIMS v4.2 · Sales Edition</span>
                 </div>
-                <span style={{ background: '#25D366', color: 'white', fontSize: '10px', fontWeight: 800, padding: '3px 10px', borderRadius: '20px' }}>WhatsApp Active</span>
+                <span style={{ background: '#25D366', color: 'white', fontSize: '10px', fontWeight: 800, padding: '3px 10px', borderRadius: '20px' }}>All Systems Live</span>
               </div>
 
               {/* Mockup Card 1: WhatsApp Automation */}
@@ -243,14 +282,14 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Mockup Card 2: Voice Dictation & Inline Vitals */}
+              {/* Mockup Card 2: Help Desk & SLA */}
               <div style={{ background: '#1e293b', padding: '14px', borderRadius: '12px', border: '1px solid #334155', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: 700, color: '#a78bfa' }}>
-                  <span>🎙️ Voice Dictation &amp; Compact Vitals</span>
-                  <span style={{ color: '#facc15' }}>BP 120/80 (Normal)</span>
+                  <span>🎫 Help Desk &amp; SLA Escalation</span>
+                  <span style={{ color: '#4ade80' }}>TK-0001 · ON TRACK</span>
                 </div>
                 <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>
-                  Expanded: <em>"c/o fever ➔ Complaining of fever × 3 days"</em>
+                  Equipment outage flagged → Auto-escalated L1 → L2 · Response SLA 4 hrs
                 </div>
               </div>
 
@@ -269,95 +308,110 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 3. 7 CORE FEATURE HIGHLIGHTS (SALES PERSPECTIVE) ──────────────────── */}
-      <section id="features" style={{ padding: '90px 24px', background: '#f8fafc' }}>
+      {/* ── 3. ALL MODULES MAP ─────────────────────────────────────────────────── */}
+      <section id="modules" style={{ padding: '90px 24px', background: '#f8fafc' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
-          
+
           <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#2563eb' }}>Next-Gen Suite</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#2563eb' }}>Complete Module Map</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '10px 0 14px', letterSpacing: '-1px' }}>
-              7 Game-Changing Features Built for Growth
+              Every Department. One Platform.
             </h2>
             <p style={{ color: '#64748b', fontSize: '16px', lineHeight: 1.6 }}>
-              Engineered specifically to maximize hospital revenue, eliminate operational friction, and deliver superior patient satisfaction.
+              Twelve deeply-integrated modules that span the entire patient journey — from front-desk registration to discharge, billing and beyond.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px' }}>
-            
-            {/* Feature 1 */}
-            <div className="sales-feature-card" style={{ background: 'white', borderRadius: '20px', padding: '28px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-                <MessageSquare size={24} />
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 10px' }}>1. Executive WhatsApp Automation Center</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                Automate OPD follow-up reminders, lab report notifications, and medicine refill alerts via official WhatsApp Cloud API with instant status audit logs.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="sales-feature-card" style={{ background: 'white', borderRadius: '20px', padding: '28px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#e0f2fe', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-                <Mic size={24} />
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 10px' }}>2. Voice Dictation &amp; Clinical Formatter</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                Hands-free speech recognition in doctors' consultation desks. Auto-expands medical shorthand (<code>c/o</code>, <code>h/o</code>, <code>bp</code>) into structured notes in seconds.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="sales-feature-card" style={{ background: 'white', borderRadius: '20px', padding: '28px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-                <Bed size={24} />
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 10px' }}>3. Hourly &amp; Daily Bed Category Billing</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                Flexible rate engine allowing ICU, Deluxe, and General ward rates to be billed hourly or daily based on exact admission and discharge timestamps.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="sales-feature-card" style={{ background: 'white', borderRadius: '20px', padding: '28px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#ffedd5', color: '#c2410c', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-                <BarChart3 size={24} />
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 10px' }}>4. Extended Stay (&gt;3 Days LOS) Monitor</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                Active Length of Stay monitoring card on hospital dashboards that automatically flags inpatients exceeding 72 hours for clinical review and discharge clearance.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="sales-feature-card" style={{ background: 'white', borderRadius: '20px', padding: '28px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#f3e8ff', color: '#9333ea', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-                <HeartPulse size={24} />
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 10px' }}>5. Compact Inline Vitals &amp; Consultation Flow</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                Space-saving inline vitals display (BP, HR, Temp, SpO2, Resp Rate, calculated BMI) paired with a step-by-step 4-stage Consultation Assessment Flow.
-              </p>
-            </div>
-
-            {/* Feature 6 & 7 */}
-            <div className="sales-feature-card" style={{ background: 'white', borderRadius: '20px', padding: '28px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#ccfbf1', color: '#0d9488', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-                <CheckCircle size={24} />
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 10px' }}>6. Chief Complaints Bar &amp; Field Validation</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                Sticky OPD complaints header bar with rapid symptom tags, supported by instant per-field input validation and rich interactive toast feedback.
-              </p>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: '20px' }}>
+            {MODULES.map((mod, idx) => {
+              const Icon = mod.icon;
+              return (
+                <div className="sales-feature-card" key={idx} style={{ background: 'white', borderRadius: '20px', padding: '24px' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: mod.bg, color: mod.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                    <Icon size={24} />
+                  </div>
+                  <h3 style={{ fontSize: '16px', fontWeight: 800, margin: '0 0 8px' }}>{mod.title}</h3>
+                  <p style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>{mod.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── 4. LIVE INTERACTIVE SHOWCASE (TABBED DEMO) ────────────────────────── */}
+      {/* ── 4. FLAGSHIP FEATURES ───────────────────────────────────────────────── */}
+      <section id="features" style={{ padding: '90px 24px', background: '#ffffff' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
+
+          <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#059669' }}>Next-Gen Suite</span>
+            <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '10px 0 14px', letterSpacing: '-1px' }}>
+              9 Game-Changing Features Built for Growth
+            </h2>
+            <p style={{ color: '#64748b', fontSize: '16px', lineHeight: 1.6 }}>
+              Engineered to maximize hospital revenue, eliminate operational friction, and deliver superior patient satisfaction.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px' }}>
+            {FEATURES.map((f, idx) => {
+              const Icon = f.icon;
+              return (
+                <div className="sales-feature-card" key={idx} style={{ background: 'white', borderRadius: '20px', padding: '28px' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: f.bg, color: f.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                    <Icon size={24} />
+                  </div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 10px' }}>{idx + 1}. {f.title}</h3>
+                  <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 5. HELP DESK SPOTLIGHT ─────────────────────────────────────────────── */}
+      <section id="helpdesk" style={{ padding: '90px 24px', background: '#0f172a', color: 'white' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
+
+          <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#a78bfa' }}>New · Support Operations</span>
+            <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, margin: '10px 0 14px', letterSpacing: '-1px' }}>
+              Enterprise Help Desk with SLA-Driven Escalation
+            </h2>
+            <p style={{ color: '#94a3b8', fontSize: '16px', lineHeight: 1.6 }}>
+              Stop chasing issues across spreadsheets and phone calls. Route every staff request and patient grievance through a structured, accountable ticketing system.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '20px' }}>
+            {[
+              { icon: Ticket, color: '#a78bfa', bg: 'rgba(167, 139, 250, 0.12)', title: 'Categorized Ticketing', desc: 'Internal staff and patient-grievance categories out of the box — Hardware, IT/Software, Facilities, Patient Care Quality and more — each with its own routing.' },
+              { icon: Gauge, color: '#4ade80', bg: 'rgba(74, 222, 128, 0.12)', title: 'Configurable SLA Policies', desc: 'Set response and resolution SLAs per category. Tickets show live ON_TRACK / AT_RISK / OVERDUE status with countdown timers.' },
+              { icon: AlertTriangle, color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.12)', title: 'Automatic Multi-Level Escalation', desc: 'Overdue tickets escalate automatically from L1 to L2 to management — with a full escalation audit trail and priority re-ranking.' },
+              { icon: Wrench, color: '#60a5fa', bg: 'rgba(96, 165, 250, 0.12)', title: 'Hospital Equipment Register', desc: 'Register every asset — ventilators, beds, diagnostic devices — and link maintenance tickets directly to equipment records.' },
+              { icon: BarChart3, color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)', title: 'Live Help Desk Analytics', desc: 'Real-time open counts, status breakdowns, SLA compliance trends and per-category volume on the help desk dashboard.' },
+              { icon: MessageSquare, color: '#f472b6', bg: 'rgba(244, 114, 182, 0.12)', title: 'Collaborative Notes & History', desc: 'Threaded internal notes, full lifecycle history and audit-safe updates on every ticket from creation to resolution.' },
+            ].map((f, idx) => {
+              const Icon = f.icon;
+              return (
+                <div key={idx} style={{ background: '#1e293b', borderRadius: '20px', padding: '28px', border: '1px solid #334155' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: f.bg, color: f.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                    <Icon size={24} />
+                  </div>
+                  <h3 style={{ fontSize: '17px', fontWeight: 800, margin: '0 0 8px', color: '#f1f5f9' }}>{f.title}</h3>
+                  <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 6. LIVE INTERACTIVE SHOWCASE (TABBED DEMO) ────────────────────────── */}
       <section id="showcase" style={{ padding: '90px 24px', background: '#ffffff' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '40px' }}>
-          
+
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
             <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#059669' }}>Interactive Product Tour</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '10px 0 0', letterSpacing: '-1px' }}>
@@ -367,15 +421,10 @@ export default function LandingPage() {
 
           {/* Tabs Navigation */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            {[
-              { id: 'whatsapp', label: '📱 WhatsApp Automation', color: '#25D366' },
-              { id: 'dictation', label: '🎙️ Voice Dictation EMR', color: '#2563eb' },
-              { id: 'beds', label: '🛏️ Hourly/Daily Bed Billing', color: '#d97706' },
-              { id: 'vitals', label: '🩺 Compact Vitals & Complaints', color: '#9333ea' }
-            ].map(tab => (
+            {TABS.map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 style={{
                   padding: '12px 20px',
                   borderRadius: '12px',
@@ -449,14 +498,14 @@ export default function LandingPage() {
             {activeTab === 'beds' && (
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '32px', alignItems: 'center' }}>
                 <div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#fbbf24', marginBottom: '12px' }}>Dynamic Bed Category Rates (Hourly &amp; Daily)</h3>
+                  <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#fbbf24', marginBottom: '12px' }}>Dynamic Bed Rates &amp; Extended-Stay Monitoring</h3>
                   <p style={{ color: '#cbd5e1', lineHeight: 1.6, fontSize: '15px' }}>
-                    Manage ICU, Deluxe, and General Ward billing with precision. Charge per hour for emergency stays or per day for routine admissions.
+                    Manage ICU, Deluxe, and General Ward billing with precision. Charge per hour for emergency stays or per day for routine admissions — while monitoring length-of-stay in real time.
                   </p>
                   <ul style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#94a3b8' }}>
                     <li>✓ Configurable hourly vs daily rates per bed category</li>
                     <li>✓ Automated grace period calculator</li>
-                    <li>✓ Seamless transfer &amp; discharge ledger sync</li>
+                    <li>✓ &gt;3-day LOS auto-flag for clinical review</li>
                   </ul>
                 </div>
                 <div style={{ background: '#1e293b', borderRadius: '16px', padding: '20px', border: '1px solid #334155' }}>
@@ -470,6 +519,43 @@ export default function LandingPage() {
                       <span>Private Deluxe:</span>
                       <span style={{ color: '#34d399', fontWeight: 700 }}>₹350 / hr • ₹5,000 / day</span>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#020617', borderRadius: '8px' }}>
+                      <span>LOS Flag Threshold:</span>
+                      <span style={{ color: '#fb7185', fontWeight: 700 }}>&gt;72 hours • ICU Bed 04</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'helpdesk' && (
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '32px', alignItems: 'center' }}>
+                <div>
+                  <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#a78bfa', marginBottom: '12px' }}>SLA-Powered Help Desk Workflow</h3>
+                  <p style={{ color: '#cbd5e1', lineHeight: 1.6, fontSize: '15px' }}>
+                    Every staff request and patient grievance becomes a tracked ticket with a category, priority, SLA deadline and automatic escalation path.
+                  </p>
+                  <ul style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#94a3b8' }}>
+                    <li>✓ Categories: Hardware, IT/Software, Facilities, Billing, Patient Care</li>
+                    <li>✓ Live SLA countdown with ON_TRACK / AT_RISK / OVERDUE states</li>
+                    <li>✓ Auto-escalation with full audit trail</li>
+                  </ul>
+                </div>
+                <div style={{ background: '#1e293b', borderRadius: '16px', padding: '20px', border: '1px solid #334155' }}>
+                  <div style={{ fontWeight: 700, color: '#e2e8f0', marginBottom: '12px' }}>Ticket Board Preview</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#020617', borderRadius: '8px' }}>
+                      <span>TK-0001 · ICU ventilator display fault</span>
+                      <span style={{ color: '#4ade80', fontWeight: 700 }}>ON TRACK</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#020617', borderRadius: '8px' }}>
+                      <span>TK-0002 · Pharmacy stock sync delay</span>
+                      <span style={{ color: '#fbbf24', fontWeight: 700 }}>AT RISK</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#020617', borderRadius: '8px' }}>
+                      <span>TK-0003 · Patient grievance (Billing)</span>
+                      <span style={{ color: '#fb7185', fontWeight: 700 }}>ESCALATED L2</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -478,7 +564,7 @@ export default function LandingPage() {
             {activeTab === 'vitals' && (
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '32px', alignItems: 'center' }}>
                 <div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#c084fc', marginBottom: '12px' }}>Compact Inline Vitals &amp; Chief Complaints Bar</h3>
+                  <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#34d399', marginBottom: '12px' }}>Compact Inline Vitals &amp; Chief Complaints Bar</h3>
                   <p style={{ color: '#cbd5e1', lineHeight: 1.6, fontSize: '15px' }}>
                     Consultation desk features a sticky top chief complaints bar with rapid symptom tags and an inline vitals bar with real-time format validation.
                   </p>
@@ -496,7 +582,7 @@ export default function LandingPage() {
                     </div>
                     <div style={{ background: '#020617', padding: '8px', borderRadius: '8px' }}>
                       <div style={{ color: '#94a3b8', fontSize: '10px' }}>BMI</div>
-                      <div style={{ color: '#c084fc', fontWeight: 800 }}>22.9 kg/m²</div>
+                      <div style={{ color: '#34d399', fontWeight: 800 }}>22.9 kg/m²</div>
                     </div>
                   </div>
                 </div>
@@ -506,7 +592,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 5. COMPLIANCE & TRUST ──────────────────────────────────────────────── */}
+      {/* ── 7. COMPLIANCE & TRUST ──────────────────────────────────────────────── */}
       <section id="compliance" style={{ padding: '90px 24px', background: '#f8fafc' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
@@ -531,8 +617,8 @@ export default function LandingPage() {
 
             <div style={{ background: 'white', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
               <Lock size={32} color="#dc2626" style={{ marginBottom: '16px' }} />
-              <h4 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '6px' }}>AES-256 Encryption</h4>
-              <p style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.5, margin: 0 }}>Bank-grade encryption protecting all medical records and billing data.</p>
+              <h4 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '6px' }}>AES-256 Encryption &amp; HIPAA RBAC</h4>
+              <p style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.5, margin: 0 }}>Bank-grade encryption with seven-tier role access and full/de-identified PII masking.</p>
             </div>
 
             <div style={{ background: 'white', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
@@ -544,14 +630,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 6. SALES CALL TO ACTION (NO PRICING TABLE) ─────────────────────────── */}
+      {/* ── 8. SALES CALL TO ACTION (NO PRICING TABLE) ─────────────────────────── */}
       <section style={{ padding: '80px 24px', background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)', color: 'white' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
-          
+
           <h2 style={{ fontSize: isMobile ? '30px' : '44px', fontWeight: 900, margin: 0, letterSpacing: '-1px' }}>
             Ready to Supercharge Your Hospital Operations?
           </h2>
-          
+
           <p style={{ fontSize: '18px', color: '#93c5fd', lineHeight: 1.6, maxWidth: '640px', margin: 0 }}>
             Connect with our sales specialists to schedule a live 1-on-1 walkthrough tailored to your hospital or clinic workflow.
           </p>
@@ -577,10 +663,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 7. CONTACT & FOOTER ────────────────────────────────────────────────── */}
+      {/* ── 9. CONTACT & FOOTER ────────────────────────────────────────────────── */}
       <section id="contact" style={{ padding: '80px 24px', background: '#ffffff' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
-          
+
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '20px' }}>
             <a href="mailto:sales@cybelinx.com" style={{ padding: '24px', borderRadius: '16px', background: '#f8fafc', border: '1px solid #e2e8f0', textDecoration: 'none', color: '#0f172a' }}>
               <Mail size={24} color="#2563eb" style={{ marginBottom: '12px' }} />
