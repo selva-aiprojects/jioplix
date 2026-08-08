@@ -544,11 +544,24 @@ export default function Sidebar() {
     const gLabels = new Set<string>();
     gs.forEach(g => g.items.forEach(i => gLabels.add(i.label.toLowerCase())));
 
-    // Gather leftover items (excluding main dashboard)
-    const ug = pm.filter(m => !gLabels.has(m.label.toLowerCase()) && !m.path.endsWith('/dashboard'));
-    const dashboards = pm.filter(m => m.path.endsWith('/dashboard'));
+    // Main top-level platform dashboard link ONLY
+    const mainDashboardMatches = pm.filter(m =>
+      m.path === '/tenant/dashboard' ||
+      m.path === '/nexus/dashboard' ||
+      m.label.toLowerCase() === 'dashboard'
+    );
+    const mainDashboard = mainDashboardMatches.length > 0
+      ? [mainDashboardMatches[0]]
+      : [{ label: 'Dashboard', path: '/tenant/dashboard', icon: 'Dashboard' }];
 
-    // If there are leftover non-dashboard items, sweep them into Non-Clinical Operations
+    // Leftover unmapped items (excluding main platform dashboard) -> sweep into Non-Clinical Operations
+    const ug = pm.filter(m =>
+      !gLabels.has(m.label.toLowerCase()) &&
+      m.path !== '/tenant/dashboard' &&
+      m.path !== '/nexus/dashboard' &&
+      m.label.toLowerCase() !== 'dashboard'
+    );
+
     if (ug.length > 0) {
       const ncGroup = gs.find(g => g.id === 'nonclinical');
       if (ncGroup) {
@@ -556,7 +569,7 @@ export default function Sidebar() {
       }
     }
 
-    return { groups: gs, ungroupped: dashboards };
+    return { groups: gs, ungroupped: mainDashboard };
   }, []);
 
   const [openGroup, setOpenGroup] = useState<string | null>(null);
