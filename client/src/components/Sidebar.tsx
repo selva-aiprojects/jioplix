@@ -420,15 +420,12 @@ export default function Sidebar() {
       "Insurance & Claims",
       "Finance & Compliance",
     ];
-    const analyticsFlow = [
-      "Clinical Analytics",
-      "Patient CRM",
-    ];
-    const hrOpsFlow = [
+    const nonClinicalFlow = [
       "HR Management (HRMS)",
       "Payroll Processing",
       "Procurement",
       "Pharmacy Inventory",
+      "Patient CRM",
     ];
     const commFlow = [
       "Message Board",
@@ -504,7 +501,7 @@ export default function Sidebar() {
       {
         id: 'analytics',
         title: "Analytics & Intelligence",
-        items: getItems(analyticsFlow).filter(() => {
+        items: getItems(["Clinical Analytics"]).filter(() => {
           if (!atLeastStandard || !isAdmin) return false;
           return true;
         }),
@@ -512,14 +509,14 @@ export default function Sidebar() {
         badge: !atLeastStandard ? "Standard+" : null,
       },
       {
-        id: 'hrops',
-        title: "HR & Operations",
-        items: getItems(hrOpsFlow).filter(() => {
-          if (!isEnterprise || !isAdmin) return false;
+        id: 'nonclinical',
+        title: "Non-Clinical Operations",
+        items: getItems(nonClinicalFlow).filter(() => {
+          if (!atLeastStandard) return false;
           return true;
         }),
-        icon: UserCog,
-        badge: !isEnterprise ? "Enterprise" : null,
+        icon: Box,
+        badge: !isEnterprise ? "Enterprise / Standard" : null,
       },
       {
         id: 'communication',
@@ -546,9 +543,20 @@ export default function Sidebar() {
 
     const gLabels = new Set<string>();
     gs.forEach(g => g.items.forEach(i => gLabels.add(i.label.toLowerCase())));
-    const ug = pm.filter(m => !gLabels.has(m.label.toLowerCase()));
 
-    return { groups: gs, ungroupped: ug };
+    // Gather leftover items (excluding main dashboard)
+    const ug = pm.filter(m => !gLabels.has(m.label.toLowerCase()) && !m.path.endsWith('/dashboard'));
+    const dashboards = pm.filter(m => m.path.endsWith('/dashboard'));
+
+    // If there are leftover non-dashboard items, sweep them into Non-Clinical Operations
+    if (ug.length > 0) {
+      const ncGroup = gs.find(g => g.id === 'nonclinical');
+      if (ncGroup) {
+        ncGroup.items = [...ncGroup.items, ...ug];
+      }
+    }
+
+    return { groups: gs, ungroupped: dashboards };
   }, []);
 
   const [openGroup, setOpenGroup] = useState<string | null>(null);
@@ -618,22 +626,22 @@ export default function Sidebar() {
         </button>
 
         {/* Logo / Tenant Brand */}
-        <div style={{ padding: '0 8px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', marginTop: '16px' }}>
+        <div style={{ padding: '8px 12px 12px', borderBottom: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', marginTop: '8px' }}>
           <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
             <img
               src={sidebarLogoUrl}
               alt={tenantName}
-              style={{ width: '100%', height: 'auto', maxHeight: '80px', objectFit: 'contain', cursor: 'pointer', borderRadius: '12px' }}
+              style={{ width: 'auto', maxWidth: '160px', height: 'auto', maxHeight: '52px', objectFit: 'contain', cursor: 'pointer', borderRadius: '8px' }}
               onError={(e) => {
                 const img = e.target as HTMLImageElement;
                 img.style.display = 'none';
                 const parent = img.parentElement;
                 if (parent) {
-                  parent.innerHTML = `<div style="width:56px;height:56px;background:linear-gradient(135deg,#0ea5e9,#34d399);border-radius:16px;margin:16px auto;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:white;">${tenantName.charAt(0)}</div><h2 style="font-size:18px;font-weight:900;color:white;margin-top:14px;letter-spacing:-0.3px;">${tenantName}</h2>`;
+                  parent.innerHTML = `<div style="width:42px;height:42px;background:linear-gradient(135deg,#0ea5e9,#34d399);border-radius:12px;margin:8px auto;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:white;">${tenantName.charAt(0)}</div><h2 style="font-size:15px;font-weight:800;color:white;margin-top:8px;letter-spacing:-0.3px;">${tenantName}</h2>`;
                 }
               }}
             />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '6px' }}>
               <span style={{
                 fontSize: '9px', fontWeight: 900, color: planColor,
                 textTransform: 'uppercase', background: 'rgba(255,255,255,0.05)',
@@ -641,7 +649,7 @@ export default function Sidebar() {
                 border: `1px solid ${planColor}30`
               }}>{plan} plan</span>
               <button onClick={refreshMenus} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }} title="Refresh menu">
-                <RefreshCw size={12} />
+                <RefreshCw size={11} />
               </button>
             </div>
           </div>
