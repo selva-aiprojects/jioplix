@@ -640,7 +640,7 @@ export default function DashboardPage() {
           justifyContent: 'space-between',
           padding: '24px 32px',
           width: '100%',
-          marginBottom: '32px',
+          marginBottom: '24px',
           gap: isMobile ? '20px' : '0'
         }}>
           {/* Left Welcome Text */}

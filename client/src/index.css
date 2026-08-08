@@ -527,29 +527,33 @@ code, pre, .font-mono, [style*="monospace"] {
 }
 
 .dashboard-header {
-  display: flex;
+  display: flex !important;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   text-align: left;
-  margin-bottom: 32px;
+  margin-bottom: 24px !important;
   position: relative;
   background: var(--hero-bg, linear-gradient(135deg, #003870 0%, #0056A8 100%)) !important;
   color: var(--hero-text, #ffffff) !important;
-  border-radius: 28px;
-  padding: 24px 32px;
-  box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px !important;
+  padding: 24px 32px !important;
+  min-height: 110px;
+  box-shadow: 0 10px 30px -10px rgba(0, 56, 112, 0.22) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   overflow: hidden;
   gap: 20px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1023px) {
   .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
-    gap: 16px;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 20px !important;
+    min-height: auto !important;
+    margin-bottom: 20px !important;
+    gap: 16px !important;
   }
 }
 

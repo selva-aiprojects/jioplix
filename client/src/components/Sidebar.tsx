@@ -56,6 +56,16 @@ const Icons: Record<string, any> = {
   "Central Billing":        Receipt,
   "Insurance & Claims":     ShieldCheck,
   "Finance & Compliance":   CircleDollarSign,
+  "Outpatient Registration (OPD)": HeartPulse,
+  "Inpatient Admission (IPD)": Bed,
+  "Human Resource Management System": UserCog,
+  "Payroll & Compensation Processing": Wallet,
+  "Procurement & Supply Chain Management": Box,
+  "Pharmacy Inventory & Stock Control": Package,
+  "Patient Relationship Management (CRM)": Users,
+  "Insurance & TPA Claims Management": ShieldCheck,
+  "Hospital Branding & User Interface": Palette,
+  "Staff & Access Control (RBAC)": UserCog,
   "Clinical Analytics":     BarChart2,
   "Patient CRM":            Users,
   "HR Management (HRMS)":   UserCog,
@@ -202,10 +212,10 @@ const normalizeLabel = (label: string): string => {
   // Exact overrides first
   const labelMap: Record<string, string> = {
     // OPD
-    "opd registration":          "OPD Registration",
-    "opd center":                "OPD Registration",
-    "opd registration desk":     "OPD Registration",
-    "vital assessment":          "OPD Registration",
+    "opd registration":          "Outpatient Registration (OPD)",
+    "opd center":                "Outpatient Registration (OPD)",
+    "opd registration desk":     "Outpatient Registration (OPD)",
+    "vital assessment":          "Outpatient Registration (OPD)",
     "opd queue":                 "OPD Consultation Queue",
     "consulting mgmt.":          "OPD Consultation Queue",
     "consultation desk":         "Consultation Desk",
@@ -216,9 +226,9 @@ const normalizeLabel = (label: string): string => {
     "doctor availability":       "Doctor's Schedule",
     "patient register":          "Patient Register",
     // IPD
-    "admission desk":            "IPD Admission",
-    "ipd admission desk":        "IPD Admission",
-    "ipd admission hub":         "IPD Admission",
+    "admission desk":            "Inpatient Admission (IPD)",
+    "ipd admission desk":        "Inpatient Admission (IPD)",
+    "ipd admission hub":         "Inpatient Admission (IPD)",
     "ipd bed map":               "Bed Management",
     "discharge summaries":       "Discharge & Summary",
     "discharge process":         "Discharge & Summary",
@@ -243,20 +253,23 @@ const normalizeLabel = (label: string): string => {
     "invoicing & billing":       "Central Billing",
     "opd billing & revenue center": "Central Billing",
     "ipd & discharge billing":   "Central Billing",
-    "insurance & claims":        "Insurance & Claims",
+    "insurance & claims":        "Insurance & TPA Claims Management",
     "finance & compliance":      "Finance & Compliance",
     // Analytics
     "operations analytics":      "Clinical Analytics",
     "operational analytics":     "Clinical Analytics",
     "performance insights":      "Clinical Analytics",
     "alert center":              "Clinical Analytics",
-    "patient crm":               "Patient CRM",
+    "patient crm":               "Patient Relationship Management (CRM)",
     "clinical intelligence hub": "Clinical Analytics",
-    // HR & Ops
-    "hrms":                      "HR Management (HRMS)",
-    "duty roster":               "HR Management (HRMS)",
-    "payroll":                   "Payroll Processing",
-    "pharmacy inventory":        "Pharmacy Inventory",
+    // HR & Non-Clinical Ops
+    "hrms":                      "Human Resource Management System",
+    "hr management (hrms)":      "Human Resource Management System",
+    "duty roster":               "Human Resource Management System",
+    "payroll":                   "Payroll & Compensation Processing",
+    "payroll processing":        "Payroll & Compensation Processing",
+    "procurement":               "Procurement & Supply Chain Management",
+    "pharmacy inventory":        "Pharmacy Inventory & Stock Control",
     // Communication
     "message board":             "Message Board",
     "mail management":           "Mail & Communications",
@@ -265,11 +278,13 @@ const normalizeLabel = (label: string): string => {
     "follow-up center":          "WhatsApp Reminders",
     // System
     "hospital settings (masters)": "Hospital Settings",
-    "branding & ui settings":    "Branding & UI",
-    "branding settings":         "Branding & UI",
-    "staff management":          "Staff & Access Control",
-    "user management":           "Staff & Access Control",
-    "staff & access":            "Staff & Access Control",
+    "branding & ui settings":    "Hospital Branding & User Interface",
+    "branding settings":         "Hospital Branding & User Interface",
+    "branding & ui":             "Hospital Branding & User Interface",
+    "staff management":          "Staff & Access Control (RBAC)",
+    "user management":           "Staff & Access Control (RBAC)",
+    "staff & access":            "Staff & Access Control (RBAC)",
+    "staff & access control":    "Staff & Access Control (RBAC)",
     "ticketing management system": "Support Tickets",
     "help & support":            "Support Tickets",
     "support & tickets":         "Support Tickets",
@@ -393,7 +408,7 @@ export default function Sidebar() {
     // ── Group definitions ────────────────────────────────────────────────────
     // Define canonical ordered labels per group
     const opdFlow = [
-      "OPD Registration",
+      "Outpatient Registration (OPD)",
       "OPD Consultation Queue",
       "Consultation Desk",
       "Doctor's Queue",
@@ -403,7 +418,7 @@ export default function Sidebar() {
       "Clinical Archives",
     ];
     const ipdFlow = [
-      "IPD Admission",
+      "Inpatient Admission (IPD)",
       "Bed Management",
       "IPD Census & Daycare",
       "Discharge & Summary",
@@ -417,15 +432,15 @@ export default function Sidebar() {
     ];
     const billingFlow = [
       "Central Billing",
-      "Insurance & Claims",
+      "Insurance & TPA Claims Management",
       "Finance & Compliance",
     ];
     const nonClinicalFlow = [
-      "HR Management (HRMS)",
-      "Payroll Processing",
-      "Procurement",
-      "Pharmacy Inventory",
-      "Patient CRM",
+      "Human Resource Management System",
+      "Payroll & Compensation Processing",
+      "Procurement & Supply Chain Management",
+      "Pharmacy Inventory & Stock Control",
+      "Patient Relationship Management (CRM)",
     ];
     const commFlow = [
       "Message Board",
@@ -434,8 +449,8 @@ export default function Sidebar() {
     ];
     const adminFlow = [
       "Hospital Settings",
-      "Branding & UI",
-      "Staff & Access Control",
+      "Hospital Branding & User Interface",
+      "Staff & Access Control (RBAC)",
       "Help Desk",
       "Support Tickets",
       "Secure Configurations",

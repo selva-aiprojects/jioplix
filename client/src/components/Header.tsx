@@ -7,7 +7,7 @@ interface HeaderProps {
   compact?: boolean;
 }
 
-export default function Header({ title, compact = false }: HeaderProps) {
+export default function Header({ title }: HeaderProps) {
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName") || "User";
   const tenantName = getNamespacedItem('tenantName') || localStorage.getItem("tenantName") || "Jioplix Hospital";
@@ -61,15 +61,16 @@ export default function Header({ title, compact = false }: HeaderProps) {
       flexDirection: isMobile ? 'column' : 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: compact ? '12px 24px' : '24px 32px',
+      padding: isMobile ? '20px' : '24px 32px',
       width: '100%',
-      marginBottom: compact ? '12px' : '32px',
-      gap: isMobile ? '20px' : '0'
+      marginBottom: '24px',
+      gap: isMobile ? '16px' : '20px',
+      boxSizing: 'border-box'
     }}>
       {/* Left Welcome/Title block */}
       <div style={{ zIndex: 2, textAlign: 'left', width: isMobile ? '100%' : 'auto' }}>
         {isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', width: '100%' }}>
             <button 
               className="hamburger-menu"
               onClick={() => {
@@ -90,14 +91,14 @@ export default function Header({ title, compact = false }: HeaderProps) {
           </div>
         )}
         <h1 style={{ 
-          fontSize: compact ? '20px' : (isMobile ? '24px' : '28px'), 
+          fontSize: isMobile ? '22px' : '26px', 
           fontWeight: 900, 
           color: '#ffffff', 
           margin: 0,
           letterSpacing: '-0.02em',
           textShadow: '0 2px 10px rgba(0,0,0,0.15)'
         }}>{title}</h1>
-        <p style={{ margin: compact ? '2px 0 6px' : '4px 0 12px', color: 'rgba(255, 255, 255, 0.8)', fontSize: compact ? '12px' : '14px', fontWeight: 500 }}>
+        <p style={{ margin: '4px 0 10px', color: 'rgba(255, 255, 255, 0.85)', fontSize: '13px', fontWeight: 500, lineHeight: 1.4 }}>
           {getTaglineForPage(title)}
         </p>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginTop: '4px' }}>
@@ -108,7 +109,7 @@ export default function Header({ title, compact = false }: HeaderProps) {
             </span>
           </div>
           <div style={{ width: '1px', height: '14px', background: 'rgba(255, 255, 255, 0.15)' }} />
-          <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', fontWeight: 600 }}>{userName}</span>
+          <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.85)', fontWeight: 600 }}>{userName}</span>
         </div>
       </div>
 
@@ -116,7 +117,7 @@ export default function Header({ title, compact = false }: HeaderProps) {
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '20px', 
+        gap: '16px', 
         zIndex: 2,
         width: isMobile ? '100%' : 'auto',
         justifyContent: isMobile ? 'center' : 'flex-end'
@@ -129,10 +130,10 @@ export default function Header({ title, compact = false }: HeaderProps) {
             display: 'flex', 
             alignItems: 'center', 
             gap: '6px',
-            padding: compact ? '8px 14px' : '10px 18px',
+            padding: '9px 16px',
             fontSize: '11px',
             fontWeight: 800,
-            borderRadius: '12px',
+            borderRadius: '10px',
             cursor: 'pointer',
             backgroundColor: 'rgba(255, 255, 255, 0.15)',
             backdropFilter: 'blur(10px)',

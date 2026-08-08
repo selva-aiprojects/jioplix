@@ -5,9 +5,10 @@ import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 
 function getHeaders() {
+  const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
   return {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
-    "x-tenant-id": localStorage.getItem("tenant") || ""
+    "x-tenant-id": tenantId
   };
 }
 
@@ -150,7 +151,7 @@ export default function AnalyticsPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Operations Analytics" />
+        <Header title="Operations & Clinical Analytics" />
         <div style={{ padding: "20px 24px" }}>
           {error && (
             <div style={{ background: "#fef2f2", color: "#b91c1c", padding: "12px 16px", borderRadius: "12px", marginBottom: "16px", fontSize: "13px", fontWeight: 600 }}>

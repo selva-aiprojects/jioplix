@@ -5,9 +5,10 @@ import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 
 function getHeaders() {
+  const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
   return {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
-    "x-tenant-id": localStorage.getItem("tenant") || ""
+    "x-tenant-id": tenantId
   };
 }
 
