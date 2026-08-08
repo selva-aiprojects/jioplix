@@ -101,4 +101,72 @@
 - [ ] **Tele-Health Bridge**: Seamless video consultation integration with synchronized clinical notes.
 
 ---
-*Last Updated: 2026-06-06 11:05*
+## 🗺️ Enhancement Roadmap (Phase A → B → C)
+Detailed plan: `docs/Requirements/Enhancements_Implementation_Plan.md`
+
+### Phase A — Helpdesk & Analytics (v14)
+- [ ] **Helpdesk**: Patient grievance + internal ticket categories; SLA timers & escalation matrix; link tickets to patient / equipment / department.
+  - [x] H1: Helpdesk tables (`helpdesk_tickets`, `helpdesk_categories`, `helpdesk_sla_policies`, `helpdesk_escalations`, `helpdesk_ticket_notes`, `helpdesk_equipment`) + ensure-helper + reconciliation (validated on real tenant `kkcth`)
+  - [x] H2: Ticket CRUD + SLA engine + escalation sweep + Resend emails + RBAC (`backend/src/modules/helpdesk` → `/api/helpdesk`; end-to-end tested on `kkcth`)
+  - [x] H3: Web screens (dashboard, list, detail, equipment register) + sidebar (`client/src/modules/tenant/helpdesk` → `/tenant/helpdesk`; builds clean)
+  - [ ] H4: Grievance intake from public complaint endpoint + helpdesk analytics endpoint
+- [ ] **Analytics**: Real-time operational dashboards (OPD load, bed occupancy, pharmacy stock-out risk, revenue vs target); doctor-wise & specialty-wise performance; predictive alerts (bed shortage, high ALOS, expiry risk).
+  - [ ] A1: `targets` + `operational_alerts` tables
+  - [ ] A2: OPD-load + bed-occupancy + pharmacy-risk endpoints
+  - [ ] A3: Revenue-vs-target + doctor/specialty performance endpoints
+  - [ ] A4: Predictive alert engine (5 signals) + ack/resolve
+  - [ ] A5: Ops command center + performance + alert UI
+
+### Phase B — AI Assistant (v15)
+- [ ] B1: Conversational operational queries (intent routing + safe aggregate queries + audit log)
+- [ ] B2: Discharge summary draft polish (vitals/meds/labs/follow-up + style toggle)
+- [ ] B3: In-consultation differential diagnosis + drug interaction rules engine
+- [ ] B4: (Optional) Stock prediction + claim rejection prediction
+
+### Phase C — Mobile Ecosystem (v16)
+- [ ] M1: Single role-driven Flutter app shell + token refresh + theme
+- [ ] M2: Doctor app (today list, patient card, e-Rx, labs, voice summary)
+- [ ] M3: Nurse app (tasks, vitals, bed map) + `client_txn_id` idempotency on backend
+- [ ] M4: Admin app (KPIs, approvals, alerts)
+- [ ] M5: Offline read cache + write queue + sync UI
+- [ ] M6: Push notifications (FCM + `push_tokens` + alert→push hook)
+
+### Phase D — HRMS, Payroll & Procurement (v17)
+- [ ] **HRMS**: Doctor & Nurse duty roster with conflict detection; credential & privilege management; leave + attendance linked to roster; on-call & emergency duty tracking.
+  - [ ] R1: Tables (`duty_shifts`, `duty_roster`, `roster_swaps`, `attendance`, `staff_credentials`, `staff_privileges`, `on_call_duty`) + ensure-helper + reconciliation
+  - [ ] R2: Roster engine + conflict detection + publish/swap
+  - [ ] R3: Attendance + leave linkage + credentials/privileges
+  - [ ] R4: On-call ledger + UI screens + RBAC menus
+- [ ] **Payroll**: Doctor incentive/share auto-calculation from billing; night duty / emergency allowance rules; statutory compliance (PF, ESI, professional tax) with hospital-specific rules.
+  - [ ] P1: Tables (`payroll_rules`, `payroll_runs`, `payroll_items`, `payroll_statutory`, `payroll_slip_items`) + ensure-helper + reconciliation
+  - [ ] P2: Billing attribution driver + incentive engine (`doctor-share`)
+  - [ ] P3: Allowances from attendance/on-call + run lifecycle + payslip PDF
+  - [ ] P4: Statutory config + UI screens + RBAC menus
+- [ ] **Procurement**: Vendor rate contract + comparison; auto PR generation from reorder levels; GRN with quality check & quarantine; three-way match (PO–GRN–Invoice).
+  - [ ] G1: Tables (`vendor_rate_contracts`, `purchase_requisitions`, `purchase_orders`, `grn`, `grn_items`, `procurement_matching`) + reorder sweep
+  - [ ] G2: Rate contracts + comparison + PR/PO lifecycle
+  - [ ] G3: GRN + QC/quarantine + stock integration via `pharmacy_inwards`
+  - [ ] G4: Three-way match + UI screens + RBAC menus
+
+### Phase E — CRM, Finance & Inventory (v18)
+- [ ] **CRM (Patient)**: Advanced appointment scheduling (multi-doctor, multi-location, token + time slot hybrid); smart patient search + deduplication (Aadhaar / mobile / UHID); referral & corporate/TPA patient handling; consent management (DPDP-ready); family / linked patient accounts.
+  - [ ] C1: Tables (`patient_identifiers`, `patient_duplicates`, `patient_groups`, `patient_links`, `patient_consents`, `referrals`, `corporate_accounts`, `appointment_slots`) + ensure-helper + reconciliation
+  - [ ] C2: Slot engine (multi-doctor/location, token+time) + token board
+  - [ ] C3: Dedup scoring + merge wizard + identifiers
+  - [ ] C4: Referrals + corporate accounts + consent register + family accounts
+  - [ ] C5: UI screens + RBAC menus
+- [ ] **Finance (Billing)**: Package & surgery billing with automatic component breakdown; real-time insurance/TPA eligibility + claim status tracking; GST + e-invoice compliance (India); advance, refund, write-off & partial payment workflows; doctor share / incentive calculation.
+  - [ ] F1: Tables (`billing_packages`, `billing_package_components`, `surgery_cases`, `surgery_components`, `invoice_advances`, `invoice_refunds`, `invoice_writeoffs`, `gst_invoices`, `insurance_claim_tracking`) + ensure-helper + reconciliation
+  - [ ] F2: Package + surgery component billing engine
+  - [ ] F3: Advance/refund/write-off/partial payment workflow + audit
+  - [ ] F4: GST config + e-invoice (IRN) sandbox + HSN on masters
+  - [ ] F5: Insurance eligibility + claim status tracking + UI
+- [ ] **Inventory (Pharmacy)**: Batch + Expiry + FEFO control with auto-alerts; ward / OT / ICU indent & issue workflow; narcotic & Schedule H drug tracking; auto-reorder linked to consumption; near-expiry & dead-stock analytics.
+  - [ ] I1: `medicines`/`drug_categories` ALTERs + tables (`indents`, `indent_items`, `pharmacy_issues`, `issue_items`, `narcotic_register`, `reorder_logs`) + ensure-helper + reconciliation
+  - [ ] I2: Indent & issue workflow (incl. billing linkage)
+  - [ ] I3: Narcotic/Schedule-H register + immutable audit
+  - [ ] I4: Consumption-linked auto-reorder + Procurement PR hook
+  - [ ] I5: Expiry/dead-stock analytics + UI screens
+
+---
+*Last Updated: 2026-08-08 14:30*
