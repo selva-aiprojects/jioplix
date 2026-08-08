@@ -8,6 +8,7 @@ const aiService = require("../../services/aiService");
 const pdfService = require("../../services/pdfService");
 const bcrypt = require("bcryptjs");
 const upload = require("../../config/upload");
+const { ensureHelpdeskInfrastructure } = require("../helpdesk");
 
 const s = (val) => (val === undefined || val === null ? "" : String(val).replace(/'/g, "''"));
 const sqlValue = (val) => (val === undefined || val === null || val === "" ? "NULL" : `'${s(val)}'`);
@@ -705,6 +706,7 @@ router.get("/heal-all-masters", async (req, res, next) => {
     await ensureSuppliersTable(req);
     await ensureMedicinesTable(req);
     await ensureInsuranceInfrastructure(req);
+    await ensureHelpdeskInfrastructure(req);
 
     // Retroactive cleanup: remove dummy staff rows seeded during provisioning
     // Targets the *.hims.com pattern from old provisioning logic

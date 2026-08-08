@@ -43,6 +43,7 @@ import NexusSettingsPage from './modules/nexus/NexusSettingsPage';
 import TenantDetailsPage from './modules/nexus/TenantDetailsPage';
 import ProvisionTenantPage from './modules/nexus/ProvisionTenantPage';
 import SupportTicketsPage from './modules/tenant/support/SupportTicketsPage';
+import HelpdeskPage from './modules/tenant/helpdesk/HelpdeskPage';
 import NexusTicketingPage from './modules/nexus/NexusTicketingPage';
 import NexusCommunicationPage from './modules/nexus/NexusCommunicationPage';
 import NexusUtilizationPage from './modules/nexus/NexusUtilizationPage';
@@ -121,6 +122,7 @@ function App() {
         <Route path="/reminders" element={<Navigate to="/tenant/reminders" replace />} />
         <Route path="/tenant/support" element={<Navigate to="/tenant/support/tickets" replace />} />
         <Route path="/tenant/support/tickets" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Support"><SupportTicketsPage /></RoleGuard>} />
+        <Route path="/tenant/helpdesk" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Helpdesk"><HelpdeskPage /></RoleGuard>} />
         <Route path="/billing" element={<RoleGuard allowedRoles={['admin', 'receptionist', 'staff', 'billing']} moduleName="Billing Desk"><BillingPage /></RoleGuard>} />
         <Route path="/appointments" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Appointments"><AppointmentsPage /></RoleGuard>} />
         <Route path="/patients" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Patient Directory"><PatientsPage /></RoleGuard>} />

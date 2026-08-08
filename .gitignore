@@ -41,3 +41,7 @@ test_output.txt
 debug.log
 .vercel
 .env*.local
+.aider*
+
+# Local runtime logs
+backend/_server*.log

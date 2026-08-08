@@ -224,6 +224,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                 ('Hospital Settings', '/tenant/masters', 'Settings', 'professional', 14),
                 ('Help & Support', '/tenant/support', 'HelpCircle', 'basic', 15),
                 ('Ticketing Management System', '/tenant/support/tickets', 'Ticket', 'basic', 16),
+                ('Help Desk', '/tenant/helpdesk', 'Headset', 'basic', 18),
                 ('Dashboard', '/tenant/dashboard', 'Dashboard', 'basic', 0),
                 ('Invoicing & Billing', '/billing', 'Billing', 'basic', 17),
                 ('IPD Census & Daycare', '/tenant/ipd/admissions', 'Clipboard', 'professional', 19),
@@ -249,7 +250,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   'Appointment List', 'Doctor Availability and Book Appointments',
                   'Laboratory', 'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue',
                   'IPD Bed Map', 'IPD Census & Daycare',
-                  'Help & Support', 'Ticketing Management System'
+                  'Help & Support', 'Ticketing Management System', 'Help Desk'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 
@@ -262,7 +263,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                 AND m.label IN (
                   'Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue',
                   'IPD Bed Map', 'IPD Census & Daycare', 'Admission Desk', 'Discharge Summaries',
-                  'Help & Support'
+                  'Help & Support', 'Help Desk'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 
@@ -275,7 +276,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                 AND m.label IN (
                   'Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue',
                   'Appointment List', 'Doctor Availability and Book Appointments',
-                  'Invoicing & Billing', 'Help & Support', 'Ticketing Management System'
+                  'Invoicing & Billing', 'Help & Support', 'Ticketing Management System', 'Help Desk'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 
@@ -287,7 +288,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                 WHERE r.name = 'PHARMACIST'
                 AND m.label IN (
                   'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue',
-                  'Help & Support', 'Ticketing Management System'
+                  'Help & Support', 'Ticketing Management System', 'Help Desk'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 
@@ -298,7 +299,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                 CROSS JOIN "${schema}".rbac_menus m
                 WHERE r.name = 'LAB_ASSISTANT'
                 AND m.label IN (
-                  'Laboratory', 'Help & Support', 'Ticketing Management System'
+                  'Laboratory', 'Help & Support', 'Ticketing Management System', 'Help Desk'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 
@@ -309,7 +310,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                 CROSS JOIN "${schema}".rbac_menus m
                 WHERE r.name = 'SUPPORT'
                 AND m.label IN (
-                  'Dashboard', 'Help & Support', 'Ticketing Management System',
+                  'Dashboard', 'Help & Support', 'Ticketing Management System', 'Help Desk',
                   'Invoicing & Billing'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
@@ -409,6 +410,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                     ('Branding & UI Settings', '/tenant/settings', 'Palette', 18, 'basic'),
                     ('Help & Support', '/tenant/support', 'Receipt', 16, 'basic'),
                     ('Ticketing Management System', '/tenant/support/tickets', 'Ticket', 17, 'basic'),
+                    ('Help Desk', '/tenant/helpdesk', 'Headset', 18, 'basic'),
                     ('Staff & RBAC', '/tenant/staff', 'Doctor', 14, 'professional'),
                     ('Hospital Settings (Masters)', '/tenant/masters', 'Settings', 15, 'professional'),
                     ('Laboratory', '/tenant/lab', 'Lab', 8, 'standard'),
@@ -434,7 +436,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'DOCTOR' AND m.label IN ('Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Consultation Desk', 'Appointment List', 'Doctor Availability and Book Appointments', 'Laboratory', 'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue', 'IPD Bed Map', 'IPD Census & Daycare', 'Help & Support', 'Ticketing Management System')
+                    WHERE r.name = 'DOCTOR' AND m.label IN ('Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Consultation Desk', 'Appointment List', 'Doctor Availability and Book Appointments', 'Laboratory', 'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue', 'IPD Bed Map', 'IPD Census & Daycare', 'Help & Support', 'Ticketing Management System', 'Help Desk')
                     ON CONFLICT DO NOTHING
                   `);
                   
@@ -442,7 +444,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'NURSE' AND m.label IN ('Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue', 'IPD Bed Map', 'IPD Census & Daycare', 'IPD Admission Desk', 'Discharge Summaries', 'Help & Support')
+                    WHERE r.name = 'NURSE' AND m.label IN ('Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue', 'IPD Bed Map', 'IPD Census & Daycare', 'IPD Admission Desk', 'Discharge Summaries', 'Help & Support', 'Help Desk')
                     ON CONFLICT DO NOTHING
                   `);
 
@@ -450,7 +452,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'RECEPTIONIST' AND m.label IN ('Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Appointment List', 'Doctor Availability and Book Appointments', 'Invoicing & Billing', 'Help & Support', 'Ticketing Management System')
+                    WHERE r.name = 'RECEPTIONIST' AND m.label IN ('Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue', 'Appointment List', 'Doctor Availability and Book Appointments', 'Invoicing & Billing', 'Help & Support', 'Ticketing Management System', 'Help Desk')
                     ON CONFLICT DO NOTHING
                   `);
 
@@ -458,7 +460,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'PHARMACIST' AND m.label IN ('Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue', 'Help & Support', 'Ticketing Management System')
+                    WHERE r.name = 'PHARMACIST' AND m.label IN ('Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue', 'Help & Support', 'Ticketing Management System', 'Help Desk')
                     ON CONFLICT DO NOTHING
                   `);
 
@@ -466,7 +468,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'LAB_ASSISTANT' AND m.label IN ('Laboratory', 'Help & Support', 'Ticketing Management System')
+                    WHERE r.name = 'LAB_ASSISTANT' AND m.label IN ('Laboratory', 'Help & Support', 'Ticketing Management System', 'Help Desk')
                     ON CONFLICT DO NOTHING
                   `);
 
@@ -474,7 +476,7 @@ router.post("/login", loginLimiter, async (req, res) => {
                   await req.prisma.$executeRawUnsafe(`
                     INSERT INTO "${schema}".rbac_role_menus (role_id, menu_id)
                     SELECT r.id, m.id FROM "${schema}".rbac_roles r, "${schema}".rbac_menus m 
-                    WHERE r.name = 'SUPPORT' AND m.label IN ('Dashboard', 'Help & Support', 'Ticketing Management System', 'Invoicing & Billing')
+                    WHERE r.name = 'SUPPORT' AND m.label IN ('Dashboard', 'Help & Support', 'Ticketing Management System', 'Help Desk', 'Invoicing & Billing')
                     ON CONFLICT DO NOTHING
                   `);
 

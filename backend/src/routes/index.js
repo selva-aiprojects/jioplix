@@ -9,6 +9,7 @@ const billingRoutes = require("../modules/billing");
 const doctorRoutes = require("../modules/doctor");
 const insuranceRoutes = require("../modules/insurance");
 const abhaRoutes = require("../modules/abha");
+const helpdeskRoutes = require("../modules/helpdesk");
 const { auth } = require("../middleware/auth");
 const { tenant } = require("../middleware/tenant");
 const publicRoutes = require("../modules/public");
@@ -32,6 +33,7 @@ router.use("/doctor", auth, tenant, doctorRoutes);
 router.use("/doctors", auth, tenant, doctorRoutes);
 router.use("/abha", auth, tenant, abhaRoutes);
 router.use("/reminders", auth, tenant, remindersRoutes);
+router.use("/helpdesk", auth, tenant, helpdeskRoutes);
 // Public endpoints that require tenant identification but no user auth
 router.use('/public', tenant, publicRoutes);
 router.get("/health-db", async (req, res) => {

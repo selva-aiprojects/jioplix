@@ -79,6 +79,8 @@ const normalizePath = (label: string, originalPath: string) => {
     "help & support": "/tenant/support/tickets",
     "support & tickets": "/tenant/support/tickets",
     "ticketing management system": "/tenant/support/tickets",
+    "help desk": "/tenant/helpdesk",
+    "helpdesk": "/tenant/helpdesk",
     "branding settings": "/tenant/settings",
     "branding & ui settings": "/tenant/settings"
   };
@@ -138,6 +140,8 @@ const normalizeLabel = (label: string) => {
     "mail management": "Mail & Communications",
     "ticketing management system": "Support & Tickets",
     "help & support": "Support & Tickets",
+    "help desk": "Help Desk",
+    "helpdesk": "Help Desk",
     "patient register": "Patient Register"
   };
   return labelMap[l] || label;
@@ -204,7 +208,7 @@ export default function Sidebar() {
       "Clinical Intelligence Hub",
       "Doctor's Schedule", "Doctor's Queue", "Patient Register", "Patient Scheduling",
       "Vital Assessment", "Consulting Mgmt.", "Consultation Desk", "Prescription Queue",
-      "Clinical & Financial Archives"
+      "Clinical & Financial Archives", "Help Desk"
     ];
     const ipdFlow = [
       "IPD Admission Hub", "Bed Management", "IPD Census & Daycare", "Discharge Process"
