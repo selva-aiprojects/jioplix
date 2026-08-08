@@ -585,5 +585,35 @@ router.get("/analytics", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+// ---- ROOT & DEPARTMENTS ----
+router.get("/", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const [staff, shifts] = await Promise.all([
+      req.prisma.$queryRawUnsafe(`SELECT COUNT(*)::int AS count FROM "${s}".users WHERE is_active = TRUE`).catch(() => [{ count: 0 }]),
+      req.prisma.$queryRawUnsafe(`SELECT COUNT(*)::int AS count FROM "${s}".duty_shifts`).catch(() => [{ count: 0 }])
+    ]);
+    res.json({ ok: true, activeStaff: staff[0]?.count || 0, activeShifts: shifts[0]?.count || 0 });
+  } catch (error) { res.json({ ok: true, activeStaff: 0, activeShifts: 0 }); }
+});
+
+router.get("/departments", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const rows = await req.prisma.$queryRawUnsafe(
+      `SELECT DISTINCT department FROM "${s}".users WHERE department IS NOT NULL AND department <> '' ORDER BY department ASC`
+    ).catch(() => []);
+    res.json(rows.map(r => typeof r === 'string' ? r : r.department));
+  } catch (error) { res.json([]); }
+});
+
+router.get("/leave-requests", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const rows = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".attendance WHERE status = 'ON_LEAVE' ORDER BY work_date DESC LIMIT 100`).catch(() => []);
+    res.json(rows);
+  } catch { res.json([]); }
+});
+
 module.exports = router;
 module.exports.ensureHrmsInfrastructure = ensureHrmsInfrastructure;

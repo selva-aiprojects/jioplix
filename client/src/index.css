@@ -544,8 +544,16 @@ code, pre, .font-mono, [style*="monospace"] {
 
 .main-content {
   flex: 1;
-  padding: 16px;
+  padding: 24px 32px !important;
   overflow-y: auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 1023px) {
+  .main-content {
+    padding: 16px !important;
+  }
 }
 
 .dashboard-header {

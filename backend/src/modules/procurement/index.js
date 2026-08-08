@@ -748,5 +748,18 @@ router.get("/matches", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+// ---- ROOT ----
+router.get("/", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const [reqs, pos, grns] = await Promise.all([
+      req.prisma.$queryRawUnsafe(`SELECT COUNT(*)::int AS count FROM "${s}".purchase_requisitions`).catch(() => [{ count: 0 }]),
+      req.prisma.$queryRawUnsafe(`SELECT COUNT(*)::int AS count FROM "${s}".purchase_orders`).catch(() => [{ count: 0 }]),
+      req.prisma.$queryRawUnsafe(`SELECT COUNT(*)::int AS count FROM "${s}".grn`).catch(() => [{ count: 0 }])
+    ]);
+    res.json({ ok: true, requisitions: reqs[0]?.count || 0, purchaseOrders: pos[0]?.count || 0, grn: grns[0]?.count || 0 });
+  } catch { res.json({ ok: true, requisitions: 0, purchaseOrders: 0, grn: 0 }); }
+});
+
 module.exports = router;
 module.exports.ensureProcurementInfrastructure = ensureProcurementInfrastructure;

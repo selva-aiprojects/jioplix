@@ -674,5 +674,30 @@ router.get("/doctor-share-report", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+// ---- FALLBACK ROUTES ----
+router.get("/", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const ledger = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".general_ledger ORDER BY created_at DESC LIMIT 100`).catch(() => []);
+    res.json(ledger);
+  } catch { res.json([]); }
+});
+
+router.get("/invoices", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const invoices = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".billing_invoices ORDER BY created_at DESC LIMIT 100`).catch(() => []);
+    res.json(invoices);
+  } catch { res.json([]); }
+});
+
+router.get("/expenses", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const expenses = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".petty_cash ORDER BY created_at DESC LIMIT 100`).catch(() => []);
+    res.json(expenses);
+  } catch { res.json([]); }
+});
+
 module.exports = router;
 module.exports.ensureFinanceInfrastructure = ensureFinanceInfrastructure;

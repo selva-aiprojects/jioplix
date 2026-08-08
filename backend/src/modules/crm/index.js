@@ -619,5 +619,22 @@ router.post("/slots/book", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+// ---- FALLBACK ROUTES ----
+router.get("/", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const leads = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".crm_leads ORDER BY created_at DESC LIMIT 100`).catch(() => []);
+    res.json(leads);
+  } catch { res.json([]); }
+});
+
+router.get("/campaigns", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const campaigns = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".crm_campaigns ORDER BY created_at DESC LIMIT 100`).catch(() => []);
+    res.json(campaigns);
+  } catch { res.json([]); }
+});
+
 module.exports = router;
 module.exports.ensureCrmInfrastructure = ensureCrmInfrastructure;

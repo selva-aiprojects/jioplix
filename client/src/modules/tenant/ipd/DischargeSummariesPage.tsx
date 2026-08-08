@@ -67,7 +67,7 @@ export default function DischargeSummariesPage() {
     <div className="dashboard-layout print-document">
       <Sidebar />
       <main className="main-content">
-        <Header title="Discharge Summaries" />
+        <Header title="Inpatient Discharge & Case Summaries" />
         
         {dataLoading ? (
           <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading discharge summaries...</div>

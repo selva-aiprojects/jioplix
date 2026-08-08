@@ -233,8 +233,8 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
   return (
     <div className={embedded ? "" : "dashboard-layout"} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', minHeight: embedded ? 'auto' : '100vh', background: 'var(--app-bg)' }}>
       {!embedded && <Sidebar />}
-      <main className="main-content" style={{ flex: 1, padding: embedded ? '0' : isMobile ? '16px' : '32px', width: '100%' }}>
-        {!embedded && <Header title="Prescription Queue" />}
+      <main className="main-content">
+        {!embedded && <Header title="Prescription Queue & Medication Dispense" />}
 
         {loading ? (
           <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0', color: '#64748b', fontSize: '16px', fontWeight: 600 }}>Loading prescriptions...</div>

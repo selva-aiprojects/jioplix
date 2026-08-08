@@ -453,5 +453,30 @@ router.get("/analytics", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+// ---- FALLBACK ROUTES ----
+router.get("/", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const runs = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".payroll_runs ORDER BY created_at DESC LIMIT 12`).catch(() => []);
+    res.json(runs);
+  } catch { res.json([]); }
+});
+
+router.get("/structure", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const rules = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".payroll_rules WHERE is_active = TRUE ORDER BY name ASC`).catch(() => []);
+    res.json(rules);
+  } catch { res.json([]); }
+});
+
+router.get("/tax-settings", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const settings = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".payroll_statutory ORDER BY created_at DESC LIMIT 1`).catch(() => []);
+    res.json(settings[0] || { pt_enabled: true, pf_enabled: true, esic_enabled: true, tds_enabled: true });
+  } catch { res.json({ pt_enabled: true, pf_enabled: true, esic_enabled: true, tds_enabled: true }); }
+});
+
 module.exports = router;
 module.exports.ensurePayrollInfrastructure = ensurePayrollInfrastructure;

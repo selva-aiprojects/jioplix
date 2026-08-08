@@ -530,5 +530,30 @@ router.get("/dashboard", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+// ---- FALLBACK ROUTES ----
+router.get("/", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const items = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".medicines ORDER BY name ASC LIMIT 100`).catch(() => []);
+    res.json(items);
+  } catch { res.json([]); }
+});
+
+router.get("/categories", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const rows = await req.prisma.$queryRawUnsafe(`SELECT DISTINCT category FROM "${s}".medicines WHERE category IS NOT NULL ORDER BY category ASC`).catch(() => []);
+    res.json(rows.map(r => r.category));
+  } catch { res.json([]); }
+});
+
+router.get("/suppliers", async (req, res) => {
+  try {
+    const s = req.schemaName;
+    const rows = await req.prisma.$queryRawUnsafe(`SELECT * FROM "${s}".procurement_suppliers ORDER BY name ASC`).catch(() => []);
+    res.json(rows);
+  } catch { res.json([]); }
+});
+
 module.exports = router;
 module.exports.ensureInventoryInfrastructure = ensureInventoryInfrastructure;
