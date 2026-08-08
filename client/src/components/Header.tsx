@@ -60,7 +60,7 @@ export default function Header({ title, compact = false }: HeaderProps) {
       display: 'flex', 
       flexDirection: isMobile ? 'column' : 'row',
       alignItems: 'center',
-      justify: 'space-between',
+      justifyContent: 'space-between',
       padding: compact ? '12px 24px' : '24px 32px',
       width: '100%',
       marginBottom: compact ? '12px' : '32px',

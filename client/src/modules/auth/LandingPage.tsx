@@ -10,13 +10,9 @@ import {
 } from 'lucide-react';
 
 const GLOBAL_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   html { scroll-behavior: smooth; }
-
-  body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; background-color: #ffffff; color: #0f172a; }
 
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(24px); }
@@ -39,20 +35,20 @@ const GLOBAL_CSS = `
   }
 
   .sales-hero-title {
-    background: linear-gradient(135deg, #0f172a 0%, #1e40af 50%, #0d9488 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #003870 50%, #00C897 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   .btn-sales-primary {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, #0056A8 0%, #003870 100%);
     color: white;
     font-weight: 800;
     transition: all 0.25s ease;
   }
   .btn-sales-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 12px 28px rgba(0, 86, 168, 0.35);
   }
 
   .btn-sales-whatsapp {
@@ -73,8 +69,8 @@ const GLOBAL_CSS = `
   }
   .sales-feature-card:hover {
     transform: translateY(-6px);
-    border-color: #cbd5e1;
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    border-color: #b8d4f0;
+    box-shadow: 0 20px 40px rgba(0, 56, 112, 0.08);
   }
 
   .nav-link {
@@ -83,7 +79,7 @@ const GLOBAL_CSS = `
     color: #475569;
     font-weight: 600;
   }
-  .nav-link:hover { color: #2563eb; }
+  .nav-link:hover { color: #0056A8; }
 
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: #f8fafc; }
@@ -175,7 +171,9 @@ export default function LandingPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
               onClick={() => navigate('/login')}
-              style={{ padding: '10px 20px', borderRadius: '10px', background: '#f1f5f9', color: '#334155', fontWeight: 700, fontSize: '14px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+              style={{ padding: '10px 20px', borderRadius: '10px', background: 'white', color: '#0056A8', fontWeight: 700, fontSize: '14px', border: '1.5px solid #0056A8', cursor: 'pointer', transition: 'all 0.2s ease' }}
+              onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = '#e6f0ff'; }}
+              onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = 'white'; }}
             >
               Sign In
             </button>
@@ -196,15 +194,15 @@ export default function LandingPage() {
       <section style={{
         position: 'relative', overflow: 'hidden',
         padding: isMobile ? '60px 20px 40px' : '90px 24px 70px',
-        background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37,99,235,0.08) 0%, transparent 70%), #ffffff'
+        background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,86,168,0.08) 0%, transparent 70%), #ffffff'
       }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', gap: '56px' }}>
 
           {/* Left Hero Sales Pitch */}
           <div style={{ flex: 1.1, display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeInUp 0.6s ease both' }}>
-            <div style={{ display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: '8px', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '6px 14px', borderRadius: '999px' }}>
-              <span style={{ background: '#2563eb', color: 'white', fontSize: '10px', fontWeight: 800, padding: '2px 8px', borderRadius: '999px' }}>2026 RELEASE</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e40af' }}>12+ Clinical Modules · AI Co-Pilot · Help Desk SLA</span>
+            <div style={{ display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: '8px', background: '#e6f0ff', border: '1px solid #b8d4f0', padding: '6px 14px', borderRadius: '999px' }}>
+              <span style={{ background: '#0056A8', color: 'white', fontSize: '10px', fontWeight: 800, padding: '2px 8px', borderRadius: '999px' }}>2026 RELEASE</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#003870' }}>12+ Clinical Modules · AI Co-Pilot · Help Desk SLA</span>
             </div>
 
             <h1 className="sales-hero-title" style={{ fontSize: isMobile ? '36px' : '54px', fontWeight: 900, lineHeight: 1.12, letterSpacing: '-1.5px', margin: 0 }}>
@@ -218,7 +216,7 @@ export default function LandingPage() {
             {/* Core Feature Badges */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
               <span style={{ background: '#dcfce7', color: '#15803d', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>📱 WhatsApp Center</span>
-              <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🎙️ Voice Dictation</span>
+              <span style={{ background: '#e6f0ff', color: '#0056A8', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🎙️ Voice Dictation</span>
               <span style={{ background: '#fef3c7', color: '#b45309', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🛏️ Hourly/Daily Billing</span>
               <span style={{ background: '#f3e8ff', color: '#7e22ce', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🎫 Help Desk & SLA</span>
               <span style={{ background: '#e0e7ff', color: '#4338ca', fontSize: '12px', fontWeight: 700, padding: '6px 14px', borderRadius: '20px' }}>🤖 AI Co-Pilot</span>
@@ -313,7 +311,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
 
           <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#2563eb' }}>Complete Module Map</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#0056A8' }}>Complete Module Map</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '10px 0 14px', letterSpacing: '-1px' }}>
               Every Department. One Platform.
             </h2>
@@ -344,7 +342,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
 
           <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#059669' }}>Next-Gen Suite</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#00C897' }}>Next-Gen Suite</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '10px 0 14px', letterSpacing: '-1px' }}>
               9 Game-Changing Features Built for Growth
             </h2>
@@ -413,7 +411,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '40px' }}>
 
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#059669' }}>Interactive Product Tour</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#00C897' }}>Interactive Product Tour</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '10px 0 0', letterSpacing: '-1px' }}>
               Experience the Platform in Action
             </h2>
@@ -596,7 +594,7 @@ export default function LandingPage() {
       <section id="compliance" style={{ padding: '90px 24px', background: '#f8fafc' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#2563eb' }}>Enterprise Trust</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#0056A8' }}>Enterprise Trust</span>
             <h2 style={{ fontSize: isMobile ? '28px' : '40px', fontWeight: 900, color: '#0f172a', margin: '10px 0 0', letterSpacing: '-1px' }}>
               Built for Security, Compliance &amp; Speed
             </h2>
@@ -604,7 +602,7 @@ export default function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: '20px' }}>
             <div style={{ background: 'white', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-              <Shield size={32} color="#2563eb" style={{ marginBottom: '16px' }} />
+              <Shield size={32} color="#0056A8" style={{ marginBottom: '16px' }} />
               <h4 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '6px' }}>NHA ABDM Certified</h4>
               <p style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.5, margin: 0 }}>Registered with Ayushman Bharat Digital Mission for seamless ABHA creation.</p>
             </div>
@@ -669,9 +667,9 @@ export default function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '20px' }}>
             <a href="mailto:sales@cybelinx.com" style={{ padding: '24px', borderRadius: '16px', background: '#f8fafc', border: '1px solid #e2e8f0', textDecoration: 'none', color: '#0f172a' }}>
-              <Mail size={24} color="#2563eb" style={{ marginBottom: '12px' }} />
+              <Mail size={24} color="#0056A8" style={{ marginBottom: '12px' }} />
               <div style={{ fontWeight: 800, fontSize: '16px' }}>Email Sales</div>
-              <div style={{ color: '#2563eb', fontWeight: 700, marginTop: '4px' }}>sales@cybelinx.com</div>
+              <div style={{ color: '#0056A8', fontWeight: 700, marginTop: '4px' }}>sales@cybelinx.com</div>
               <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>24-hour turnaround guaranteed</div>
             </a>
 

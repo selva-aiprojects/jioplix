@@ -44,4 +44,7 @@ debug.log
 .aider*
 
 # Local runtime logs
-backend/_server*.log
+backend/*.log
+backend/server.log
+backend/server.err.log
+backend/_diag_*.js

@@ -12,6 +12,7 @@
   --primary-dark: #003870;       /* Deep Medical Blue for sidebar/dark panels */
   --primary-accent: #0056A8;    /* Medical Blue — primary interactive color */
   --secondary-accent: #00C897;  /* Healthcare Teal — success, highlights */
+  --brand-teal: #00C897;
   --bg-gradient: linear-gradient(135deg, #003870 0%, #0056A8 100%);
   --text-main: #0f172a;
   --text-muted: #546E7A;
@@ -1092,12 +1093,6 @@ code, pre, .font-mono, [style*="monospace"] {
   transform: translateX(4px);
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
 .high-velocity-input:focus {
   border-color: #0056A8;
   box-shadow: 0 0 0 4px rgba(0, 86, 168, 0.15);
@@ -1232,9 +1227,3 @@ code, pre, .font-mono, [style*="monospace"] {
   box-shadow: 0 0 0 3px rgba(0, 86, 168, 0.12);
 }
 
-
-.hero-gradient-text {
-  background: linear-gradient(to right, #a855f7, #ec4899);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}

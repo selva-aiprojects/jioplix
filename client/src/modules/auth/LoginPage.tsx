@@ -26,8 +26,8 @@ const LOGIN_CSS = `
     border: 1.5px solid #cbd5e1;
   }
   .login-input-box:focus-within {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    border-color: #0056A8;
+    box-shadow: 0 0 0 4px rgba(0, 86, 168, 0.1);
     background: #ffffff !important;
   }
   .role-pill-btn {
@@ -165,15 +165,15 @@ export default function LoginPage() {
         boxShadow: '0 32px 64px -12px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(226, 232, 240, 0.8)',
       }}>
 
-        {/* LEFT PANEL: Sleek Dark Glass & Floating Orbs */}
+        {/* LEFT PANEL: Brand Deep Blue with floating orbs */}
         {!isMobile && (
           <div style={{
             flex: 1.1,
-            background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)',
+            background: 'linear-gradient(145deg, #003870 0%, #004f9f 60%, #002a58 100%)',
             padding: '56px',
             display: 'flex',
             flexDirection: 'column',
-            justify: 'space-between',
+            justifyContent: 'space-between',
             position: 'relative',
             overflow: 'hidden',
             color: 'white'
@@ -181,12 +181,12 @@ export default function LoginPage() {
             {/* Glowing Orb Effects */}
             <div style={{
               position: 'absolute', top: '-60px', left: '-60px', width: '260px', height: '260px',
-              borderRadius: '50%', background: 'radial-gradient(circle, rgba(37, 99, 235, 0.4), transparent 70%)',
+              borderRadius: '50%', background: 'radial-gradient(circle, rgba(0, 86, 168, 0.45), transparent 70%)',
               filter: 'blur(30px)', animation: 'orbFloat 8s ease-in-out infinite'
             }} />
             <div style={{
               position: 'absolute', bottom: '-80px', right: '-80px', width: '300px', height: '300px',
-              borderRadius: '50%', background: 'radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 70%)',
+              borderRadius: '50%', background: 'radial-gradient(circle, rgba(0, 200, 151, 0.3), transparent 70%)',
               filter: 'blur(40px)', animation: 'orbFloat 10s ease-in-out infinite'
             }} />
 
@@ -198,8 +198,8 @@ export default function LoginPage() {
                 <BrandLogo size="lg" forcePlatformLogo />
               </div>
 
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px', background: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', marginBottom: '20px' }}>
-                <Sparkles size={14} color="#60a5fa" />
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px', background: 'rgba(0, 86, 168, 0.2)', border: '1px solid rgba(0, 86, 168, 0.4)', marginBottom: '20px' }}>
+                <Sparkles size={14} color="#7ec4ff" />
                 <span style={{ fontSize: '12px', fontWeight: 700, color: '#93c5fd' }}>Jioplix AI Clinical Suite 2026</span>
               </div>
 
@@ -379,7 +379,7 @@ export default function LoginPage() {
                 width: '100%',
                 padding: '16px',
                 borderRadius: '12px',
-                background: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%)',
+                background: 'linear-gradient(135deg, #0056A8 0%, #003870 100%)',
                 color: 'white',
                 border: 'none',
                 fontWeight: 800,
@@ -389,7 +389,7 @@ export default function LoginPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                boxShadow: '0 8px 20px rgba(30, 64, 175, 0.3)',
+                boxShadow: '0 8px 20px rgba(0, 86, 168, 0.3)',
                 transition: 'all 0.2s ease',
                 marginTop: '4px'
               }}
