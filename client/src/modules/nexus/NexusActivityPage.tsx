@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NexusSidebar from "../../components/NexusSidebar";
 
+import NexusHeader from "../../components/NexusHeader";
+
 export default function NexusActivityPage() {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
@@ -20,15 +22,13 @@ export default function NexusActivityPage() {
   ];
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout" style={{ minHeight: '100vh', background: 'var(--app-bg)' }}>
       <NexusSidebar />
       <main className="main-content">
-        <header className="dashboard-header">
-          <div className="welcome-msg">
-            <h1 style={{ fontSize: '24px', fontWeight: 800 }}>System Activity Logs</h1>
-            <p>Audit trail of all platform-wide operations.</p>
-          </div>
-        </header>
+        <NexusHeader 
+          title="Global System Audit & Activity Logs" 
+          subtitle="Real-time audit trail of all platform-wide administrative events, schema updates, and security credentials."
+        />
 
         <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
           <div style={{ padding: '24px', borderBottom: '1px solid #f1f5f9' }}>

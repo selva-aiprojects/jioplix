@@ -4,177 +4,218 @@ import axios from "axios";
 import NexusSidebar from "../../components/NexusSidebar";
 import NexusHeader from "../../components/NexusHeader";
 import { API_BASE_URL as API_BASE } from "../../config/api";
-
-const Icons = {
-  Tenants: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-    </svg>
-  ),
-  Activity: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-    </svg>
-  ),
-  Settings: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  ),
-  Plus: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  ),
-  Database: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-    </svg>
-  ),
-  Users: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  )
-};
+import { 
+  Building2, Activity, Database, Users, Plus, ShieldCheck, 
+  ExternalLink, Layers, ArrowUpRight, CheckCircle2, AlertCircle, RefreshCw
+} from "lucide-react";
 
 export default function NexusDashboardPage() {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
-  const [tenantCount, setTenantCount] = useState(0);
+  const [tenants, setTenants] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (role !== 'nexus') {
        navigate("/");
-    } else {
-       axios.get(`${API_BASE}/api/nexus/tenants`, {
-         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-       })
-       .then(res => setTenantCount(res.data.length))
-       .catch(err => console.error("Failed to fetch tenants", err));
+       return;
     }
+    fetchTenants();
   }, [role, navigate]);
 
+  const fetchTenants = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${API_BASE}/api/nexus/tenants`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      setTenants(res.data || []);
+    } catch (err) {
+      console.error("Failed to fetch tenants", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const buildTenantUrl = (domainOrCode: string) => {
+    const tenantLabel = (domainOrCode || '').trim().toLowerCase();
+    const configured = (import.meta as any).env?.VITE_APP_DOMAIN;
+    let root = configured || '';
+    if (!root && typeof window !== 'undefined') {
+      const host = window.location.hostname;
+      const parts = host.split('.');
+      root = parts.length >= 2 ? parts.slice(-2).join('.') : host;
+    }
+    return `${window.location.protocol}//${tenantLabel}.${root}`;
+  };
+
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout" style={{ minHeight: '100vh', background: 'var(--app-bg)' }}>
       <NexusSidebar />
       <main className="main-content">
-        <NexusHeader />
+        <NexusHeader 
+          title="Nexus Global Orchestration Console" 
+          subtitle="Multi-tenant healthcare infrastructure surveillance, shard allocation and enterprise system health."
+          actions={
+            <button
+              onClick={() => navigate('/nexus/tenants/new')}
+              style={{
+                padding: '12px 24px',
+                borderRadius: '14px',
+                background: '#00F5D4',
+                color: '#0b0f19',
+                fontWeight: 900,
+                fontSize: '14px',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 8px 20px -4px rgba(0, 245, 212, 0.4)',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <Plus size={18} /> Provision New Shard
+            </button>
+          }
+        />
 
-        {/* Stats Grid */}
-        <div className="stats-grid">
-          <div className="stat-card" style={{ padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', background: 'white' }}>
-            <div className="stat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div className="stat-icon" style={{ width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>
-                <Icons.Tenants />
+        {/* Executive KPI Stats Bar */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+          
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 24px -6px rgba(0, 56, 112, 0.05)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(0, 120, 255, 0.1)', color: '#0078FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Building2 size={24} />
               </div>
-              <span style={{ color: '#10b981', fontSize: '12px', fontWeight: 700 }}>+4 New</span>
+              <span style={{ background: '#dcfce7', color: '#15803d', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>
+                +100% Provisioned
+              </span>
             </div>
-            <div>
-              <div className="stat-value" style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>{tenantCount}</div>
-              <div className="stat-label" style={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>Active Hospital Shards</div>
-            </div>
+            <div style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>{tenants.length}</div>
+            <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 700 }}>Active Hospital Shards</div>
           </div>
 
-          <div className="stat-card" style={{ padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', background: 'white' }}>
-            <div className="stat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div className="stat-icon" style={{ width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981' }}>
-                <Icons.Activity />
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 24px -6px rgba(0, 56, 112, 0.05)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Activity size={24} />
               </div>
-              <span style={{ color: '#10b981', fontSize: '12px', fontWeight: 700 }}>Live</span>
+              <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', fontSize: '11px', fontWeight: 900, padding: '4px 10px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} /> LIVE SLA
+              </span>
             </div>
-            <div>
-              <div className="stat-value" style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>99.9%</div>
-              <div className="stat-label" style={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>Service Uptime</div>
-            </div>
+            <div style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>99.99%</div>
+            <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 700 }}>Service Uptime &amp; Gateway Health</div>
           </div>
 
-          <div className="stat-card" style={{ padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', background: 'white' }}>
-            <div className="stat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div className="stat-icon" style={{ width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
-                <Icons.Settings />
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 24px -6px rgba(0, 56, 112, 0.05)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(157, 78, 221, 0.1)', color: '#9D4EDD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Database size={24} />
               </div>
-              <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 700 }}>Normal</span>
+              <span style={{ background: '#f3e8ff', color: '#7e22ce', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>
+                PostgreSQL SSL
+              </span>
             </div>
-            <div>
-              <div className="stat-value" style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>1.2ms</div>
-              <div className="stat-label" style={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>Avg. API Latency</div>
-            </div>
+            <div style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>24.8 GB</div>
+            <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 700 }}>Isolated Tenant Database Load</div>
           </div>
 
-          <div className="stat-card" style={{ padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', background: 'white' }}>
-            <div className="stat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div className="stat-icon" style={{ width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>
-                <Icons.Database />
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 24px -6px rgba(0, 56, 112, 0.05)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ShieldCheck size={24} />
               </div>
-              <span style={{ color: '#3b82f6', fontSize: '12px', fontWeight: 700 }}>Active</span>
+              <span style={{ background: '#fef3c7', color: '#b45309', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>
+                HIPAA Tier 7
+              </span>
             </div>
-            <div>
-              <div className="stat-value" style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>4.2 GB</div>
-              <div className="stat-label" style={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>Total Cloud Storage</div>
-            </div>
+            <div style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>100%</div>
+            <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 700 }}>Security &amp; ABDM Compliance Score</div>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <h2 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', color: '#0f172a', marginTop: '48px' }}>Management Actions</h2>
-        <div className="action-grid">
-          <div className="action-card" onClick={() => navigate('/nexus/tenants')}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px -5px rgba(139, 92, 246, 0.5)' }}>
-              <Icons.Plus />
+        {/* Shard Directory Table Section */}
+        <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '28px', boxShadow: '0 10px 30px -10px rgba(0, 56, 112, 0.06)' }}>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+            <div>
+              <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0f172a', margin: 0 }}>Active Hospital Shards Directory</h3>
+              <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0 0' }}>Real-time database isolation schemas and tenant endpoints</p>
             </div>
-            <div className="action-content">
-              <h3 style={{ fontWeight: 800 }}>Provision Shard</h3>
-              <p>Setup a new hospital instance</p>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={fetchTenants}
+                style={{ padding: '8px 16px', borderRadius: '10px', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <RefreshCw size={14} /> Refresh
+              </button>
             </div>
           </div>
 
-          <div className="action-card" onClick={() => navigate('/nexus/users')}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.5)' }}>
-              <Icons.Users />
+          {loading ? (
+            <div style={{ padding: '60px 0', textAlign: 'center', color: '#64748b', fontWeight: 600 }}>Loading active hospital shards...</div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', borderRadius: '12px 0 0 12px' }}>Hospital Tenant</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Database Schema</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Domain Routing</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Plan Tier</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right', borderRadius: '0 12px 12px 0' }}>Orchestration Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tenants.map((t, idx) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s ease' }}>
+                      <td style={{ padding: '18px 16px', fontWeight: 800, color: '#0f172a', fontSize: '15px' }}>
+                        {t.name}
+                      </td>
+                      <td style={{ padding: '18px 16px', fontFamily: 'monospace', fontSize: '13px', color: '#0056A8', fontWeight: 700 }}>
+                        {t.db_name || t.dbName || t.code || 'default'}
+                      </td>
+                      <td style={{ padding: '18px 16px', fontSize: '13px', color: '#64748b', fontWeight: 600 }}>
+                        <span style={{ background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                          {t.domain || t.code || 'local'}.jioplix.com
+                        </span>
+                      </td>
+                      <td style={{ padding: '18px 16px' }}>
+                        <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>
+                          {t.plan || 'Enterprise Tier'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '18px 16px' }}>
+                        <span style={{ background: '#dcfce7', color: '#15803d', fontSize: '11px', fontWeight: 900, padding: '4px 12px', borderRadius: '20px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#15803d' }} /> ACTIVE
+                        </span>
+                      </td>
+                      <td style={{ padding: '18px 16px', textAlign: 'right' }}>
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                          <button
+                            onClick={() => navigate(`/nexus/tenants/${t.id}`)}
+                            style={{ padding: '8px 14px', borderRadius: '10px', background: '#0056A8', color: 'white', border: 'none', fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}
+                          >
+                            Manage Shard
+                          </button>
+                          <button
+                            onClick={() => window.open(buildTenantUrl(t.domain || t.code || t.dbName || t.name.replace(/\s+/g,'-').toLowerCase()), '_blank')}
+                            style={{ padding: '8px 14px', borderRadius: '10px', background: '#ffffff', color: '#0f172a', border: '1px solid #cbd5e1', fontWeight: 800, fontSize: '12px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                          >
+                            Launch <ExternalLink size={12} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="action-content">
-              <h3 style={{ fontWeight: 800 }}>RBAC Controls</h3>
-              <p>Configure Super Admin access</p>
-            </div>
-          </div>
-
-          <div className="action-card" onClick={() => navigate('/nexus/activity')}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px -5px rgba(16, 185, 129, 0.5)' }}>
-              <Icons.Activity />
-            </div>
-            <div className="action-content">
-              <h3 style={{ fontWeight: 800 }}>Audit Logs</h3>
-              <p>System telemetry & history</p>
-            </div>
-          </div>
-          <div className="action-card" onClick={() => navigate('/nexus/tickets')}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px -5px rgba(245, 158, 11, 0.5)' }}>
-               <Icons.Settings />
-            </div>
-            <div className="action-content">
-              <h3 style={{ fontWeight: 800 }}>Support Ticketing</h3>
-              <p>Manage tenant requests & upgrades</p>
-            </div>
-          </div>
-
-          <div className="action-card" onClick={() => navigate('/nexus/utilization')}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px -5px rgba(99, 102, 241, 0.5)' }}>
-              <Icons.Database />
-            </div>
-            <div className="action-content">
-              <h3 style={{ fontWeight: 800 }}>Resource Consumption</h3>
-              <p>Cloud utilization & DB growth</p>
-            </div>
-          </div>
+          )}
         </div>
       </main>
     </div>

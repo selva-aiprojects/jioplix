@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "../../components/Header";
 import NexusSidebar from "../../components/NexusSidebar";
+import NexusHeader from "../../components/NexusHeader";
 import { API_BASE_URL as API_BASE } from "../../config/api";
 
 export default function NexusTicketingPage() {
@@ -46,10 +46,10 @@ export default function NexusTicketingPage() {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--app-bg)' }}>
+    <div className="dashboard-layout" style={{ minHeight: '100vh', background: 'var(--app-bg)' }}>
       <NexusSidebar />
-      <main style={{ flex: 1, padding: '40px' }}>
-        <Header title="Nexus Support Command Center" />
+      <main className="main-content">
+        <NexusHeader title="Nexus Support Command Center" subtitle="Real-time multi-tenant helpdesk ticket resolution and SLA monitoring." />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 450px', gap: '32px' }}>
           <div>

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NexusSidebar from "../../components/NexusSidebar";
 import { API_BASE_URL as API_BASE } from "../../config/api";
+import NexusHeader from "../../components/NexusHeader";
 
 
 export default function TenantDetailsPage() {
@@ -69,7 +70,7 @@ export default function TenantDetailsPage() {
       alert("Shard decommissioned and deleted successfully.");
       navigate("/nexus/tenants");
     } catch (err) {
-      alert("Failed to delete shard. It might be in use or connection failed.");
+      alert("Failed to delete shard.");
     } finally {
       setActionLoading(false);
     }
@@ -79,18 +80,21 @@ export default function TenantDetailsPage() {
   if (!tenant) return <div style={{ padding: '40px', textAlign: 'center' }}>Shard not found.</div>;
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout" style={{ minHeight: '100vh', background: 'var(--app-bg)' }}>
       <NexusSidebar />
       <main className="main-content">
-        <header className="dashboard-header" style={{ marginBottom: '32px' }}>
-          <div className="welcome-msg">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-              <button onClick={() => navigate('/nexus/tenants')} className="button-link" style={{ padding: 0 }}>← Back to Shards</button>
-            </div>
-            <h1 style={{ fontSize: '28px', fontWeight: 900 }}>{tenant.name}</h1>
-            <p style={{ color: '#64748b' }}>Shard ID: {tenant.id} • Status: <span className="status-pill success">Healthy</span></p>
-          </div>
-        </header>
+        <NexusHeader 
+          title={tenant.name} 
+          subtitle={`Shard Schema: ${tenant.db_name || tenant.code || 'default'} · ID: ${tenant.id}`}
+          actions={
+            <button 
+              onClick={() => navigate('/nexus/tenants')}
+              style={{ padding: '10px 18px', borderRadius: '12px', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}
+            >
+              ← Back to Shards
+            </button>
+          }
+        />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>

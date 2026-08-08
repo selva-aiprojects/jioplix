@@ -5,6 +5,8 @@ import NexusSidebar from "../../components/NexusSidebar";
 import { API_BASE_URL as API_BASE } from "../../config/api";
 
 
+import NexusHeader from "../../components/NexusHeader";
+
 export default function ProvisionTenantPage() {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
@@ -48,16 +50,21 @@ export default function ProvisionTenantPage() {
   };
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout" style={{ minHeight: '100vh', background: 'var(--app-bg)' }}>
       <NexusSidebar />
       <main className="main-content">
-        <header className="dashboard-header" style={{ marginBottom: '32px' }}>
-          <div className="welcome-msg">
-             <button onClick={() => navigate('/nexus/tenants')} style={{ background: 'none', border: 'none', color: '#8b5cf6', fontWeight: 700, cursor: 'pointer', padding: 0, marginBottom: '8px' }}>← Back to Tenants</button>
-             <h1 style={{ fontSize: '28px', fontWeight: 900 }}>Provision New Shard</h1>
-             <p style={{ color: '#64748b' }}>Deploy an isolated clinical instance in the cloud.</p>
-          </div>
-        </header>
+        <NexusHeader 
+          title="Provision New Hospital Shard" 
+          subtitle="Deploy a new isolated PostgreSQL schema, hospital subdomain, and admin access keys."
+          actions={
+            <button 
+              onClick={() => navigate('/nexus/tenants')}
+              style={{ padding: '10px 18px', borderRadius: '12px', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}
+            >
+              ← Back to Shards
+            </button>
+          }
+        />
 
         <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>

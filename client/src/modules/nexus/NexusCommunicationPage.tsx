@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "../../components/Header";
 import NexusSidebar from "../../components/NexusSidebar";
+import NexusHeader from "../../components/NexusHeader";
 import { API_BASE_URL as API_BASE } from "../../config/api";
 
 export default function NexusCommunicationPage() {
@@ -60,10 +60,13 @@ export default function NexusCommunicationPage() {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--app-bg)' }}>
+    <div className="dashboard-layout" style={{ minHeight: '100vh', background: 'var(--app-bg)' }}>
       <NexusSidebar />
-      <main style={{ flex: 1, padding: '40px' }}>
-        <Header title="Mail & Communication Management" />
+      <main className="main-content">
+        <NexusHeader 
+          title="Mail & Signal Communication Desk" 
+          subtitle="Audit and dispatch global transactional emails, tenant system notices, and security alerts via Resend."
+        />
 
         <div style={{ maxWidth: '1200px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
