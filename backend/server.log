@@ -856,3 +856,132 @@ API running on http://localhost:4000
 [NEXUS] Checking Registry Schema...
 [NEXUS] Registry contains 6 tenants.
 [NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:15:09.193Z GET /api/health-db
+[AUDIT] 2026-08-08T17:15:14.944Z POST /api/auth/login
+[AUTH] Login attempt for admin@hims-sys.com as nexus in domain-auto
+[AUTH] Master credential bypass triggered for Nexus
+[AUDIT] 2026-08-08T17:16:43.476Z POST /api/auth/login
+[AUTH] Login attempt for admin@hims-sys.com as nexus in domain-auto
+[AUTH] Master credential bypass triggered for Nexus
+[AUDIT] 2026-08-08T17:16:43.563Z GET /api/nexus/tenants/public
+[NEXUS] Checking Registry Schema...
+[NEXUS] Registry contains 6 tenants.
+[NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:16:44.965Z GET /api/nexus/stats
+[NEXUS] Checking Registry Schema...
+[NEXUS] Registry contains 6 tenants.
+[NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:16:45.770Z GET /api/nexus/tenants
+[NEXUS] Checking Registry Schema...
+[NEXUS] Registry contains 6 tenants.
+[NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:16:46.544Z GET /api/nexus/users
+[NEXUS] Checking Registry Schema...
+[NEXUS] Registry contains 6 tenants.
+[NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:16:47.276Z GET /api/nexus/activity
+[NEXUS] Checking Registry Schema...
+[NEXUS] Registry contains 6 tenants.
+[NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:16:48.003Z GET /api/nexus/tenants
+[NEXUS] Checking Registry Schema...
+[NEXUS] Registry contains 6 tenants.
+[NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:16:48.857Z GET /api/nexus/tenants/0edcbcd2-d8b8-4e30-a602-5ea13c1fd459/users
+[NEXUS] Checking Registry Schema...
+[NEXUS] Registry contains 6 tenants.
+[NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:16:49.557Z GET /api/patients
+[AUDIT] 2026-08-08T17:16:49.561Z GET /api/patients/opd-queue
+[AUDIT] 2026-08-08T17:16:49.565Z GET /api/appointments
+[AUDIT] 2026-08-08T17:16:49.568Z GET /api/appointments/doctors
+[AUDIT] 2026-08-08T17:16:49.573Z GET /api/doctors/availability
+[AUDIT] 2026-08-08T17:16:49.576Z GET /api/consultations
+[AUDIT] 2026-08-08T17:16:49.580Z GET /api/billing
+[AUDIT] 2026-08-08T17:16:49.586Z GET /api/billing/invoices
+[AUDIT] 2026-08-08T17:16:49.591Z GET /api/hospital/lab/orders
+[AUDIT] 2026-08-08T17:16:49.596Z GET /api/hospital/pharmacy
+[AUDIT] 2026-08-08T17:16:49.601Z GET /api/hospital/ipd/beds
+[AUDIT] 2026-08-08T17:16:49.606Z GET /api/hospital/ipd/admissions
+[AUDIT] 2026-08-08T17:16:49.611Z GET /api/insurance
+[AUDIT] 2026-08-08T17:16:49.617Z GET /api/payroll
+[AUDIT] 2026-08-08T17:16:49.622Z GET /api/hrms
+[AUDIT] 2026-08-08T17:16:49.630Z GET /api/analytics
+[AUDIT] 2026-08-08T17:16:49.634Z GET /api/procurement
+[AUDIT] 2026-08-08T17:16:49.640Z GET /api/crm
+[AUDIT] 2026-08-08T17:16:49.644Z GET /api/finance
+[AUDIT] 2026-08-08T17:16:49.650Z GET /api/inventory
+[AUDIT] 2026-08-08T17:16:49.658Z GET /api/reminders
+[AUDIT] 2026-08-08T17:16:49.663Z GET /api/helpdesk/tickets
+[AUDIT] 2026-08-08T17:16:49.668Z GET /api/abha/status
+[AUDIT] 2026-08-08T17:16:49.674Z GET /api/tenants/settings
+[AUDIT] 2026-08-08T17:16:49.678Z GET /api/tenants/staff
+[AUDIT] 2026-08-08T17:16:49.682Z GET /api/tenants/masters
+[AUDIT] 2026-08-08T17:17:00.728Z GET /api/nexus/stats
+[NEXUS] Checking Registry Schema...
+[NEXUS] Registry contains 6 tenants.
+[NEXUS] Registry Schema is synchronized.
+[AUDIT] 2026-08-08T17:18:33.614Z POST /api/auth/login
+[AUTH] Login attempt for admin@hims-sys.com as nexus in domain-auto
+[AUTH] Master credential bypass triggered for Nexus
+[AUDIT] 2026-08-08T17:18:33.816Z GET /api/nexus/tenants
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:34.587Z GET /api/nexus/tenants//users
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:34.879Z POST /api/auth/login
+[AUTH] Login attempt for  as tenant in domain-auto
+[AUDIT] 2026-08-08T17:18:34.900Z POST /api/auth/login
+[AUTH] Login attempt for admin@hims-sys.com as nexus in domain-auto
+[AUTH] Master credential bypass triggered for Nexus
+[AUDIT] 2026-08-08T17:18:34.911Z GET /api/nexus/tenants/public
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:35.477Z GET /api/nexus/tenants
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:36.045Z GET /api/nexus/tenants/
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:36.547Z GET /api/nexus/users
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:36.872Z GET /api/nexus/tickets
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:37.464Z GET /api/nexus/utilization
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:37.984Z GET /api/nexus/utilization/history
+[NEXUS] Checking Registry Schema...
+[AUDIT] 2026-08-08T17:18:38.504Z GET /api/hospital/doctors
+[AUDIT] 2026-08-08T17:18:38.510Z GET /api/hospital/staff
+[AUDIT] 2026-08-08T17:18:38.515Z GET /api/hospital/lab/orders
+[AUDIT] 2026-08-08T17:18:38.519Z GET /api/hospital/pharmacy
+[AUDIT] 2026-08-08T17:18:38.523Z GET /api/hospital/ipd/beds
+[AUDIT] 2026-08-08T17:18:38.528Z GET /api/hospital/ipd/admissions
+[AUDIT] 2026-08-08T17:18:38.531Z GET /api/hospital/metrics/clinical-command-overview
+[AUDIT] 2026-08-08T17:18:38.536Z GET /api/hospital/configs
+[AUDIT] 2026-08-08T17:18:38.551Z GET /api/patients?limit=10
+[AUDIT] 2026-08-08T17:18:38.555Z GET /api/patients/opd-queue
+[AUDIT] 2026-08-08T17:18:38.559Z GET /api/patients?q=test
+[AUDIT] 2026-08-08T17:18:38.565Z GET /api/appointments
+[AUDIT] 2026-08-08T17:18:38.572Z GET /api/appointments/doctors
+[AUDIT] 2026-08-08T17:18:38.578Z GET /api/doctors/availability
+[AUDIT] 2026-08-08T17:18:38.584Z GET /api/consultations
+[AUDIT] 2026-08-08T17:18:38.588Z GET /api/billing
+[AUDIT] 2026-08-08T17:18:38.592Z GET /api/billing/invoices
+[AUDIT] 2026-08-08T17:18:38.596Z GET /api/insurance
+[AUDIT] 2026-08-08T17:18:38.600Z GET /api/analytics/opd-load
+[AUDIT] 2026-08-08T17:18:38.604Z GET /api/analytics/bed-occupancy
+[AUDIT] 2026-08-08T17:18:38.607Z GET /api/analytics/pharmacy-risk
+[AUDIT] 2026-08-08T17:18:38.611Z GET /api/analytics/revenue
+[AUDIT] 2026-08-08T17:18:38.615Z GET /api/analytics/alerts
+[AUDIT] 2026-08-08T17:18:38.619Z GET /api/analytics/targets
+[AUDIT] 2026-08-08T17:18:38.622Z GET /api/reminders
+[AUDIT] 2026-08-08T17:18:38.627Z GET /api/helpdesk/tickets
+[AUDIT] 2026-08-08T17:18:38.630Z GET /api/abha/status
+[AUDIT] 2026-08-08T17:18:38.634Z GET /api/payroll
+[AUDIT] 2026-08-08T17:18:38.638Z GET /api/hrms
+[AUDIT] 2026-08-08T17:18:38.643Z GET /api/procurement
+[AUDIT] 2026-08-08T17:18:38.647Z GET /api/crm
+[AUDIT] 2026-08-08T17:18:38.651Z GET /api/finance
+[AUDIT] 2026-08-08T17:18:38.655Z GET /api/inventory
+[AUDIT] 2026-08-08T17:18:38.660Z GET /api/tenants/settings
+[AUDIT] 2026-08-08T17:18:38.664Z GET /api/tenants/staff
+[AUDIT] 2026-08-08T17:18:38.669Z GET /api/tenants/masters
+[AUDIT] 2026-08-08T17:18:47.852Z GET /api/nexus/tenants/public
+[NEXUS] Checking Registry Schema...

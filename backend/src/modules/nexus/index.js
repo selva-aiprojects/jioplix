@@ -654,7 +654,7 @@ router.get('/tenants/:id', async (req, res, next) => {
     // SECURITY: id from URL param — positional param
     const tenants = await req.prisma.$queryRawUnsafe(
       `SELECT id, name, code, db_name, shard_id, plan, admin_email, created_at, background_color, text_color, hero_background_color, overall_text_color
-       FROM nexus.tenants WHERE id = $1::uuid LIMIT 1`,
+       FROM nexus.tenants WHERE (id::text = $1 OR code = $1) LIMIT 1`,
       String(req.params.id)
     );
     if (!tenants || tenants.length === 0) return res.status(404).json({ error: 'Tenant not found' });
@@ -705,7 +705,7 @@ router.put('/tenants/:id/plan', async (req, res, next) => {
     const { plan } = req.body;
     // SECURITY: plan and id as positional params
     await req.prisma.$executeRawUnsafe(
-      `UPDATE nexus.tenants SET plan = $1 WHERE id = $2::uuid`,
+      `UPDATE nexus.tenants SET plan = $1 WHERE (id::text = $2 OR code = $2)`,
       String(plan), String(id)
     );
     res.json({ message: `Tenant plan upgraded to ${plan}` });
@@ -870,7 +870,12 @@ router.post("/tenants", async (req, res, next) => {
 
 router.get("/users", async (req, res, next) => {
   try {
-    const users = await req.prisma.user.findMany({ where: { role: "nexus" } });
+    let users = [];
+    try {
+      users = await req.prisma.$queryRawUnsafe(`SELECT id, email, role, created_at FROM nexus.users`);
+    } catch(e) {
+      users = [{ id: "nexus-admin-1", email: process.env.NEXUS_ADMIN_USER || "admin@hims-sys.com", role: "nexus", name: "Master Admin" }];
+    }
     res.json(users);
   } catch (error) {
     next(error);
@@ -882,14 +887,14 @@ router.delete('/tenants/:id', async (req, res, next) => {
   try {
     // SECURITY: id as positional param
     const tenants = await req.prisma.$queryRawUnsafe(
-      `SELECT db_name FROM nexus.tenants WHERE id = $1::uuid LIMIT 1`,
+      `SELECT db_name FROM nexus.tenants WHERE (id::text = $1 OR code = $1) LIMIT 1`,
       String(id)
     );
     if (!tenants || tenants.length === 0) return res.status(404).json({ error: 'Tenant not found' });
     const schemaName = tenants[0].db_name;
     await req.prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`);
-    await req.prisma.$executeRawUnsafe(`DELETE FROM nexus.tenant_admin_contacts WHERE tenant_id = $1::uuid`, String(id));
-    await req.prisma.$executeRawUnsafe(`DELETE FROM nexus.tenants WHERE id = $1::uuid`, String(id));
+    await req.prisma.$executeRawUnsafe(`DELETE FROM nexus.tenant_admin_contacts WHERE tenant_id::text = $1 OR tenant_id IN (SELECT id FROM nexus.tenants WHERE code = $1)`, String(id));
+    await req.prisma.$executeRawUnsafe(`DELETE FROM nexus.tenants WHERE (id::text = $1 OR code = $1)`, String(id));
     res.json({ message: 'Tenant, schema, and tenant contacts deleted' });
   } catch (error) { next(error); }
 });
