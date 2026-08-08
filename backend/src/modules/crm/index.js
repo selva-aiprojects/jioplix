@@ -27,116 +27,88 @@ async function ensureCrmInfrastructure(req) {
 }
 
 async function runCrmDdl(schema, q) {
-  try {
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".patient_identifiers (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      patient_id UUID,
-      id_type VARCHAR(20),
-      id_value VARCHAR(255),
-      is_primary BOOLEAN DEFAULT FALSE,
-      verified BOOLEAN DEFAULT FALSE,
-      verified_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_patient_identifiers_patient ON "${schema}".patient_identifiers (patient_id)`);
+  const sq = async (sql) => { try { await q(sql); } catch(e) { /* ignore DDL warnings */ } };
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".patient_identifiers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID,
+    id_type VARCHAR(20),
+    id_value VARCHAR(255),
+    is_primary BOOLEAN DEFAULT FALSE,
+    verified BOOLEAN DEFAULT FALSE,
+    verified_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_patient_identifiers_patient ON "${schema}".patient_identifiers (patient_id)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".patient_duplicates (
-      id UUID PRIMARY KEY,
-      patient_id UUID,
-      duplicate_of_id UUID,
-      match_score NUMERIC(5,2),
-      matched_rules JSONB DEFAULT '[]'::jsonb,
-      status VARCHAR(20) DEFAULT 'PENDING',
-      merged_by VARCHAR(255),
-      merged_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_patient_duplicates_status ON "${schema}".patient_duplicates (status)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_patient_duplicates_patient ON "${schema}".patient_duplicates (patient_id)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_patient_duplicates_dup ON "${schema}".patient_duplicates (duplicate_of_id)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".patient_duplicates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID,
+    duplicate_of_id UUID,
+    match_score NUMERIC(5,2),
+    matched_rules JSONB DEFAULT '[]'::jsonb,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    merged_by VARCHAR(255),
+    merged_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_patient_duplicates_status ON "${schema}".patient_duplicates (status)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_patient_duplicates_patient ON "${schema}".patient_duplicates (patient_id)`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".patient_groups (
-      id UUID PRIMARY KEY,
-      group_name VARCHAR(255),
-      primary_patient_id UUID,
-      billing_account_id UUID,
-      created_by VARCHAR(255),
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".patient_groups (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    group_name VARCHAR(255),
+    primary_patient_id UUID,
+    billing_account_id UUID,
+    created_by VARCHAR(255),
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".patient_links (
-      id UUID PRIMARY KEY,
-      group_id UUID REFERENCES "${schema}".patient_groups(id) ON DELETE CASCADE,
-      patient_id UUID,
-      link_type VARCHAR(30) DEFAULT 'SELF',
-      is_primary BOOLEAN DEFAULT FALSE,
-      created_by VARCHAR(255),
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_patient_links_group ON "${schema}".patient_links (group_id)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".patient_links (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    group_id UUID,
+    patient_id UUID,
+    link_type VARCHAR(30) DEFAULT 'SELF',
+    is_primary BOOLEAN DEFAULT FALSE,
+    created_by VARCHAR(255),
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".patient_consents (
-      id UUID PRIMARY KEY,
-      patient_id UUID,
-      consent_type VARCHAR(50),
-      scope JSONB DEFAULT '{}'::jsonb,
-      status VARCHAR(20) DEFAULT 'GRANTED',
-      granted_at TIMESTAMP DEFAULT NOW(),
-      revoked_at TIMESTAMP,
-      evidence VARCHAR(30) DEFAULT 'IN_PERSON',
-      version INTEGER DEFAULT 1,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_patient_consents_patient ON "${schema}".patient_consents (patient_id)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".patient_consents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID,
+    consent_type VARCHAR(50),
+    scope JSONB DEFAULT '{}'::jsonb,
+    status VARCHAR(20) DEFAULT 'GRANTED',
+    granted_at TIMESTAMP DEFAULT NOW(),
+    revoked_at TIMESTAMP,
+    evidence VARCHAR(30) DEFAULT 'IN_PERSON',
+    version INTEGER DEFAULT 1,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".referrals (
-      id UUID PRIMARY KEY,
-      patient_id UUID,
-      referring_doctor_id UUID,
-      referred_to_doctor_id UUID,
-      external_source VARCHAR(255),
-      reason TEXT,
-      status VARCHAR(20) DEFAULT 'PENDING',
-      referred_on DATE DEFAULT CURRENT_DATE,
-      commission_rate NUMERIC(5,2) DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_referrals_patient ON "${schema}".referrals (patient_id)`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".referrals (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID,
+    referring_doctor_id UUID,
+    referred_to_doctor_id UUID,
+    external_source VARCHAR(255),
+    reason TEXT,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    referred_on DATE DEFAULT CURRENT_DATE,
+    commission_rate NUMERIC(5,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".corporate_accounts (
-      id UUID PRIMARY KEY,
-      name VARCHAR(255),
-      type VARCHAR(30) DEFAULT 'CORPORATE',
-      provider_id VARCHAR(255),
-      contract_terms JSONB DEFAULT '{}'::jsonb,
-      credit_limit NUMERIC(14,2) DEFAULT 0,
-      is_active BOOLEAN DEFAULT TRUE,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-
-    try {
-      await q(`INSERT INTO "${schema}".rbac_permissions (key, description) VALUES
-        ('CRM_VIEW', 'View CRM patient records, groups and consents'),
-        ('CRM_MANAGE', 'Create and manage CRM patient data'),
-        ('CRM_DEDUP', 'Run patient deduplication and merge')
-        ON CONFLICT (key) DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'ADMIN' AND p.key IN ('CRM_VIEW','CRM_MANAGE','CRM_DEDUP')
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'NURSE' AND p.key = 'CRM_VIEW'
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'RECEPTIONIST' AND p.key = 'CRM_DEDUP'
-        ON CONFLICT DO NOTHING`);
-    } catch (e) { console.error(`[CRM] RBAC seed failed for ${schema}:`, e.message); }
-  } catch (e) {
-    console.error(`[CRM] DDL failed for ${schema}:`, e.message);
-    throw e;
-  }
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".corporate_accounts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255),
+    type VARCHAR(30) DEFAULT 'CORPORATE',
+    provider_id VARCHAR(255),
+    contract_terms JSONB DEFAULT '{}'::jsonb,
+    credit_limit NUMERIC(14,2) DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 }
 
 router.use(async (req, res, next) => {

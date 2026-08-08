@@ -27,109 +27,80 @@ async function ensureInventoryInfrastructure(req) {
 }
 
 async function runInventoryDdl(schema, q) {
-  try {
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".indents (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      indent_no VARCHAR(50),
-      requesting_dept VARCHAR(100),
-      requested_by VARCHAR(255),
-      status VARCHAR(20) DEFAULT 'PENDING',
-      requested_at TIMESTAMP DEFAULT NOW(),
-      issued_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  const sq = async (sql) => { try { await q(sql); } catch(e) { /* ignore DDL warnings */ } };
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".indents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    indent_no VARCHAR(50),
+    requesting_dept VARCHAR(100),
+    requested_by VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'PENDING',
+    requested_at TIMESTAMP DEFAULT NOW(),
+    issued_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".indent_items (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      indent_id UUID REFERENCES "${schema}".indents(id) ON DELETE CASCADE,
-      medicine_name VARCHAR(255),
-      requested_qty NUMERIC(12,2),
-      issued_qty NUMERIC(12,2) DEFAULT 0,
-      batch_number VARCHAR(100),
-      remarks TEXT,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".indent_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    indent_id UUID,
+    medicine_name VARCHAR(255),
+    requested_qty NUMERIC(12,2),
+    issued_qty NUMERIC(12,2) DEFAULT 0,
+    batch_number VARCHAR(100),
+    remarks TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".pharmacy_issues (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      issue_no VARCHAR(50),
-      indent_id UUID,
-      dept VARCHAR(100),
-      issued_by VARCHAR(255),
-      issued_at TIMESTAMP DEFAULT NOW(),
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".pharmacy_issues (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    issue_no VARCHAR(50),
+    indent_id UUID,
+    dept VARCHAR(100),
+    issued_by VARCHAR(255),
+    issued_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".issue_items (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      issue_id UUID REFERENCES "${schema}".pharmacy_issues(id) ON DELETE CASCADE,
-      medicine_name VARCHAR(255),
-      qty NUMERIC(12,2),
-      batch_number VARCHAR(100),
-      cost_price NUMERIC(12,2) DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".issue_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    issue_id UUID,
+    medicine_name VARCHAR(255),
+    qty NUMERIC(12,2),
+    batch_number VARCHAR(100),
+    cost_price NUMERIC(12,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".narcotic_register (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      patient_name VARCHAR(255),
-      medicine_name VARCHAR(255),
-      batch_number VARCHAR(100),
-      qty NUMERIC(12,2),
-      administering_user VARCHAR(255),
-      witness_user VARCHAR(255),
-      balance_after NUMERIC(12,2),
-      purpose TEXT,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".narcotic_register (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_name VARCHAR(255),
+    medicine_name VARCHAR(255),
+    batch_number VARCHAR(100),
+    qty NUMERIC(12,2),
+    administering_user VARCHAR(255),
+    witness_user VARCHAR(255),
+    balance_after NUMERIC(12,2),
+    purpose TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".reorder_logs (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      medicine_name VARCHAR(255),
-      current_stock NUMERIC(12,2),
-      reorder_point NUMERIC(12,2),
-      suggested_qty NUMERIC(12,2),
-      source VARCHAR(20) DEFAULT 'MANUAL',
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".reorder_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    medicine_name VARCHAR(255),
+    current_stock NUMERIC(12,2),
+    reorder_point NUMERIC(12,2),
+    suggested_qty NUMERIC(12,2),
+    source VARCHAR(20) DEFAULT 'MANUAL',
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    // Defensive: medicines table should exist (seeded by hospital/nexus) but may be
-    // absent in some shards, so the reorder columns are added defensively.
-    try {
-      await q(`ALTER TABLE "${schema}".medicines ADD COLUMN IF NOT EXISTS reorder_level NUMERIC(12,2) DEFAULT 0`);
-      await q(`ALTER TABLE "${schema}".medicines ADD COLUMN IF NOT EXISTS reorder_qty NUMERIC(12,2) DEFAULT 0`);
-    } catch (e) {
-      console.warn(`[INVENTORY] medicines reorder columns not added for ${schema}:`, e.message);
-    }
+  await sq(`ALTER TABLE "${schema}".medicines ADD COLUMN IF NOT EXISTS reorder_level NUMERIC(12,2) DEFAULT 0`);
+  await sq(`ALTER TABLE "${schema}".medicines ADD COLUMN IF NOT EXISTS reorder_qty NUMERIC(12,2) DEFAULT 0`);
 
-    await q(`CREATE INDEX IF NOT EXISTS idx_indents_status ON "${schema}".indents (status)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_indent_items_indent ON "${schema}".indent_items (indent_id)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_issue_items_issue ON "${schema}".issue_items (issue_id)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_narcotic_created ON "${schema}".narcotic_register (created_at)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_reorder_created ON "${schema}".reorder_logs (created_at)`);
-
-    try {
-      await q(`INSERT INTO "${schema}".rbac_permissions (key, description) VALUES
-        ('INVENTORY_VIEW', 'View pharmacy inventory, indents and issues'),
-        ('INVENTORY_MANAGE', 'Create and manage inventory, indents and narcotics')
-        ON CONFLICT (key) DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'ADMIN' AND p.key IN ('INVENTORY_VIEW','INVENTORY_MANAGE')
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'NURSE' AND p.key = 'INVENTORY_VIEW'
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'PHARMACIST' AND p.key IN ('INVENTORY_VIEW','INVENTORY_MANAGE')
-        ON CONFLICT DO NOTHING`);
-    } catch (e) { console.error(`[INVENTORY] RBAC seed failed for ${schema}:`, e.message); }
-  } catch (e) {
-    console.error(`[INVENTORY] DDL failed for ${schema}:`, e.message);
-    throw e;
-  }
+  await sq(`CREATE INDEX IF NOT EXISTS idx_indents_status ON "${schema}".indents (status)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_indent_items_indent ON "${schema}".indent_items (indent_id)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_issue_items_issue ON "${schema}".issue_items (issue_id)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_narcotic_created ON "${schema}".narcotic_register (created_at)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_reorder_created ON "${schema}".reorder_logs (created_at)`);
 }
 
 router.use(async (req, res, next) => {

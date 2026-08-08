@@ -33,7 +33,7 @@ async function resolveTenantFromDomain(host) {
 }
 
 async function tenant(req, res, next) {
-  const tenantId = req.headers['x-tenant-id'] || req.body?.facility || req.query.tenantId || req.query.tenant;
+  const tenantId = req.headers['x-tenant-id'] || req.user?.tenantId || req.body?.facility || req.query.tenantId || req.query.tenant;
 
   try {
     let resolvedTenant = null;

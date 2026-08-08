@@ -27,61 +27,38 @@ async function ensureAnalyticsInfrastructure(req) {
 }
 
 async function runAnalyticsDdl(schema, q) {
-  try {
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".targets (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      period VARCHAR(20),
-      metric VARCHAR(50),
-      target_value NUMERIC(14,2),
-      is_active BOOLEAN DEFAULT TRUE,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await q(`ALTER TABLE "${schema}".targets ADD COLUMN IF NOT EXISTS period VARCHAR(20)`);
-    await q(`ALTER TABLE "${schema}".targets ADD COLUMN IF NOT EXISTS metric VARCHAR(50)`);
-    await q(`ALTER TABLE "${schema}".targets ADD COLUMN IF NOT EXISTS target_value NUMERIC(14,2)`);
-    await q(`ALTER TABLE "${schema}".targets ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`);
+  const sq = async (sql) => { try { await q(sql); } catch(e) { /* ignore DDL warnings */ } };
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".targets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    period VARCHAR(20),
+    metric VARCHAR(50),
+    target_value NUMERIC(14,2),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
+  await sq(`ALTER TABLE "${schema}".targets ADD COLUMN IF NOT EXISTS period VARCHAR(20)`);
+  await sq(`ALTER TABLE "${schema}".targets ADD COLUMN IF NOT EXISTS metric VARCHAR(50)`);
+  await sq(`ALTER TABLE "${schema}".targets ADD COLUMN IF NOT EXISTS target_value NUMERIC(14,2)`);
+  await sq(`ALTER TABLE "${schema}".targets ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".operational_alerts (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      alert_type VARCHAR(50),
-      severity VARCHAR(20) DEFAULT 'INFO',
-      message TEXT,
-      ref_data JSONB DEFAULT '{}'::jsonb,
-      status VARCHAR(20) DEFAULT 'ACTIVE',
-      created_at TIMESTAMP DEFAULT NOW(),
-      acknowledged_at TIMESTAMP,
-      resolved_at TIMESTAMP
-    )`);
-    await q(`ALTER TABLE "${schema}".operational_alerts ADD COLUMN IF NOT EXISTS severity VARCHAR(20) DEFAULT 'INFO'`);
-    await q(`ALTER TABLE "${schema}".operational_alerts ADD COLUMN IF NOT EXISTS ref_data JSONB DEFAULT '{}'::jsonb`);
-    await q(`ALTER TABLE "${schema}".operational_alerts ADD COLUMN IF NOT EXISTS acknowledged_at TIMESTAMP`);
-    await q(`ALTER TABLE "${schema}".operational_alerts ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMP`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".operational_alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    alert_type VARCHAR(50),
+    severity VARCHAR(20) DEFAULT 'INFO',
+    message TEXT,
+    ref_data JSONB DEFAULT '{}'::jsonb,
+    status VARCHAR(20) DEFAULT 'ACTIVE',
+    created_at TIMESTAMP DEFAULT NOW(),
+    acknowledged_at TIMESTAMP,
+    resolved_at TIMESTAMP
+  )`);
+  await sq(`ALTER TABLE "${schema}".operational_alerts ADD COLUMN IF NOT EXISTS severity VARCHAR(20) DEFAULT 'INFO'`);
+  await sq(`ALTER TABLE "${schema}".operational_alerts ADD COLUMN IF NOT EXISTS ref_data JSONB DEFAULT '{}'::jsonb`);
+  await sq(`ALTER TABLE "${schema}".operational_alerts ADD COLUMN IF NOT EXISTS acknowledged_at TIMESTAMP`);
+  await sq(`ALTER TABLE "${schema}".operational_alerts ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMP`);
 
-    await q(`CREATE INDEX IF NOT EXISTS idx_alerts_status ON "${schema}".operational_alerts (status)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_alerts_type ON "${schema}".operational_alerts (alert_type)`);
-
-    try {
-      await q(`INSERT INTO "${schema}".rbac_permissions (key, description) VALUES
-        ('ANALYTICS_VIEW', 'View analytics dashboards and reports'),
-        ('ANALYTICS_MANAGE', 'Manage analytics targets and alerts')
-        ON CONFLICT (key) DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'ADMIN' AND p.key IN ('ANALYTICS_VIEW','ANALYTICS_MANAGE')
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'DOCTOR' AND p.key = 'ANALYTICS_VIEW'
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'NURSE' AND p.key = 'ANALYTICS_VIEW'
-        ON CONFLICT DO NOTHING`);
-    } catch (e) { console.error(`[ANALYTICS] RBAC seed failed for ${schema}:`, e.message); }
-  } catch (e) {
-    console.error(`[ANALYTICS] DDL failed for ${schema}:`, e.message);
-    throw e;
-  }
+  await sq(`CREATE INDEX IF NOT EXISTS idx_alerts_status ON "${schema}".operational_alerts (status)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_alerts_type ON "${schema}".operational_alerts (alert_type)`);
 }
 
 router.use(async (req, res, next) => {

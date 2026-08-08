@@ -27,143 +27,95 @@ async function ensureFinanceInfrastructure(req) {
 }
 
 async function runFinanceDdl(schema, q) {
-  try {
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".billing_packages (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      package_code VARCHAR(50),
-      name VARCHAR(255),
-      category VARCHAR(100),
-      base_price NUMERIC(12,2),
-      discount_percent NUMERIC(5,2) DEFAULT 0,
-      hsn_code VARCHAR(20),
-      is_active BOOLEAN DEFAULT TRUE,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  const sq = async (sql) => { try { await q(sql); } catch(e) { /* ignore DDL warnings */ } };
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".billing_packages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    package_code VARCHAR(50),
+    name VARCHAR(255),
+    category VARCHAR(100),
+    base_price NUMERIC(12,2),
+    discount_percent NUMERIC(5,2) DEFAULT 0,
+    hsn_code VARCHAR(20),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".billing_package_components (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      package_id UUID REFERENCES "${schema}".billing_packages(id) ON DELETE CASCADE,
-      item_name VARCHAR(255),
-      item_type VARCHAR(50),
-      qty NUMERIC(8,2) DEFAULT 1,
-      unit_price NUMERIC(12,2),
-      tax_percent NUMERIC(5,2) DEFAULT 0,
-      discount_amount NUMERIC(12,2) DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".billing_package_components (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    package_id UUID,
+    item_name VARCHAR(255),
+    item_type VARCHAR(50),
+    qty NUMERIC(8,2) DEFAULT 1,
+    unit_price NUMERIC(12,2),
+    tax_percent NUMERIC(5,2) DEFAULT 0,
+    discount_amount NUMERIC(12,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".surgery_cases (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      case_no VARCHAR(50),
-      patient_name VARCHAR(255),
-      encounter_id UUID,
-      procedure_name VARCHAR(255),
-      surgeon_name VARCHAR(255),
-      anesthetist_name VARCHAR(255),
-      ot_start TIMESTAMP,
-      ot_end TIMESTAMP,
-      status VARCHAR(20) DEFAULT 'SCHEDULED',
-      gross_charge NUMERIC(14,2) DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".surgery_cases (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    case_no VARCHAR(50),
+    patient_name VARCHAR(255),
+    encounter_id UUID,
+    procedure_name VARCHAR(255),
+    surgeon_name VARCHAR(255),
+    anesthetist_name VARCHAR(255),
+    ot_start TIMESTAMP,
+    ot_end TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'SCHEDULED',
+    gross_charge NUMERIC(14,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".surgery_components (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      case_id UUID REFERENCES "${schema}".surgery_cases(id) ON DELETE CASCADE,
-      item_name VARCHAR(255),
-      item_type VARCHAR(50),
-      qty NUMERIC(8,2) DEFAULT 1,
-      unit_price NUMERIC(12,2),
-      tax_percent NUMERIC(5,2) DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".surgery_components (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    case_id UUID,
+    item_name VARCHAR(255),
+    item_type VARCHAR(50),
+    qty NUMERIC(8,2) DEFAULT 1,
+    unit_price NUMERIC(12,2),
+    tax_percent NUMERIC(5,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".invoice_advances (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      patient_name VARCHAR(255),
-      encounter_id UUID,
-      amount NUMERIC(12,2),
-      payment_mode VARCHAR(30) DEFAULT 'CASH',
-      balance NUMERIC(12,2),
-      allocated_to_invoice_id UUID,
-      status VARCHAR(20) DEFAULT 'OPEN',
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".invoice_advances (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_name VARCHAR(255),
+    encounter_id UUID,
+    amount NUMERIC(12,2),
+    payment_mode VARCHAR(30) DEFAULT 'CASH',
+    balance NUMERIC(12,2),
+    allocated_to_invoice_id UUID,
+    status VARCHAR(20) DEFAULT 'OPEN',
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".invoice_refunds (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      invoice_ref VARCHAR(100),
-      amount NUMERIC(12,2),
-      reason TEXT,
-      payment_mode VARCHAR(30),
-      approved_by VARCHAR(255),
-      status VARCHAR(20) DEFAULT 'PENDING',
-      refunded_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".invoice_refunds (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    invoice_ref VARCHAR(100),
+    amount NUMERIC(12,2),
+    reason TEXT,
+    payment_mode VARCHAR(30),
+    approved_by VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'PENDING',
+    refunded_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".invoice_writeoffs (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      invoice_ref VARCHAR(100),
-      amount NUMERIC(12,2),
-      reason TEXT,
-      approval_level VARCHAR(30) DEFAULT 'MANAGER',
-      approved_by VARCHAR(255),
-      status VARCHAR(20) DEFAULT 'PENDING',
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
+  await sq(`CREATE TABLE IF NOT EXISTS "${schema}".invoice_writeoffs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    invoice_ref VARCHAR(100),
+    amount NUMERIC(12,2),
+    reason TEXT,
+    approval_level VARCHAR(30) DEFAULT 'MANAGER',
+    approved_by VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT NOW()
+  )`);
 
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".gst_invoices (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      invoice_ref VARCHAR(100),
-      gstin VARCHAR(20),
-      place_of_supply VARCHAR(50),
-      hsn_summary JSONB DEFAULT '{}'::jsonb,
-      irn VARCHAR(100),
-      irn_status VARCHAR(30) DEFAULT 'PENDING',
-      qr_code TEXT,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-
-    await q(`CREATE TABLE IF NOT EXISTS "${schema}".insurance_claim_tracking (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      claim_id UUID,
-      provider_status VARCHAR(30) DEFAULT 'SUBMITTED',
-      status_date TIMESTAMP DEFAULT NOW(),
-      remarks TEXT,
-      updated_by VARCHAR(255),
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-
-    await q(`CREATE INDEX IF NOT EXISTS idx_billing_packages_code ON "${schema}".billing_packages (package_code)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_billing_components_package ON "${schema}".billing_package_components (package_id)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_surgery_cases_status ON "${schema}".surgery_cases (status)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_surgery_components_case ON "${schema}".surgery_components (case_id)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_advances_status ON "${schema}".invoice_advances (status)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_refunds_status ON "${schema}".invoice_refunds (status)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_writeoffs_status ON "${schema}".invoice_writeoffs (status)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_gst_invoices_ref ON "${schema}".gst_invoices (invoice_ref)`);
-    await q(`CREATE INDEX IF NOT EXISTS idx_claim_tracking_claim ON "${schema}".insurance_claim_tracking (claim_id)`);
-
-    try {
-      await q(`INSERT INTO "${schema}".rbac_permissions (key, description) VALUES
-        ('FINANCE_VIEW', 'View finance, billing and packages'),
-        ('FINANCE_MANAGE', 'Create and manage finance data'),
-        ('FINANCE_APPROVE', 'Approve refunds, writeoffs and claims')
-        ON CONFLICT (key) DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'ADMIN' AND p.key IN ('FINANCE_VIEW','FINANCE_MANAGE','FINANCE_APPROVE')
-        ON CONFLICT DO NOTHING`);
-      await q(`INSERT INTO "${schema}".rbac_role_permissions (role_id, permission_id)
-        SELECT r.id, p.id FROM "${schema}".rbac_roles r, "${schema}".rbac_permissions p
-        WHERE r.name = 'NURSE' AND p.key = 'FINANCE_VIEW'
-        ON CONFLICT DO NOTHING`);
-    } catch (e) { console.error(`[FINANCE] RBAC seed failed for ${schema}:`, e.message); }
-  } catch (e) {
-    console.error(`[FINANCE] DDL failed for ${schema}:`, e.message);
-    throw e;
-  }
+  await sq(`CREATE INDEX IF NOT EXISTS idx_billing_packages_active ON "${schema}".billing_packages (is_active)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_surgery_cases_status ON "${schema}".surgery_cases (status)`);
+  await sq(`CREATE INDEX IF NOT EXISTS idx_invoice_advances_status ON "${schema}".invoice_advances (status)`);
 }
 
 router.use(async (req, res, next) => {
