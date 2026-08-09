@@ -727,7 +727,7 @@ router.post("/tenants", async (req, res, next) => {
     const tenantId = crypto.randomUUID();
 
     // 1. Create Tenant in Global Registry
-    const domainValue = (domain || tenantCode).trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    const domainValue = (domain || tenantCode).trim().toLowerCase().replace(/[^a-z0-9]/g, '');
     
     // SECURITY: All tenant registry fields as positional params
     await req.prisma.$executeRawUnsafe(

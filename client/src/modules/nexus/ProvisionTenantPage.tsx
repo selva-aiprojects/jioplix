@@ -74,11 +74,30 @@ export default function ProvisionTenantPage() {
                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#64748b', marginBottom: '8px' }}>Legal Entity Name</label>
-                    <input required placeholder="e.g. Apollo Hospitals" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0' }} value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+                    <input 
+                      required 
+                      placeholder="e.g. Apollo Hospitals" 
+                      style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0' }} 
+                      value={formData.name} 
+                      onChange={e => {
+                        const val = e.target.value;
+                        const autoSlug = val.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        setFormData({ ...formData, name: val, dbName: autoSlug });
+                      }} 
+                    />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#64748b', marginBottom: '8px' }}>Unique Shard Code (Slug)</label>
-                    <input required placeholder="e.g. apollo_chennai" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0' }} value={formData.dbName} onChange={e => setFormData({...formData, dbName: e.target.value.toLowerCase().replace(/\s/g, '_')})} />
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#64748b', marginBottom: '8px' }}>Subdomain Slug (No Special Chars)</label>
+                    <input 
+                      required 
+                      placeholder="e.g. apollochennai" 
+                      style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0' }} 
+                      value={formData.dbName} 
+                      onChange={e => setFormData({ ...formData, dbName: e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '') })} 
+                    />
+                    <span style={{ fontSize: '11px', color: '#0056A8', fontWeight: 700, marginTop: '6px', display: 'block' }}>
+                      URL: https://{formData.dbName || 'subdomain'}.jioplix.com
+                    </span>
                   </div>
                </div>
             </div>
