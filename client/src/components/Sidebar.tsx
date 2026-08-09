@@ -858,12 +858,7 @@ export default function Sidebar() {
   };
 
   const toggleGroup = (id: string) => {
-    if (id === 'opd' || id === 'ipd') {
-      setOpenGroup(prev => (prev === id ? null : id));
-    } else {
-      setOpenGroup(prev => (prev === id ? null : id));
-      setOpenParent(null);
-    }
+    setOpenGroup(prev => (prev === id ? null : id));
   };
 
   const refreshMenus = () => {
@@ -894,12 +889,12 @@ export default function Sidebar() {
         </button>
 
         {/* Logo / Tenant Brand */}
-        <div style={{ padding: '8px 12px 12px', borderBottom: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', marginTop: '8px' }}>
-          <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)', textAlign: 'center', background: 'rgba(255,255,255,0.02)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
             <img
               src={sidebarLogoUrl}
               alt={tenantName}
-              style={{ width: 'auto', maxWidth: '160px', height: 'auto', maxHeight: '52px', objectFit: 'contain', cursor: 'pointer', borderRadius: '8px' }}
+              style={{ width: 'auto', maxWidth: '180px', height: 'auto', maxHeight: '52px', objectFit: 'contain', cursor: 'pointer', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }}
               onError={(e) => {
                 const img = e.target as HTMLImageElement;
                 img.style.display = 'none';
@@ -909,14 +904,14 @@ export default function Sidebar() {
                 }
               }}
             />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '2px' }}>
               <span style={{
                 fontSize: '9px', fontWeight: 900, color: planColor,
-                textTransform: 'uppercase', background: 'rgba(255,255,255,0.05)',
-                padding: '2px 10px', borderRadius: '4px', letterSpacing: '0.5px',
-                border: `1px solid ${planColor}30`
+                textTransform: 'uppercase', background: 'rgba(255,255,255,0.08)',
+                padding: '3px 10px', borderRadius: '4px', letterSpacing: '0.6px',
+                border: `1px solid ${planColor}40`
               }}>{plan} plan</span>
-              <button onClick={refreshMenus} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }} title="Refresh menu">
+              <button onClick={refreshMenus} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }} title="Sync / Refresh Menus">
                 <RefreshCw size={11} />
               </button>
             </div>
