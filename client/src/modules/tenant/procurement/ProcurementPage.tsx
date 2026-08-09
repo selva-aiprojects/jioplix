@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
+import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 
 function getHeaders() {
@@ -185,6 +186,7 @@ export default function ProcurementPage() {
   ];
 
   return (
+    <PlanGateGuard moduleName="Procurement & Supply Chain">
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
@@ -484,5 +486,6 @@ export default function ProcurementPage() {
         </div>
       </main>
     </div>
+    </PlanGateGuard>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
+import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 
 function getHeaders() {
@@ -262,6 +263,7 @@ export default function HrmsPage() {
   ];
 
   return (
+    <PlanGateGuard moduleName="Human Resource Management System (HRMS)">
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
@@ -750,5 +752,6 @@ export default function HrmsPage() {
         </div>
       </main>
     </div>
+    </PlanGateGuard>
   );
 }

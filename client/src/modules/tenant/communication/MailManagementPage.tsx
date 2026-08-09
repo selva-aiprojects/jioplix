@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
+import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 
 export default function MailManagementPage() {
@@ -30,6 +31,7 @@ export default function MailManagementPage() {
   };
 
   return (
+    <PlanGateGuard moduleName="Mail & Communications">
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
@@ -105,5 +107,6 @@ export default function MailManagementPage() {
         )}
       </main>
     </div>
+    </PlanGateGuard>
   );
 }

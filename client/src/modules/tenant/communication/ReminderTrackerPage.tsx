@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
+import PlanGateGuard from "../../../components/PlanGateGuard";
 import { useToast } from "../../../components/ToastProvider";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 
@@ -172,6 +173,7 @@ export default function ReminderTrackerPage() {
   const deliveryRate = total > 0 ? Math.round((sentCount / total) * 100) : 100;
 
   return (
+    <PlanGateGuard moduleName="Executive Follow-up & Reminders">
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content" style={{ padding: '24px', background: '#f8fafc', minHeight: '100vh' }}>
@@ -457,5 +459,6 @@ export default function ReminderTrackerPage() {
         )}
       </main>
     </div>
+    </PlanGateGuard>
   );
 }

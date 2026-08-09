@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
+import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 
 function getHeaders() {
@@ -148,6 +149,7 @@ export default function AnalyticsPage() {
   );
 
   return (
+    <PlanGateGuard moduleName="Operations & Clinical Analytics">
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
@@ -321,5 +323,6 @@ export default function AnalyticsPage() {
         </div>
       </main>
     </div>
+    </PlanGateGuard>
   );
 }

@@ -360,25 +360,25 @@ export default function Sidebar() {
       if (!hasSome("tenant sensitive configs") && !hasSome("secure configurations"))
         dm.push({ label: "Tenant Sensitive Configs", path: "/tenant/settings/secure", icon: "ShieldCheck", sort_order: 51 });
 
-      if (atLeastStandard && !hasSome("operations analytics") && !hasSome("clinical analytics"))
+      if (atLeastProfessional && !hasSome("operations analytics") && !hasSome("clinical analytics"))
         dm.push({ label: "Operations Analytics", path: "/tenant/analytics/ops", icon: "TrendingUp", sort_order: 30 });
 
-      if (atLeastStandard && !hasSome("patient crm"))
+      if (atLeastProfessional && !hasSome("patient crm"))
         dm.push({ label: "Patient CRM", path: "/tenant/crm", icon: "Users", sort_order: 31 });
 
-      if (isEnterprise && !hasSome("payroll"))
+      if (atLeastProfessional && !hasSome("payroll"))
         dm.push({ label: "Payroll", path: "/tenant/payroll", icon: "Receipt", sort_order: 40 });
 
-      if (isEnterprise && !hasSome("hrms") && !hasSome("duty roster"))
+      if (atLeastProfessional && !hasSome("hrms") && !hasSome("duty roster"))
         dm.push({ label: "HRMS", path: "/tenant/hrms", icon: "ClipboardList", sort_order: 41 });
 
-      if (isEnterprise && !hasSome("procurement"))
+      if (atLeastProfessional && !hasSome("procurement"))
         dm.push({ label: "Procurement", path: "/tenant/procurement", icon: "Box", sort_order: 42 });
 
-      if (isEnterprise && !hasSome("pharmacy inventory"))
+      if (atLeastProfessional && !hasSome("pharmacy inventory"))
         dm.push({ label: "Pharmacy Inventory", path: "/tenant/inventory", icon: "Box", sort_order: 43 });
 
-      if (isEnterprise && !hasSome("finance & compliance"))
+      if (atLeastProfessional && !hasSome("finance & compliance"))
         dm.push({ label: "Finance & Compliance", path: "/tenant/finance", icon: "Receipt", sort_order: 44 });
     }
 
@@ -516,32 +516,32 @@ export default function Sidebar() {
       {
         id: 'analytics',
         title: "Analytics & Intelligence",
-        items: getItems(["Clinical Analytics"]).filter(() => {
-          if (!atLeastStandard || !isAdmin) return false;
+        items: getItems(["Clinical Analytics", "Operations Analytics"]).filter(() => {
+          if (!atLeastProfessional || !isAdmin) return false;
           return true;
         }),
         icon: BarChart2,
-        badge: !atLeastStandard ? "Standard+" : null,
+        badge: !atLeastProfessional ? "Professional+" : null,
       },
       {
         id: 'nonclinical',
         title: "Non-Clinical Operations",
         items: getItems(nonClinicalFlow).filter(() => {
-          if (!atLeastStandard) return false;
+          if (!atLeastProfessional) return false;
           return true;
         }),
         icon: Box,
-        badge: !isEnterprise ? "Enterprise / Standard" : null,
+        badge: !atLeastProfessional ? "Professional+" : null,
       },
       {
         id: 'communication',
         title: "Communication",
         items: getItems(commFlow).filter(() => {
-          if (!atLeastStandard) return false;
+          if (!atLeastProfessional) return false;
           return true;
         }),
         icon: MessageSquare,
-        badge: !atLeastStandard ? "Standard+" : null,
+        badge: !atLeastProfessional ? "Professional+" : null,
       },
       {
         id: 'admin',
