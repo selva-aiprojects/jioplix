@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import LoginPage from './modules/auth/LoginPage';
 import LandingPage from './modules/auth/LandingPage';
 import { applyTheme } from './config/theme';
