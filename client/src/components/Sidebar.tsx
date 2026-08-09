@@ -142,16 +142,17 @@ const ALIAS_MAP: Record<string, string> = {
   "ai diagnostic assistant": "Clinical Decision Support",
 
   // Pharmacy
-  "prescription queue": "Prescriptions",
+  "prescription queue": "Prescription Queue",
   "medication dispensing": "Dispensing",
-  "pharmacy inventory": "Inventory",
-  "pharmacy inventory & stock control": "Inventory",
-  "stock inventory": "Inventory",
-  "pharmacy stock": "Inventory",
-  "purchase": "Purchase",
-  "suppliers": "Suppliers",
-  "expiry": "Expiry",
-  "reports": "Reports",
+  "pharmacy inventory": "Pharmacy Inventory",
+  "pharmacy inventory & stock control": "Pharmacy Inventory",
+  "stock inventory": "Pharmacy Inventory",
+  "pharmacy stock": "Pharmacy Inventory",
+  "pharmacy dashboard": "Pharmacy Dashboard",
+  "pharmacy management": "Pharmacy Dashboard",
+  "pharmacy hub": "Pharmacy Dashboard",
+  "procurement & suppliers": "Procurement & Suppliers",
+  "pharmacy reports": "Pharmacy Reports",
 
   // Billing & Finance
   "invoicing & billing": "Patient Billing",
@@ -466,14 +467,10 @@ export default function Sidebar() {
     }
 
     if (atLeastStandard && isPharmacist) {
-      if (!hasSome("expiry queue") && !hasSome("expiry"))
-        dm.push({ label: "Expiry", path: "/tenant/pharmacy/inventory", icon: "Activity", sort_order: 32 });
-      if (!hasSome("purchase order") && !hasSome("purchase"))
-        dm.push({ label: "Purchase", path: "/tenant/pharmacy/inventory", icon: "Receipt", sort_order: 33 });
-      if (!hasSome("supplier ledger") && !hasSome("suppliers"))
-        dm.push({ label: "Suppliers", path: "/tenant/pharmacy/inventory", icon: "Users", sort_order: 34 });
-      if (!hasSome("pharmacy reports") && !hasSome("reports"))
-        dm.push({ label: "Reports", path: "/tenant/pharmacy/dashboard", icon: "BarChart2", sort_order: 35 });
+      if (!hasSome("procurement & suppliers"))
+        dm.push({ label: "Procurement & Suppliers", path: "/tenant/inventory", icon: "Users", sort_order: 34 });
+      if (!hasSome("pharmacy reports"))
+        dm.push({ label: "Pharmacy Reports", path: "/tenant/pharmacy/dashboard", icon: "BarChart2", sort_order: 35 });
     }
 
     // Automation testing fallback menus
@@ -533,16 +530,17 @@ export default function Sidebar() {
       "AI Diagnostic Assistant",
     ];
     const pharmacyFlow = [
+      "Pharmacy Dashboard",
+      "Pharmacy Management",
+      "Pharmacy Hub",
       "Prescription Queue",
       "Medication Dispensing",
       "Pharmacy Inventory",
       "Pharmacy Inventory & Stock Control",
       "Stock Inventory",
       "Pharmacy Stock",
-      "Purchase",
-      "Suppliers",
-      "Expiry",
-      "Reports",
+      "Procurement & Suppliers",
+      "Pharmacy Reports",
     ];
     const billingFlow = [
       "Invoicing & Billing",
