@@ -115,6 +115,27 @@ const Icons: Record<string, any> = {
 };
 
 const ALIAS_MAP: Record<string, string> = {
+  // Outpatient (OPD)
+  "opd registration": "OPD Registration",
+  "outpatient registration (opd)": "OPD Registration",
+  "doctor's queue": "Doctor's Queue",
+  "opd queue": "Doctor's Queue",
+  "opd consultation queue": "Doctor's Queue",
+  "consultation desk": "Consultation Desk",
+  "patient scheduling": "Patient Scheduling",
+  "patient register": "Patient Register",
+
+  // Inpatient (IPD)
+  "admission desk": "Admission Desk",
+  "inpatient admission (ipd)": "Admission Desk",
+  "ipd bed map": "Bed & Ward Management",
+  "bed management": "Bed & Ward Management",
+  "ipd census & daycare": "IPD Census & Daycare",
+  "discharge summaries": "Discharge",
+  "discharge & summary": "Discharge",
+  "clinical & financial archives": "Medical Records & Archives",
+  "clinical archives": "Medical Records & Archives",
+
   // Clinical Services
   "laboratory": "Laboratory",
   "laboratory & diagnostics": "Laboratory",
@@ -129,23 +150,22 @@ const ALIAS_MAP: Record<string, string> = {
   "finance & compliance": "Finance & Revenue",
 
   // Hospital Operations
-  "ipd bed map": "Bed & Ward Management",
-  "bed management": "Bed & Ward Management",
   "human resource management system": "Workforce Management",
   "hrms": "Workforce Management",
   "payroll & compensation processing": "Workforce Management",
   "payroll": "Workforce Management",
-  "procurement & supply chain management": "Procurement",
-  "procurement": "Procurement",
+  "procurement & supply chain management": "Supply Chain",
+  "procurement": "Supply Chain",
   "pharmacy inventory & stock control": "Supply Chain",
   "pharmacy inventory": "Supply Chain",
   "stock inventory": "Supply Chain",
+  "prescription queue": "Supply Chain",
 
   // Reports & Analytics
   "clinical analytics": "Clinical Reports",
   "operations analytics": "Operational Reports",
   "performance insights": "Performance Insights",
-  "alert center": "Analytics",
+  "alert center": "Analytics Dashboard",
 
   // Patient Engagement
   "patient crm": "Patient CRM",
@@ -486,17 +506,17 @@ export default function Sidebar() {
       "Discharge Summaries",
       "Discharge & Summary",
       "Clinical & Financial Archives",
+      "Clinical Archives",
     ];
     const diagnosticsFlow = [
       "Laboratory",
       "Laboratory & Diagnostics",
-      "AI Diagnostic Assistant",
+      "Radiology & Imaging",
       "Pharmacy Dashboard",
       "Pharmacy Management",
-      "Stock Inventory",
-      "Pharmacy Stock",
-      "Prescription Queue",
-      "Medication Dispensing",
+      "Pharmacy Hub",
+      "Operation Theatre",
+      "AI Diagnostic Assistant",
     ];
     const billingFlow = [
       "Invoicing & Billing",
@@ -505,16 +525,20 @@ export default function Sidebar() {
       "Finance & Compliance",
     ];
     const nonClinicalFlow = [
+      // Workforce Management
       "Human Resource Management System",
       "HRMS",
       "Payroll & Compensation Processing",
       "Payroll",
+      // Supply Chain
       "Procurement & Supply Chain Management",
       "Procurement",
       "Pharmacy Inventory & Stock Control",
       "Pharmacy Inventory",
-      "Patient Relationship Management (CRM)",
-      "Patient CRM",
+      "Stock Inventory",
+      "Prescription Queue",
+      // Facility Management
+      "Facility Management",
     ];
     const reportsAnalyticsFlow = [
       "Clinical Analytics",
@@ -523,11 +547,14 @@ export default function Sidebar() {
       "Alert Center",
     ];
     const commFlow = [
+      "Patient CRM",
+      "Patient Relationship Management (CRM)",
       "Message Board",
       "Mail & Communications",
       "Mail Management",
-      "WhatsApp Reminders",
       "Reminder Tracker",
+      "WhatsApp Reminders",
+      "Patient Portal",
     ];
     const adminFlow = [
       "Hospital Settings (Masters)",
