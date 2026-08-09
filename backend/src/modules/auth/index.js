@@ -30,6 +30,13 @@ router.post("/login", loginLimiter, async (req, res) => {
   try {
     console.log(`[AUTH] Login attempt for ${email} as ${type} in ${facility || 'domain-auto'}`);
 
+    // SECURITY: Block Nexus super-admin login on tenant subdomains
+    const hostSubdomain = extractSubdomain(req.headers.host);
+    if (type === "nexus" && hostSubdomain) {
+      console.warn(`[AUTH] Nexus login blocked on tenant subdomain: ${hostSubdomain}`);
+      return res.status(403).json({ error: "Nexus master login is restricted on hospital subdomains. Please log in from the main domain." });
+    }
+
     // Nexus credentials are intentionally environment-only.  Surface a deployment
     // configuration problem clearly instead of presenting it as a bad password.
     if (type === "nexus" && (!NEXUS_USER || !NEXUS_PASS || !process.env.JWT_SECRET)) {

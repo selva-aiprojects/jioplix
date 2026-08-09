@@ -94,6 +94,12 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (type === "nexus" && getSubdomain()) {
+      setError("Nexus Admin login is disabled on tenant subdomains. Please log in from the main platform domain.");
+      return;
+    }
+
     setLoading(true);
 
     const selectedFacility = facility || (facilities.length > 0 ? facilities[0].id : "");
@@ -279,14 +285,23 @@ export default function LoginPage() {
             <button
               type="button"
               className="role-pill-btn"
-              onClick={() => setType("nexus")}
+              onClick={() => {
+                if (getSubdomain()) {
+                  setError("Nexus Admin login is disabled on dedicated hospital subdomains. Please access from the main domain.");
+                  return;
+                }
+                setType("nexus");
+              }}
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                padding: '10px', borderRadius: '10px', border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer',
+                padding: '10px', borderRadius: '10px', border: 'none', fontWeight: 700, fontSize: '13px',
+                cursor: getSubdomain() ? 'not-allowed' : 'pointer',
+                opacity: getSubdomain() ? 0.45 : 1,
                 background: type === "nexus" ? '#ffffff' : 'transparent',
                 color: type === "nexus" ? '#0f172a' : '#64748b',
                 boxShadow: type === "nexus" ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'
               }}
+              title={getSubdomain() ? "Nexus Admin login disabled on hospital subdomains" : "Nexus Admin"}
             >
               <Shield size={15} color={type === "nexus" ? '#059669' : '#64748b'} /> Nexus Admin
             </button>
