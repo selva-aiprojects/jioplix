@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
-import { Users, ArrowRightLeft, Building2 } from "lucide-react";
 
 export default function ReferralsPage() {
   const [referrals, setReferrals] = useState<any[]>([]);
@@ -28,50 +27,55 @@ export default function ReferralsPage() {
   }, []);
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout" style={{ minHeight: "100vh", background: "var(--app-bg, #f8fafc)" }}>
       <Sidebar />
-      <main className="main-content">
+      <main className="main-content" style={{ paddingBottom: "60px" }}>
         <Header title="Referral Management & Partner Network" subtitle="Inbound & Outbound Doctor/Hospital Referral Tracking & Patient Feedback" />
 
-        <div style={{ padding: 24 }}>
-          <div className="form-card" style={{ background: 'rgba(30, 41, 59, 0.45)', backdropFilter: 'blur(10px)', padding: 24, borderRadius: 16, border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h3 style={{ color: 'white', margin: '0 0 16px 0', fontWeight: 800 }}>Partner Doctor Referral Ledger</h3>
+        <div style={{ padding: "24px" }}>
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)" }}>
+            <h3 style={{ color: "#0f172a", margin: "0 0 20px 0", fontWeight: 800, fontSize: "18px" }}>Partner Doctor Referral Ledger</h3>
 
             {loading ? (
-              <div style={{ color: '#94a3b8' }}>Loading referral network logs...</div>
+              <div style={{ color: "#64748b", padding: "20px" }}>Loading referral network logs...</div>
             ) : referrals.length === 0 ? (
-              <div style={{ color: '#94a3b8', textAlign: 'center', padding: 20 }}>No active referrals logged in partner network registry.</div>
+              <div style={{ color: "#64748b", textAlign: "center", padding: "30px" }}>No active referrals logged in partner network registry.</div>
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', fontSize: 14 }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', color: '#94a3b8' }}>
-                    <th style={{ padding: 12 }}>Direction</th>
-                    <th style={{ padding: 12 }}>Referring Doctor</th>
-                    <th style={{ padding: 12 }}>Patient Name</th>
-                    <th style={{ padding: 12 }}>Specialty</th>
-                    <th style={{ padding: 12 }}>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {referrals.map(r => (
-                    <tr key={r.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <td style={{ padding: 12 }}>
-                        <span style={{ background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '4px 8px', borderRadius: 6, fontWeight: 800, fontSize: 12 }}>
-                          {r.referral_type}
-                        </span>
-                      </td>
-                      <td style={{ padding: 12, fontWeight: 700 }}>{r.referring_doctor} <div style={{ fontSize: 11, color: '#94a3b8' }}>{r.referring_hospital || 'Clinic'}</div></td>
-                      <td style={{ padding: 12, color: '#e2e8f0' }}>{r.patient_name}</td>
-                      <td style={{ padding: 12 }}>{r.specialty_required}</td>
-                      <td style={{ padding: 12 }}>
-                        <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#10b981', padding: '4px 8px', borderRadius: 6, fontWeight: 800, fontSize: 12 }}>
-                          {r.referral_status}
-                        </span>
-                      </td>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
+                  <thead>
+                    <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", textAlign: "left" }}>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Direction</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Referring Doctor</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Patient Name</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Specialty</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {referrals.map(r => (
+                      <tr key={r.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "14px 16px" }}>
+                          <span style={{ background: "#e0f2fe", color: "#0369a1", padding: "4px 10px", borderRadius: "8px", fontWeight: 800, fontSize: "12px" }}>
+                            {r.referral_type}
+                          </span>
+                        </td>
+                        <td style={{ padding: "14px 16px", fontWeight: 800, color: "#0f172a" }}>
+                          {r.referring_doctor} 
+                          <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 600, marginTop: "2px" }}>{r.referring_hospital || 'Clinic'}</div>
+                        </td>
+                        <td style={{ padding: "14px 16px", color: "#0f172a", fontWeight: 700 }}>{r.patient_name}</td>
+                        <td style={{ padding: "14px 16px", color: "#334155", fontWeight: 600 }}>{r.specialty_required}</td>
+                        <td style={{ padding: "14px 16px" }}>
+                          <span style={{ background: "#dcfce7", color: "#15803d", padding: "4px 10px", borderRadius: "8px", fontWeight: 800, fontSize: "12px" }}>
+                            {r.referral_status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>

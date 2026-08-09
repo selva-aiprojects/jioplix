@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
-import { Navigation, Truck, Siren, Activity } from "lucide-react";
 
 export default function AmbulancePage() {
   const [trips, setTrips] = useState<any[]>([]);
@@ -28,48 +27,50 @@ export default function AmbulancePage() {
   }, []);
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout" style={{ minHeight: "100vh", background: "var(--app-bg, #f8fafc)" }}>
       <Sidebar />
-      <main className="main-content">
+      <main className="main-content" style={{ paddingBottom: "60px" }}>
         <Header title="Ambulance & Emergency Patient Transport" subtitle="Fleet Management, Dispatch Console & Live GPS Transport Monitor" />
 
-        <div style={{ padding: 24 }}>
-          <div className="form-card" style={{ background: 'rgba(30, 41, 59, 0.45)', backdropFilter: 'blur(10px)', padding: 24, borderRadius: 16, border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h3 style={{ color: 'white', margin: '0 0 16px 0', fontWeight: 800 }}>Active Dispatch & Transport Trips</h3>
+        <div style={{ padding: "24px" }}>
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)" }}>
+            <h3 style={{ color: "#0f172a", margin: "0 0 20px 0", fontWeight: 800, fontSize: "18px" }}>Active Dispatch & Transport Trips</h3>
 
             {loading ? (
-              <div style={{ color: '#94a3b8' }}>Loading fleet dispatch data...</div>
+              <div style={{ color: "#64748b", padding: "20px" }}>Loading fleet dispatch data...</div>
             ) : trips.length === 0 ? (
-              <div style={{ color: '#94a3b8', textAlign: 'center', padding: 20 }}>No active emergency dispatches. All ambulance units on standby.</div>
+              <div style={{ color: "#64748b", textAlign: "center", padding: "30px" }}>No active emergency dispatches. All ambulance units on standby.</div>
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', fontSize: 14 }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', color: '#94a3b8' }}>
-                    <th style={{ padding: 12 }}>Vehicle No</th>
-                    <th style={{ padding: 12 }}>Type</th>
-                    <th style={{ padding: 12 }}>Driver / Paramedic</th>
-                    <th style={{ padding: 12 }}>Pickup Location</th>
-                    <th style={{ padding: 12 }}>ETA</th>
-                    <th style={{ padding: 12 }}>Trip Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {trips.map(t => (
-                    <tr key={t.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <td style={{ padding: 12, fontWeight: 800, color: '#ef4444' }}>{t.vehicle_no}</td>
-                      <td style={{ padding: 12 }}>{t.ambulance_type}</td>
-                      <td style={{ padding: 12 }}>{t.driver_name} / {t.paramedic_name || 'N/A'}</td>
-                      <td style={{ padding: 12, color: '#cbd5e1' }}>{t.pickup_location}</td>
-                      <td style={{ padding: 12, color: '#f59e0b', fontWeight: 800 }}>{t.eta_minutes} mins</td>
-                      <td style={{ padding: 12 }}>
-                        <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '4px 8px', borderRadius: 6, fontWeight: 800, fontSize: 12 }}>
-                          {t.trip_status}
-                        </span>
-                      </td>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
+                  <thead>
+                    <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", textAlign: "left" }}>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Vehicle No</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Type</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Driver / Paramedic</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Pickup Location</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>ETA</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Trip Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {trips.map(t => (
+                      <tr key={t.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "14px 16px", fontWeight: 900, color: "#dc2626" }}>{t.vehicle_no}</td>
+                        <td style={{ padding: "14px 16px", color: "#0f172a", fontWeight: 700 }}>{t.ambulance_type}</td>
+                        <td style={{ padding: "14px 16px", color: "#334155", fontWeight: 600 }}>{t.driver_name} / {t.paramedic_name || 'N/A'}</td>
+                        <td style={{ padding: "14px 16px", color: "#334155" }}>{t.pickup_location}</td>
+                        <td style={{ padding: "14px 16px", color: "#d97706", fontWeight: 800 }}>{t.eta_minutes} mins</td>
+                        <td style={{ padding: "14px 16px" }}>
+                          <span style={{ background: "#fee2e2", color: "#dc2626", padding: "4px 10px", borderRadius: "8px", fontWeight: 800, fontSize: "12px" }}>
+                            {t.trip_status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>
