@@ -898,10 +898,20 @@ export default function Sidebar() {
     return { groups: gs, ungroupped: mainDashboard };
   }, []);
 
-  const [openParent, setOpenParent] = useState<string | null>(null);
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [closedGroups, setClosedGroups] = useState<Set<string>>(new Set());
   const sidebarRef = useRef<HTMLDivElement>(null);
   const lastScrolledRoute = useRef<string>('');
+
+  const isGroupOpen = (id: string) => !closedGroups.has(id);
+
+  const toggleGroup = (id: string) => {
+    setClosedGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const matchesLocation = (to: string) => {
     const [path, query] = to.split('?');
@@ -920,27 +930,6 @@ export default function Sidebar() {
     if (!nav) return;
     const currentRoute = `${location.pathname}${location.search}`;
     if (lastScrolledRoute.current === currentRoute) return;
-    let activeGroupId = "";
-    let activeParentId = "";
-    groups.forEach(g => {
-      if (g.subGroups) {
-        const matchingSub = g.subGroups.find((sg: any) => sg.items?.some((i: any) => matchesLocation(i.path)));
-        if (matchingSub) {
-          activeGroupId = matchingSub.id;
-          activeParentId = g.id;
-        }
-      } else if (g.items?.some((i: any) => matchesLocation(i.path))) {
-        activeGroupId = g.id;
-      }
-    });
-
-    if (activeParentId && openParent !== activeParentId) {
-      setOpenParent(activeParentId);
-    }
-    if (activeGroupId && openGroup !== activeGroupId) {
-      setOpenGroup(activeGroupId);
-      return;
-    }
     const activeLink = nav.querySelector('.nav-item.active') as HTMLElement | null;
     if (!activeLink) return;
     const navRect = nav.getBoundingClientRect();
@@ -950,16 +939,7 @@ export default function Sidebar() {
       nav.scrollTop = Math.max(0, nav.scrollTop + relativeTop - navRect.height / 2 + linkRect.height / 2);
     }
     lastScrolledRoute.current = currentRoute;
-  }, [location.pathname, location.search, openGroup, openParent, groups]);
-
-  const toggleParent = (id: string) => {
-    setOpenParent(prev => (prev === id ? null : id));
-    setOpenGroup(null);
-  };
-
-  const toggleGroup = (id: string) => {
-    setOpenGroup(prev => (prev === id ? null : id));
-  };
+  }, [location.pathname, location.search, groups]);
 
   const refreshMenus = () => {
     localStorage.removeItem("userMenus");
@@ -976,7 +956,7 @@ export default function Sidebar() {
         document.querySelector('.mobile-overlay')?.classList.remove('active');
       }}></div>
 
-      <div className="sidebar" style={{ width: '300px', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="sidebar" style={{ width: '310px', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <button
           className="sidebar-close"
           onClick={() => {
@@ -1019,7 +999,7 @@ export default function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav ref={sidebarRef} className="nav-container" style={{ flex: 1, overflowY: 'auto', padding: '10px 12px' }}>
+        <nav ref={sidebarRef} className="nav-container" style={{ flex: 1, overflowY: 'auto', padding: '12px 14px' }}>
           {/* Ungrouped items (e.g. main Dashboard) */}
           {ungroupped.map((menu, idx) => (
             <SidebarLink key={idx} to={menu.path} icon={Icons[menu.label] || Icons[menu.icon] || LayoutDashboard} label={menu.label} />
@@ -1030,66 +1010,65 @@ export default function Sidebar() {
             if (group.isParent) {
               const hasVisibleItems = group.subGroups?.some((sg: any) => sg.items.length > 0);
               if (!hasVisibleItems) return null;
-              const isParentOpen = openParent === group.id;
+              const isParentOpen = isGroupOpen(group.id);
               return (
-                <div key={group.id} style={{ marginBottom: '4px' }}>
+                <div key={group.id} style={{ marginBottom: '8px' }}>
                   {/* Collapsible Parent Group Button */}
                   <button
-                    onClick={() => toggleParent(group.id)}
+                    onClick={() => toggleGroup(group.id)}
                     style={{
                       width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-                      padding: '10px 14px', background: 'none', border: 'none',
-                      color: isParentOpen ? 'white' : 'var(--sidebar-text, #94a3b8)',
-                      cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
-                      textTransform: 'uppercase', letterSpacing: '0.6px',
+                      padding: '10px 14px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
+                      color: '#ffffff', cursor: 'pointer', fontSize: '11.5px', fontWeight: 800, borderRadius: '10px',
+                      textTransform: 'uppercase', letterSpacing: '0.6px', marginTop: '6px', marginBottom: '4px'
                     }}
                   >
-                    <group.icon size={15} style={{ opacity: isParentOpen ? 1 : 0.5, flexShrink: 0 }} />
+                    <group.icon size={15} style={{ opacity: 0.9, flexShrink: 0, color: '#38bdf8' }} />
                     <span style={{ flex: 1, textAlign: 'left' }}>{group.title}</span>
-                    <ChevronDown size={13} style={{ transform: isParentOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
+                    <ChevronDown size={13} style={{ transform: isParentOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.8, flexShrink: 0 }} />
                   </button>
 
                   {/* Render subgroups inside container */}
                   <div style={{
-                    maxHeight: isParentOpen ? '1000px' : '0',
+                    maxHeight: isParentOpen ? '2000px' : '0',
                     overflow: 'hidden',
                     transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    paddingLeft: '6px',
-                    borderLeft: isParentOpen ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
-                    marginLeft: '10px',
+                    paddingLeft: '8px',
+                    borderLeft: '1px solid rgba(56,189,248,0.2)',
+                    marginLeft: '12px',
                   }}>
                     {group.subGroups?.map((subGroup: any) => {
                       if (subGroup.items.length === 0) return null;
+                      const isSubOpen = isGroupOpen(subGroup.id);
                       return (
-                        <div key={subGroup.id} style={{ marginBottom: '4px' }}>
+                        <div key={subGroup.id} style={{ marginBottom: '6px' }}>
                           <button
                             onClick={() => toggleGroup(subGroup.id)}
                             style={{
                               width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-                              padding: '10px 14px', background: 'none', border: 'none',
-                              color: openGroup === subGroup.id ? 'white' : 'var(--sidebar-text, #94a3b8)',
-                              cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
-                              textTransform: 'uppercase', letterSpacing: '0.6px',
+                              padding: '8px 12px', background: 'none', border: 'none',
+                              color: '#cbd5e1', cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '8px',
+                              textTransform: 'uppercase', letterSpacing: '0.5px',
                             }}
                           >
-                            <subGroup.icon size={15} style={{ opacity: openGroup === subGroup.id ? 1 : 0.5, flexShrink: 0 }} />
+                            <subGroup.icon size={14} style={{ opacity: 0.8, flexShrink: 0, color: '#0ea5e9' }} />
                             <span style={{ flex: 1, textAlign: 'left' }}>{subGroup.title}</span>
                             {subGroup.badge && (
                               <span style={{
-                                fontSize: '8px', fontWeight: 800, color: '#64748b',
-                                background: 'rgba(255,255,255,0.05)', padding: '2px 6px',
+                                fontSize: '8px', fontWeight: 800, color: '#cbd5e1',
+                                background: 'rgba(255,255,255,0.08)', padding: '2px 6px',
                                 borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.3px'
                               }}>{subGroup.badge}</span>
                             )}
-                            <ChevronDown size={13} style={{ transform: openGroup === subGroup.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
+                            <ChevronDown size={13} style={{ transform: isSubOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
                           </button>
 
                           <div style={{
-                            maxHeight: openGroup === subGroup.id ? '1000px' : '0',
+                            maxHeight: isSubOpen ? '2000px' : '0',
                             overflow: 'hidden',
                             transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            paddingLeft: '6px',
-                            borderLeft: openGroup === subGroup.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
+                            paddingLeft: '8px',
+                            borderLeft: '1px solid rgba(255,255,255,0.08)',
                             marginLeft: '10px',
                             display: 'flex',
                             flexDirection: 'column',
@@ -1115,37 +1094,37 @@ export default function Sidebar() {
 
             // Normal single-level group
             if (!group.items || group.items.length === 0) return null;
+            const isOpen = isGroupOpen(group.id);
             return (
-              <div key={group.id} style={{ marginBottom: '4px' }}>
+              <div key={group.id} style={{ marginBottom: '8px' }}>
                 <button
                   onClick={() => toggleGroup(group.id)}
                   style={{
                     width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-                    padding: '10px 14px', background: 'none', border: 'none',
-                    color: openGroup === group.id ? 'white' : 'var(--sidebar-text, #94a3b8)',
-                    cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
-                    textTransform: 'uppercase', letterSpacing: '0.6px',
+                    padding: '10px 14px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
+                    color: '#ffffff', cursor: 'pointer', fontSize: '11.5px', fontWeight: 800, borderRadius: '10px',
+                    textTransform: 'uppercase', letterSpacing: '0.6px', marginTop: '6px', marginBottom: '4px'
                   }}
                 >
-                  <group.icon size={15} style={{ opacity: openGroup === group.id ? 1 : 0.5, flexShrink: 0 }} />
+                  <group.icon size={15} style={{ opacity: 0.9, flexShrink: 0, color: '#38bdf8' }} />
                   <span style={{ flex: 1, textAlign: 'left' }}>{group.title}</span>
                   {group.badge && (
                     <span style={{
-                      fontSize: '8px', fontWeight: 800, color: '#64748b',
-                      background: 'rgba(255,255,255,0.05)', padding: '2px 6px',
-                      borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.3px'
+                      fontSize: '9px', fontWeight: 900, color: '#f59e0b',
+                      background: 'rgba(245,158,11,0.15)', padding: '2px 8px', border: '1px solid rgba(245,158,11,0.3)',
+                      borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.4px'
                     }}>{group.badge}</span>
                   )}
-                  <ChevronDown size={13} style={{ transform: openGroup === group.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
+                  <ChevronDown size={13} style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.8, flexShrink: 0 }} />
                 </button>
 
                 <div style={{
-                  maxHeight: openGroup === group.id ? '1000px' : '0',
+                  maxHeight: isOpen ? '2000px' : '0',
                   overflow: 'hidden',
                   transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   paddingLeft: '8px',
-                  borderLeft: openGroup === group.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
-                  marginLeft: '18px',
+                  borderLeft: '1px solid rgba(56,189,248,0.2)',
+                  marginLeft: '14px',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '2px',
@@ -1199,37 +1178,36 @@ export default function Sidebar() {
         .nav-item {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
           padding: 8px 12px;
           border-radius: 10px;
-          color: var(--sidebar-text, #94a3b8);
+          color: var(--sidebar-text, #cbd5e1);
           text-decoration: none;
-          font-size: 12.5px;
+          font-size: 13px;
           font-weight: 600;
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           margin-bottom: 2px;
           position: relative;
-          overflow: hidden;
           border: 1px solid transparent;
-          white-space: nowrap;
         }
         .nav-item span {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          white-space: normal;
+          word-break: break-word;
+          line-height: 1.35;
           flex: 1;
         }
         .nav-item:hover {
-          background: rgba(255, 255, 255, 0.06);
-          color: white;
-          border-color: rgba(255, 255, 255, 0.04);
+          background: rgba(255, 255, 255, 0.08);
+          color: #ffffff;
+          border-color: rgba(255, 255, 255, 0.08);
           transform: translateX(3px);
         }
         .nav-item.active {
-          background: linear-gradient(135deg, rgba(0, 86, 168, 0.28) 0%, rgba(0, 86, 168, 0.10) 100%);
-          color: #7ec4ff;
-          border-color: rgba(0, 120, 255, 0.3);
-          box-shadow: 0 4px 12px rgba(0, 86, 168, 0.12);
+          background: linear-gradient(135deg, rgba(0, 120, 255, 0.35) 0%, rgba(0, 86, 168, 0.20) 100%);
+          color: #ffffff;
+          border-color: rgba(0, 120, 255, 0.4);
+          box-shadow: 0 4px 12px rgba(0, 86, 168, 0.25);
+          font-weight: 800;
         }
         .nav-item.active::after {
           content: "";
