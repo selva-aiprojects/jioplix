@@ -894,7 +894,7 @@ export default function Sidebar() {
             <img
               src={sidebarLogoUrl}
               alt={tenantName}
-              style={{ width: 'auto', maxWidth: '180px', height: 'auto', maxHeight: '52px', objectFit: 'contain', cursor: 'pointer', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }}
+              style={{ width: 'auto', maxWidth: '240px', height: 'auto', maxHeight: '68px', objectFit: 'contain', cursor: 'pointer', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.25))' }}
               onError={(e) => {
                 const img = e.target as HTMLImageElement;
                 img.style.display = 'none';
