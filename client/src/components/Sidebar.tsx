@@ -852,7 +852,7 @@ export default function Sidebar() {
         document.querySelector('.mobile-overlay')?.classList.remove('active');
       }}></div>
 
-      <div className="sidebar" style={{ width: '280px', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="sidebar" style={{ width: '300px', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <button
           className="sidebar-close"
           onClick={() => {
@@ -930,9 +930,9 @@ export default function Sidebar() {
                     maxHeight: isParentOpen ? '1000px' : '0',
                     overflow: 'hidden',
                     transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    paddingLeft: '8px',
+                    paddingLeft: '6px',
                     borderLeft: isParentOpen ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
-                    marginLeft: '18px',
+                    marginLeft: '10px',
                   }}>
                     {group.subGroups?.map((subGroup: any) => {
                       if (subGroup.items.length === 0) return null;
@@ -964,9 +964,9 @@ export default function Sidebar() {
                             maxHeight: openGroup === subGroup.id ? '1000px' : '0',
                             overflow: 'hidden',
                             transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            paddingLeft: '8px',
+                            paddingLeft: '6px',
                             borderLeft: openGroup === subGroup.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
-                            marginLeft: '18px',
+                            marginLeft: '10px',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '2px',
@@ -1075,12 +1075,12 @@ export default function Sidebar() {
         .nav-item {
           display: flex;
           align-items: center;
-          gap: 10px;
-          padding: 9px 14px;
+          gap: 8px;
+          padding: 8px 12px;
           border-radius: 10px;
           color: var(--sidebar-text, #94a3b8);
           text-decoration: none;
-          font-size: 13px;
+          font-size: 12.5px;
           font-weight: 600;
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           margin-bottom: 2px;
@@ -1119,16 +1119,17 @@ export default function Sidebar() {
           box-shadow: 0 0 8px #0078FF;
         }
         .nav-item.sub-item {
-          font-size: 12.5px;
-          padding: 8px 12px;
+          font-size: 11.5px;
+          padding: 7px 8px;
         }
         .main-content { min-width: 0; }
 
         @media (max-width: 1023px) {
           .sidebar {
             position: fixed !important;
-            left: -320px;
+            left: -340px;
             top: 0;
+            width: 300px !important;
             height: 100vh !important;
             overflow-y: auto !important;
             z-index: 1002;
