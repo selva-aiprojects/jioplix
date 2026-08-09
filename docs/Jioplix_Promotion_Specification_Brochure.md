@@ -111,11 +111,26 @@ Direct integration with official Meta/WhatsApp Business API for branded patient 
 
 ## 🔒 5. Security, Infrastructure & Compliance
 
+### 🛡️ 4-Layer Cross-Tenant Data Protection Shield
+Jioplix incorporates strict multi-tenant isolation protocols to prevent cross-tenant data leakage, session spoofing, or stale UI overrides:
+
+1. **Automatic Session Purge on Subdomain Switch (`TenantSecurityGuard`)**:
+   - On every route change, the frontend security guard compares the host subdomain with the active stored session.
+   - If a user switches from `anbuhospitals.jioplix.com` to `apollochennai.jioplix.com`, 100% of local storage, session tokens, cached branding, and user menus are **instantly wiped**, preventing any visual or state overlap.
+2. **Host-to-JWT Token Claim Validation (Backend Auth Guard)**:
+   - Backend middleware validates that the JWT `tenantId` strictly matches the domain/host resolving tenant (`req.headers.host`).
+   - Any attempt to reuse a token from Hospital A on Hospital B's API endpoint is rejected with a `403 Forbidden` tenant mismatch error.
+3. **PostgreSQL Engine-Level Schema Isolation (`SET search_path`)**:
+   - Database queries execute within isolated PostgreSQL schemas (`"anbu_hospitals"`, `"omega"`, `"kkcth"`).
+   - SQL search path (`SET search_path TO "${schemaName}", public`) guarantees data queries cannot cross schema boundaries.
+4. **Nexus Token Domain Lockout**:
+   - Super-Admin Nexus tokens are strictly blocked on tenant subdomains, restricting platform administration to the root platform domain.
+
+### 🔐 Compliance & Encryption Standards
 - **Architecture**: Microservices backend (Node.js/Express) + React Single Page Application (Vite/TypeScript) + Supabase PostgreSQL.
 - **Subdomain Routing**: Vercel Edge Serverless routing with wildcard domain SSL certificates (`*.jioplix.com`).
-- **Data Isolation**: Schema-based multi-tenancy (`"tenant_schema".users`) ensuring zero cross-tenant data leakage.
-- **Security Protocols**: TLS 1.3 encryption in transit, AES-256 at rest, OWASP Top 10 mitigation, and rate-limited auth routes.
-- **PII Masking**: Field-level data masking for non-clinical roles in compliance with HIPAA and DPDP Regulations 2026.
+- **Security Protocols**: TLS 1.3 encryption in transit, AES-256 at rest, OWASP Top 10 mitigation, and rate-limited auth routes (`loginLimiter`).
+- **HIPAA PII Masking Engine**: Field-level data masking for non-clinical roles in compliance with HIPAA and DPDP Regulations 2026.
 
 ---
 
