@@ -9,8 +9,8 @@ export default function IntegrationHubPage() {
 
   const fetchLogs = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       const res = await fetch("/api/integration/logs", {
         headers: { Authorization: `Bearer ${token}`, "x-tenant-id": sub }
       });

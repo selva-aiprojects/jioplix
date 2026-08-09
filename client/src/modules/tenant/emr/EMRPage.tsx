@@ -18,8 +18,8 @@ export default function EMRPage() {
 
   const fetchNotes = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       const res = await fetch("/api/emr/notes", {
         headers: { Authorization: `Bearer ${token}`, "x-tenant-id": sub }
       });
@@ -39,8 +39,8 @@ export default function EMRPage() {
   const handleSaveNote = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       await fetch("/api/emr/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "x-tenant-id": sub },

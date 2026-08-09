@@ -17,8 +17,8 @@ export default function DieteticsPage() {
 
   const fetchDiet = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       const res = await fetch("/api/dietetics/orders", {
         headers: { Authorization: `Bearer ${token}`, "x-tenant-id": sub }
       });
@@ -38,8 +38,8 @@ export default function DieteticsPage() {
   const handleCreateOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       await fetch("/api/dietetics/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "x-tenant-id": sub },

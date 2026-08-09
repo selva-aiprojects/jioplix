@@ -19,8 +19,8 @@ export default function CSSDPage() {
 
   const fetchCSSD = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       const res = await fetch("/api/cssd/batches", {
         headers: { Authorization: `Bearer ${token}`, "x-tenant-id": sub }
       });
@@ -40,8 +40,8 @@ export default function CSSDPage() {
   const handleCreateBatch = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       await fetch("/api/cssd/batches", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "x-tenant-id": sub },

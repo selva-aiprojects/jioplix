@@ -24,8 +24,8 @@ export default function EmergencyPage() {
 
   const fetchEmergencyData = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       const res = await fetch("/api/emergency/triage", {
         headers: { Authorization: `Bearer ${token}`, "x-tenant-id": sub }
       });
@@ -48,8 +48,8 @@ export default function EmergencyPage() {
   const handleTriageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       await fetch("/api/emergency/triage", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "x-tenant-id": sub },
@@ -74,8 +74,8 @@ export default function EmergencyPage() {
   const handleCodeTrigger = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      const sub = localStorage.getItem("activeSubdomain") || "demo";
+      const token = localStorage.getItem("token") || "";
+      const sub = localStorage.getItem("tenant") || localStorage.getItem("activeSubdomain") || "demo";
       await fetch("/api/emergency/code-alert", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "x-tenant-id": sub },
