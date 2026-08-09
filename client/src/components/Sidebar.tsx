@@ -668,9 +668,15 @@ export default function Sidebar() {
     const gLabels = new Set<string>();
     gs.forEach(g => {
       if (g.subGroups) {
-        g.subGroups.forEach((sg: any) => sg.items.forEach((i: any) => gLabels.add(i.label.toLowerCase())));
+        g.subGroups.forEach((sg: any) => sg.items.forEach((i: any) => {
+          if (i.originalLabel) gLabels.add(i.originalLabel.toLowerCase());
+          gLabels.add(i.label.toLowerCase());
+        }));
       } else {
-        g.items.forEach((i: any) => gLabels.add(i.label.toLowerCase()));
+        g.items.forEach((i: any) => {
+          if (i.originalLabel) gLabels.add(i.originalLabel.toLowerCase());
+          gLabels.add(i.label.toLowerCase());
+        });
       }
     });
 
