@@ -140,8 +140,18 @@ const ALIAS_MAP: Record<string, string> = {
   "laboratory": "Laboratory",
   "laboratory & diagnostics": "Laboratory",
   "ai diagnostic assistant": "Clinical Decision Support",
-  "pharmacy dashboard": "Pharmacy",
-  "pharmacy management": "Pharmacy",
+
+  // Pharmacy
+  "prescription queue": "Prescriptions",
+  "medication dispensing": "Dispensing",
+  "pharmacy inventory": "Inventory",
+  "pharmacy inventory & stock control": "Inventory",
+  "stock inventory": "Inventory",
+  "pharmacy stock": "Inventory",
+  "purchase": "Purchase",
+  "suppliers": "Suppliers",
+  "expiry": "Expiry",
+  "reports": "Reports",
 
   // Billing & Finance
   "invoicing & billing": "Patient Billing",
@@ -156,10 +166,6 @@ const ALIAS_MAP: Record<string, string> = {
   "payroll": "Workforce Management",
   "procurement & supply chain management": "Supply Chain",
   "procurement": "Supply Chain",
-  "pharmacy inventory & stock control": "Supply Chain",
-  "pharmacy inventory": "Supply Chain",
-  "stock inventory": "Supply Chain",
-  "prescription queue": "Supply Chain",
 
   // Reports & Analytics
   "clinical analytics": "Clinical Reports",
@@ -459,6 +465,17 @@ export default function Sidebar() {
         dm.push({ label: "Finance & Compliance", path: "/tenant/finance", icon: "Receipt", sort_order: 44 });
     }
 
+    if (atLeastStandard && isPharmacist) {
+      if (!hasSome("expiry queue") && !hasSome("expiry"))
+        dm.push({ label: "Expiry", path: "/tenant/pharmacy/inventory", icon: "Activity", sort_order: 32 });
+      if (!hasSome("purchase order") && !hasSome("purchase"))
+        dm.push({ label: "Purchase", path: "/tenant/pharmacy/inventory", icon: "Receipt", sort_order: 33 });
+      if (!hasSome("supplier ledger") && !hasSome("suppliers"))
+        dm.push({ label: "Suppliers", path: "/tenant/pharmacy/inventory", icon: "Users", sort_order: 34 });
+      if (!hasSome("pharmacy reports") && !hasSome("reports"))
+        dm.push({ label: "Reports", path: "/tenant/pharmacy/dashboard", icon: "BarChart2", sort_order: 35 });
+    }
+
     // Automation testing fallback menus
     if (localStorage.getItem('isAutomation') === 'true') {
       const fallback = [
@@ -512,11 +529,20 @@ export default function Sidebar() {
       "Laboratory",
       "Laboratory & Diagnostics",
       "Radiology & Imaging",
-      "Pharmacy Dashboard",
-      "Pharmacy Management",
-      "Pharmacy Hub",
       "Operation Theatre",
       "AI Diagnostic Assistant",
+    ];
+    const pharmacyFlow = [
+      "Prescription Queue",
+      "Medication Dispensing",
+      "Pharmacy Inventory",
+      "Pharmacy Inventory & Stock Control",
+      "Stock Inventory",
+      "Pharmacy Stock",
+      "Purchase",
+      "Suppliers",
+      "Expiry",
+      "Reports",
     ];
     const billingFlow = [
       "Invoicing & Billing",
@@ -533,10 +559,6 @@ export default function Sidebar() {
       // Supply Chain
       "Procurement & Supply Chain Management",
       "Procurement",
-      "Pharmacy Inventory & Stock Control",
-      "Pharmacy Inventory",
-      "Stock Inventory",
-      "Prescription Queue",
       // Facility Management
       "Facility Management",
     ];
@@ -623,13 +645,21 @@ export default function Sidebar() {
         items: getItems(diagnosticsFlow).filter(i => {
           if (!atLeastStandard) return false;
           if (i.originalLabel === "AI Diagnostic Assistant" && !isEnterprise) return false;
-          if (["pharmacy dashboard", "pharmacy management", "prescription queue", "medication dispensing", "pharmacy stock", "stock inventory"].includes(i.originalLabel?.toLowerCase())) {
-            if (!isPharmacist && !isAdmin && !isDoctor) return false;
-          }
           if (["laboratory", "laboratory & diagnostics"].includes(i.originalLabel?.toLowerCase()) && !isLabTech && !isAdmin && !isDoctor) return false;
           return true;
         }),
         icon: Stethoscope,
+        badge: !atLeastStandard ? "Standard+" : null,
+      },
+      {
+        id: 'pharmacy',
+        title: "Pharmacy",
+        items: getItems(pharmacyFlow).filter(() => {
+          if (!atLeastStandard) return false;
+          if (!isPharmacist && !isAdmin && !isDoctor) return false;
+          return true;
+        }),
+        icon: Pill,
         badge: !atLeastStandard ? "Standard+" : null,
       },
       {
@@ -646,15 +676,11 @@ export default function Sidebar() {
       {
         id: 'hospital_operations',
         title: "Hospital Operations",
-        items: getItems(nonClinicalFlow).filter(i => {
-          const name = i.originalLabel?.toLowerCase();
-          if (["pharmacy inventory", "pharmacy inventory & stock control", "stock inventory", "prescription queue"].includes(name)) {
-            return atLeastStandard;
-          }
+        items: getItems(nonClinicalFlow).filter(() => {
           return atLeastProfessional;
         }),
         icon: Building2,
-        badge: !atLeastStandard ? "Standard+" : (!atLeastProfessional ? "Professional+" : null),
+        badge: !atLeastProfessional ? "Professional+" : null,
       },
       {
         id: 'reports_analytics',
