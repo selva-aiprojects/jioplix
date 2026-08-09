@@ -197,14 +197,13 @@ router.get("/stats", async (req, res, next) => {
     const activeHours = utilizationRes[0]?.active_hours || 0;
     const utilizationPercent = Math.min(100, Math.round((activeHours / 8) * 100)); // Assuming 8h shift for index
 
-    // 10. BILLING KPIs (Live)
     let billingKpis = { dailyCollection: 0, pendingInsurance: 0, todayInvoices: 0, outstandingDues: 0 };
     try {
       const [dailyColl, pendingIns, todayInv, outstanding] = await Promise.all([
-        runQuery(`SELECT COALESCE(SUM(total), 0)::float FROM "${schema}".invoices WHERE status = 'Paid' AND created_at > NOW() - INTERVAL '24 hours'`, 0),
-        runQuery(`SELECT COALESCE(SUM(total), 0)::float FROM "${schema}".invoices WHERE payment_mode = 'Insurance' AND status IN ('Unpaid', 'Pending')`, 0),
+        runQuery(`SELECT COALESCE(SUM(total), 0)::float FROM "${schema}".invoices WHERE (status ILIKE 'paid' OR status ILIKE 'settled') AND created_at > NOW() - INTERVAL '24 hours'`, 0),
+        runQuery(`SELECT COALESCE(SUM(total), 0)::float FROM "${schema}".invoices WHERE payment_mode = 'Insurance' AND (status ILIKE 'unpaid' OR status ILIKE 'pending')`, 0),
         runQuery(`SELECT COUNT(*)::int FROM "${schema}".invoices WHERE created_at > NOW() - INTERVAL '24 hours'`, 0),
-        runQuery(`SELECT COALESCE(SUM(total), 0)::float FROM "${schema}".invoices WHERE status IN ('Unpaid', 'Partial') AND created_at > NOW() - INTERVAL '30 days'`, 0),
+        runQuery(`SELECT COALESCE(SUM(total), 0)::float FROM "${schema}".invoices WHERE (status ILIKE 'unpaid' OR status ILIKE 'partial') AND created_at > NOW() - INTERVAL '30 days'`, 0),
       ]);
       billingKpis = {
         dailyCollection: Math.round(dailyColl || 0),
@@ -259,11 +258,12 @@ router.get("/stats", async (req, res, next) => {
     const wardStats = await runQuery(`
       SELECT 
         w.name as label,
+        w.type,
         COUNT(b.id)::int as total,
-        COUNT(CASE WHEN b.status = 'Occupied' THEN 1 END)::int as occupied
+        COUNT(CASE WHEN b.status ILIKE 'Occupied' THEN 1 END)::int as occupied
       FROM "${schema}".wards w
       LEFT JOIN "${schema}".beds b ON w.id = b.ward_id
-      GROUP BY w.id, w.name
+      GROUP BY w.id, w.name, w.type
     `, []);
 
     // Bed occupancy percent formatting:
@@ -377,7 +377,7 @@ router.get("/clinical-command-overview", async (req, res, next) => {
     // 4. Capacity Gauge
     const capacity = await req.prisma.$queryRawUnsafe(`
       SELECT 
-        (SELECT COUNT(*)::int FROM "${schema}".beds WHERE status = 'Occupied') as occupied,
+        (SELECT COUNT(*)::int FROM "${schema}".beds WHERE status ILIKE 'Occupied') as occupied,
         (SELECT COUNT(*)::int FROM "${schema}".beds) as total
     `);
 

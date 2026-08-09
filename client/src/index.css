@@ -1261,3 +1261,65 @@ code, pre, .font-mono, [style*="monospace"] {
   box-shadow: 0 0 0 3px rgba(0, 86, 168, 0.12);
 }
 
+/* ── Universal Sleek Table/Grid Overrides ── */
+table, .card-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-family: var(--font-sans) !important;
+}
+
+table th, .card-table th {
+  font-family: var(--font-heading) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: var(--brand-neutral-slate) !important;
+  background-color: rgba(248, 250, 252, 0.75) !important;
+  padding: 14px 20px !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+table td, .card-table td {
+  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  padding: 14px 20px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  vertical-align: middle !important;
+}
+
+table tr, .card-table tr {
+  transition: background-color 0.15s ease-in-out !important;
+}
+
+table tr:hover, .card-table tr:hover {
+  background-color: rgba(241, 245, 249, 0.45) !important;
+}
+
+table tr:last-child td, .card-table tr:last-child td {
+  border-bottom: none !important;
+}
+
+table td strong, table td b {
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+table td span.text-muted, table td div.text-muted, table td span.subtext {
+  font-size: 11px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+/* ── Interactive Hover Animation Utilities ── */
+.hover-scale {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.hover-scale:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 12px 24px -10px rgba(0, 86, 168, 0.15) !important;
+}
+
+

@@ -337,6 +337,13 @@ export default function DashboardPage() {
     }]
   };
 
+  const bedDoughnutOptionData = [
+    { value: stats.bedStats?.find((b: any) => b.status === 'Occupied')?.count || 0, name: 'Occupied', itemStyle: { color: '#3b82f6' } },
+    { value: stats.bedStats?.find((b: any) => b.status === 'Available' || b.status === 'Vacant')?.count || 0, name: 'Available', itemStyle: { color: '#10b981' } },
+    { value: stats.bedStats?.find((b: any) => b.status === 'Cleaning')?.count || 0, name: 'Cleaning', itemStyle: { color: '#f59e0b' } },
+    { value: stats.bedStats?.find((b: any) => b.status === 'Maintenance')?.count || 0, name: 'Maintenance', itemStyle: { color: '#7c3aed' } }
+  ].filter(item => item.value > 0);
+
   const bedDoughnutOption = {
     tooltip: { trigger: 'item' },
     series: [{
@@ -345,10 +352,7 @@ export default function DashboardPage() {
       avoidLabelOverlap: false,
       itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
       label: { show: false },
-      data: stats.bedStats.length ? stats.bedStats.map((item: any) => ({ value: item.count, name: item.status })) : [
-        { value: 1, name: 'No data' }
-      ],
-      color: ['#3b82f6', '#10b981', '#f59e0b', '#7c3aed']
+      data: bedDoughnutOptionData.length ? bedDoughnutOptionData : [{ value: 1, name: 'No data', itemStyle: { color: '#e2e8f0' } }]
     }]
   };
 
@@ -1456,7 +1460,7 @@ export default function DashboardPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
                     {[
                       { name: 'Occupied', count: stats.bedStats?.find((b: any) => b.status === 'Occupied')?.count || 0, color: '#3b82f6' },
-                      { name: 'Available', count: stats.bedStats?.find((b: any) => b.status === 'Available')?.count || 0, color: '#10b981' },
+                      { name: 'Available', count: stats.bedStats?.find((b: any) => b.status === 'Available' || b.status === 'Vacant')?.count || 0, color: '#10b981' },
                       { name: 'Cleaning', count: stats.bedStats?.find((b: any) => b.status === 'Cleaning')?.count || 0, color: '#f59e0b' },
                       { name: 'Maintenance', count: stats.bedStats?.find((b: any) => b.status === 'Maintenance')?.count || 0, color: '#7c3aed' }
                     ].map((item, idx) => {
@@ -1477,9 +1481,9 @@ export default function DashboardPage() {
 
                 <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {[
-                    { label: 'General Ward', val: `${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general'))?.occupied || 0}/${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general'))?.total || 0}`, pct: stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general'))?.total ? Math.round((stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general'))?.occupied * 100) / stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general'))?.total) : 0, color: '#3b82f6' },
-                    { label: 'Private Rooms', val: `${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private'))?.occupied || 0}/${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private'))?.total || 0}`, pct: stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private'))?.total ? Math.round((stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private'))?.occupied * 100) / stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private'))?.total) : 0, color: '#10b981' },
-                    { label: 'ICU Beds', val: `${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu'))?.occupied || 0}/${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu'))?.total || 0}`, pct: stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu'))?.total ? Math.round((stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu'))?.occupied * 100) / stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu'))?.total) : 0, color: '#7c3aed' }
+                    { label: 'General Ward', val: `${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general') || (w.type && w.type.toLowerCase().includes('regular')))?.occupied || 0}/${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general') || (w.type && w.type.toLowerCase().includes('regular')))?.total || 0}`, pct: stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general') || (w.type && w.type.toLowerCase().includes('regular')))?.total ? Math.round((stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general') || (w.type && w.type.toLowerCase().includes('regular')))?.occupied * 100) / stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('general') || (w.type && w.type.toLowerCase().includes('regular')))?.total) : 0, color: '#3b82f6' },
+                    { label: 'Private Rooms', val: `${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private') || (w.type && w.type.toLowerCase().includes('special')))?.occupied || 0}/${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private') || (w.type && w.type.toLowerCase().includes('special')))?.total || 0}`, pct: stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private') || (w.type && w.type.toLowerCase().includes('special')))?.total ? Math.round((stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private') || (w.type && w.type.toLowerCase().includes('special')))?.occupied * 100) / stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('private') || (w.type && w.type.toLowerCase().includes('special')))?.total) : 0, color: '#10b981' },
+                    { label: 'ICU Beds', val: `${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu') || (w.type && w.type.toLowerCase().includes('icu')))?.occupied || 0}/${stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu') || (w.type && w.type.toLowerCase().includes('icu')))?.total || 0}`, pct: stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu') || (w.type && w.type.toLowerCase().includes('icu')))?.total ? Math.round((stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu') || (w.type && w.type.toLowerCase().includes('icu')))?.occupied * 100) / stats.wardStats?.find((w: any) => w.label.toLowerCase().includes('icu') || (w.type && w.type.toLowerCase().includes('icu')))?.total) : 0, color: '#7c3aed' }
                   ].map((ward, idx) => (
                     <div key={idx}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 800, color: '#475569', marginBottom: '4px' }}>
