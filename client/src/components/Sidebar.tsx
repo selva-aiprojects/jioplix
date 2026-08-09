@@ -735,13 +735,13 @@ export default function Sidebar() {
     const gs = [
       {
         id: 'patient_care',
-        title: "Patient Care",
+        title: "PATIENT CARE",
         icon: HeartPulse,
         isParent: true,
         subGroups: [
           {
             id: 'opd',
-            title: "Outpatient (OPD)",
+            title: "OPD",
             items: getItems(opdFlow).filter(i => {
               if (i.originalLabel === "Doctor's Schedule" && !isDoctor) return false;
               return true;
@@ -751,7 +751,7 @@ export default function Sidebar() {
           },
           {
             id: 'ipd',
-            title: "Inpatient (IPD)",
+            title: "IPD",
             items: getItems(ipdFlow).filter(() => {
               if (!atLeastProfessional) return false;
               if (!isClinical) return false;
@@ -764,21 +764,14 @@ export default function Sidebar() {
       },
       {
         id: 'enterprise_clinical',
-        title: "Enterprise Clinical Ops",
+        title: "CLINICAL OPERATIONS",
         items: getItems(enterpriseClinicalFlow),
         icon: Stethoscope,
         badge: "Enterprise",
       },
       {
-        id: 'digital_health',
-        title: "Digital Health & Interoperability",
-        items: getItems(digitalHealthFlow),
-        icon: Cpu,
-        badge: "Enterprise",
-      },
-      {
         id: 'clinical_services',
-        title: "Clinical Services",
+        title: "CLINICAL SERVICES",
         items: getItems(diagnosticsFlow).filter(i => {
           if (!atLeastStandard) return false;
           if (i.originalLabel === "AI Diagnostic Assistant" && !isEnterprise) return false;
@@ -790,7 +783,7 @@ export default function Sidebar() {
       },
       {
         id: 'pharmacy',
-        title: "Pharmacy",
+        title: "PHARMACY",
         items: getItems(pharmacyFlow).filter(() => {
           if (!atLeastStandard) return false;
           if (!isPharmacist && !isAdmin && !isDoctor) return false;
@@ -801,7 +794,7 @@ export default function Sidebar() {
       },
       {
         id: 'billing_finance',
-        title: "Billing & Finance",
+        title: "BILLING & FINANCE",
         items: getItems(billingFlow).filter(i => {
           if (i.originalLabel === "Finance & Compliance" && !isEnterprise) return false;
           if (!isBilling && !isAdmin) return false;
@@ -812,7 +805,7 @@ export default function Sidebar() {
       },
       {
         id: 'hospital_operations',
-        title: "Hospital Operations",
+        title: "HOSPITAL OPERATIONS",
         items: getItems(nonClinicalFlow).filter(() => {
           return atLeastProfessional;
         }),
@@ -820,8 +813,15 @@ export default function Sidebar() {
         badge: !atLeastProfessional ? "Professional+" : null,
       },
       {
+        id: 'digital_health',
+        title: "DIGITAL HEALTH & INTEROPERABILITY",
+        items: getItems(digitalHealthFlow),
+        icon: Cpu,
+        badge: "Enterprise",
+      },
+      {
         id: 'reports_analytics',
-        title: "Reports & Analytics",
+        title: "REPORTS & ANALYTICS",
         items: getItems(reportsAnalyticsFlow).filter(() => {
           if (!atLeastProfessional || !isAdmin) return false;
           return true;
@@ -831,7 +831,7 @@ export default function Sidebar() {
       },
       {
         id: 'patient_engagement',
-        title: "Patient Engagement",
+        title: "PATIENT ENGAGEMENT",
         items: getItems(commFlow).filter(i => {
           const name = i.originalLabel?.toLowerCase();
           if (["patient relationship management (crm)", "patient crm"].includes(name)) {
@@ -844,7 +844,7 @@ export default function Sidebar() {
       },
       {
         id: 'admin',
-        title: "Administration",
+        title: "ADMINISTRATION",
         items: getItems(adminFlow).filter(i => {
           if (!isAdmin) return false;
           if ((i.originalLabel === "Help Desk" || i.originalLabel === "Support Tickets" || i.originalLabel === "Ticketing Management System") && !atLeastStandard) return false;
