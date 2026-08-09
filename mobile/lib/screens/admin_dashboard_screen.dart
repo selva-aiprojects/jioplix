@@ -14,6 +14,7 @@ import 'pharmacist_dashboard_screen.dart';
 import 'lab_assistant_dashboard_screen.dart';
 import 'nurse_dashboard_screen.dart';
 import 'receptionist_dashboard_screen.dart';
+import 'feature_placeholder_screen.dart';
 
 class AdminDashboardScreen extends ConsumerStatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -408,6 +409,76 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
                     onTap: () => Navigator.push(context,
                         MaterialPageRoute(builder: (_) => const ReceptionistDashboardScreen())),
                     index: 4,
+                  ),
+                  _buildDeptCard(
+                    title: 'Radiology & Imaging',
+                    subtitle: 'Imaging queue & PACS server',
+                    icon: Icons.radar_rounded,
+                    color: Colors.blue,
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const FeaturePlaceholderScreen(
+                          title: 'Radiology & Imaging',
+                          breadcrumb: ['Clinical Services', 'Radiology & Imaging'],
+                          icon: Icons.radar_rounded,
+                          color: Colors.blue,
+                        ))),
+                    index: 5,
+                  ),
+                  _buildDeptCard(
+                    title: 'Operation Theatre',
+                    subtitle: 'OT scheduling & surgical log',
+                    icon: Icons.local_hospital_rounded,
+                    color: Colors.orange,
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const FeaturePlaceholderScreen(
+                          title: 'Operation Theatre',
+                          breadcrumb: ['Clinical Services', 'Operation Theatre'],
+                          icon: Icons.local_hospital_rounded,
+                          color: Colors.orange,
+                        ))),
+                    index: 6,
+                  ),
+                  _buildDeptCard(
+                    title: 'Blood Bank',
+                    subtitle: 'Donors & blood component stock',
+                    icon: Icons.bloodtype_rounded,
+                    color: Colors.red,
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const FeaturePlaceholderScreen(
+                          title: 'Blood Bank',
+                          breadcrumb: ['Clinical Services', 'Blood Bank'],
+                          icon: Icons.bloodtype_rounded,
+                          color: Colors.red,
+                        ))),
+                    index: 7,
+                  ),
+                  _buildDeptCard(
+                    title: 'Facility Management',
+                    subtitle: 'Asset tracking & maintenance',
+                    icon: Icons.home_work_rounded,
+                    color: Colors.blueGrey,
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const FeaturePlaceholderScreen(
+                          title: 'Facility Management',
+                          breadcrumb: ['Hospital Operations', 'Facility Management'],
+                          icon: Icons.home_work_rounded,
+                          color: Colors.blueGrey,
+                        ))),
+                    index: 8,
+                  ),
+                  _buildDeptCard(
+                    title: 'Patient Portal',
+                    subtitle: 'Self-service EMR & appointment',
+                    icon: Icons.switch_access_shortcut_rounded,
+                    color: Colors.teal,
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const FeaturePlaceholderScreen(
+                          title: 'Patient Portal',
+                          breadcrumb: ['Patient Engagement', 'Patient Portal'],
+                          icon: Icons.switch_access_shortcut_rounded,
+                          color: Colors.teal,
+                        ))),
+                    index: 9,
                   ),
                   const SizedBox(height: 40),
                 ]),
