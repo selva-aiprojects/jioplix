@@ -408,52 +408,83 @@ export default function Sidebar() {
     // ── Group definitions ────────────────────────────────────────────────────
     // Define canonical ordered labels per group
     const opdFlow = [
+      "OPD Registration",
       "Outpatient Registration (OPD)",
+      "Doctor's Queue",
+      "OPD Queue",
       "OPD Consultation Queue",
       "Consultation Desk",
-      "Doctor's Queue",
-      "Patient Register",
       "Patient Scheduling",
       "Doctor's Schedule",
+      "Advanced Scheduling Console",
+      "Patient Register",
       "Clinical Archives",
     ];
     const ipdFlow = [
+      "Admission Desk",
       "Inpatient Admission (IPD)",
+      "IPD Bed Map",
       "Bed Management",
       "IPD Census & Daycare",
+      "Discharge Summaries",
       "Discharge & Summary",
+      "Clinical & Financial Archives",
     ];
     const diagnosticsFlow = [
+      "Laboratory",
       "Laboratory & Diagnostics",
       "AI Diagnostic Assistant",
+      "Pharmacy Dashboard",
       "Pharmacy Management",
-      "Medication Dispensing",
+      "Stock Inventory",
       "Pharmacy Stock",
+      "Prescription Queue",
+      "Medication Dispensing",
     ];
     const billingFlow = [
+      "Invoicing & Billing",
       "Central Billing",
       "Insurance & TPA Claims Management",
       "Finance & Compliance",
     ];
     const nonClinicalFlow = [
       "Human Resource Management System",
+      "HRMS",
       "Payroll & Compensation Processing",
+      "Payroll",
       "Procurement & Supply Chain Management",
+      "Procurement",
       "Pharmacy Inventory & Stock Control",
+      "Pharmacy Inventory",
       "Patient Relationship Management (CRM)",
+      "Patient CRM",
+    ];
+    const reportsAnalyticsFlow = [
+      "Clinical Analytics",
+      "Operations Analytics",
+      "Performance Insights",
+      "Alert Center",
     ];
     const commFlow = [
       "Message Board",
       "Mail & Communications",
+      "Mail Management",
       "WhatsApp Reminders",
+      "Reminder Tracker",
     ];
     const adminFlow = [
+      "Hospital Settings (Masters)",
       "Hospital Settings",
+      "Branding & UI Settings",
+      "Branding Settings",
       "Hospital Branding & User Interface",
+      "Staff & RBAC",
       "Staff & Access Control (RBAC)",
-      "Help Desk",
-      "Support Tickets",
       "Secure Configurations",
+      "Tenant Sensitive Configs",
+      "Ticketing Management System",
+      "Support Tickets",
+      "Help Desk",
     ];
 
     const getItems = (labels: string[]) =>
@@ -534,7 +565,7 @@ export default function Sidebar() {
       {
         id: 'reports_analytics',
         title: "Reports & Analytics",
-        items: getItems(["Clinical Analytics", "Operations Analytics"]).filter(() => {
+        items: getItems(reportsAnalyticsFlow).filter(() => {
           if (!atLeastProfessional || !isAdmin) return false;
           return true;
         }),
