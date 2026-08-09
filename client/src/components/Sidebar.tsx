@@ -622,9 +622,20 @@ export default function Sidebar() {
     if (!nav) return;
     const currentRoute = `${location.pathname}${location.search}`;
     if (lastScrolledRoute.current === currentRoute) return;
-    const activeGroup = groups.find(g => g.items.some(i => matchesLocation(i.path)));
-    if (activeGroup && openGroup !== activeGroup.id) {
-      setOpenGroup(activeGroup.id);
+    let activeGroupId = "";
+    groups.forEach(g => {
+      if (g.subGroups) {
+        const matchingSub = g.subGroups.find((sg: any) => sg.items?.some((i: any) => matchesLocation(i.path)));
+        if (matchingSub) {
+          activeGroupId = matchingSub.id;
+        }
+      } else if (g.items?.some((i: any) => matchesLocation(i.path))) {
+        activeGroupId = g.id;
+      }
+    });
+
+    if (activeGroupId && openGroup !== activeGroupId) {
+      setOpenGroup(activeGroupId);
       return;
     }
     const activeLink = nav.querySelector('.nav-item.active') as HTMLElement | null;
