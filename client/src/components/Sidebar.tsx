@@ -601,6 +601,7 @@ export default function Sidebar() {
     return { groups: gs, ungroupped: mainDashboard };
   }, []);
 
+  const [openParent, setOpenParent] = useState<string | null>(null);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const lastScrolledRoute = useRef<string>('');
@@ -623,17 +624,22 @@ export default function Sidebar() {
     const currentRoute = `${location.pathname}${location.search}`;
     if (lastScrolledRoute.current === currentRoute) return;
     let activeGroupId = "";
+    let activeParentId = "";
     groups.forEach(g => {
       if (g.subGroups) {
         const matchingSub = g.subGroups.find((sg: any) => sg.items?.some((i: any) => matchesLocation(i.path)));
         if (matchingSub) {
           activeGroupId = matchingSub.id;
+          activeParentId = g.id;
         }
       } else if (g.items?.some((i: any) => matchesLocation(i.path))) {
         activeGroupId = g.id;
       }
     });
 
+    if (activeParentId && openParent !== activeParentId) {
+      setOpenParent(activeParentId);
+    }
     if (activeGroupId && openGroup !== activeGroupId) {
       setOpenGroup(activeGroupId);
       return;
@@ -647,9 +653,21 @@ export default function Sidebar() {
       nav.scrollTop = Math.max(0, nav.scrollTop + relativeTop - navRect.height / 2 + linkRect.height / 2);
     }
     lastScrolledRoute.current = currentRoute;
-  }, [location.pathname, location.search, openGroup, groups]);
+  }, [location.pathname, location.search, openGroup, openParent, groups]);
 
-  const toggleGroup = (id: string) => setOpenGroup(prev => (prev === id ? null : id));
+  const toggleParent = (id: string) => {
+    setOpenParent(prev => (prev === id ? null : id));
+    setOpenGroup(null);
+  };
+
+  const toggleGroup = (id: string) => {
+    if (id === 'opd' || id === 'ipd') {
+      setOpenGroup(prev => (prev === id ? null : id));
+    } else {
+      setOpenGroup(prev => (prev === id ? null : id));
+      setOpenParent(null);
+    }
+  };
 
   const refreshMenus = () => {
     localStorage.removeItem("userMenus");
