@@ -114,6 +114,63 @@ const Icons: Record<string, any> = {
   ShieldCheck:              ShieldCheck,
 };
 
+const ALIAS_MAP: Record<string, string> = {
+  // Clinical Services
+  "laboratory": "Laboratory",
+  "laboratory & diagnostics": "Laboratory",
+  "ai diagnostic assistant": "Clinical Decision Support",
+  "pharmacy dashboard": "Pharmacy",
+  "pharmacy management": "Pharmacy",
+
+  // Billing & Finance
+  "invoicing & billing": "Patient Billing",
+  "central billing": "Patient Billing",
+  "insurance & tpa claims management": "Insurance & TPA",
+  "finance & compliance": "Finance & Revenue",
+
+  // Hospital Operations
+  "ipd bed map": "Bed & Ward Management",
+  "bed management": "Bed & Ward Management",
+  "human resource management system": "Workforce Management",
+  "hrms": "Workforce Management",
+  "payroll & compensation processing": "Workforce Management",
+  "payroll": "Workforce Management",
+  "procurement & supply chain management": "Procurement",
+  "procurement": "Procurement",
+  "pharmacy inventory & stock control": "Supply Chain",
+  "pharmacy inventory": "Supply Chain",
+  "stock inventory": "Supply Chain",
+
+  // Reports & Analytics
+  "clinical analytics": "Clinical Reports",
+  "operations analytics": "Operational Reports",
+  "performance insights": "Performance Insights",
+  "alert center": "Analytics",
+
+  // Patient Engagement
+  "patient crm": "Patient CRM",
+  "patient relationship management (crm)": "Patient CRM",
+  "message board": "Communications",
+  "mail & communications": "Communications",
+  "mail management": "Communications",
+  "reminder tracker": "Notifications & Reminders",
+  "whatsapp reminders": "Notifications & Reminders",
+
+  // Administration
+  "hospital settings (masters)": "Hospital Configuration",
+  "hospital settings": "Hospital Configuration",
+  "branding & ui settings": "Branding & UI",
+  "branding settings": "Branding & UI",
+  "hospital branding & user interface": "Branding & UI",
+  "staff & rbac": "Users & Roles",
+  "staff & access control (rbac)": "Users & Roles",
+  "secure configurations": "Security & Compliance",
+  "tenant sensitive configs": "Security & Compliance",
+  "ticketing management system": "Help Desk",
+  "support tickets": "Help Desk",
+  "help desk": "Help Desk",
+};
+
 // ─── Route normalisation (server label → canonical path) ─────────────────────
 const normalizePath = (label: string, originalPath: string) => {
   const l = label.toLowerCase();
@@ -490,9 +547,17 @@ export default function Sidebar() {
     const getItems = (labels: string[]) =>
       pm
         .filter(m => labels.some(l => l.toLowerCase() === m.label.toLowerCase()))
+        .map(m => ({
+          ...m,
+          originalLabel: m.label,
+          label: ALIAS_MAP[m.label.toLowerCase()] || m.label
+        }))
+        .filter((item, index, self) =>
+          self.findIndex(t => t.label === item.label) === index
+        )
         .sort((a, b) =>
-          labels.findIndex(l => l.toLowerCase() === a.label.toLowerCase()) -
-          labels.findIndex(l => l.toLowerCase() === b.label.toLowerCase())
+          labels.findIndex(l => l.toLowerCase() === a.originalLabel.toLowerCase()) -
+          labels.findIndex(l => l.toLowerCase() === b.originalLabel.toLowerCase())
         );
 
     const gs = [
@@ -506,8 +571,7 @@ export default function Sidebar() {
             id: 'opd',
             title: "Outpatient (OPD)",
             items: getItems(opdFlow).filter(i => {
-              // Doctor's Schedule visible to doctor + admin
-              if (i.label === "Doctor's Schedule" && !isDoctor) return false;
+              if (i.originalLabel === "Doctor's Schedule" && !isDoctor) return false;
               return true;
             }),
             icon: HeartPulse,
@@ -531,21 +595,21 @@ export default function Sidebar() {
         title: "Clinical Services",
         items: getItems(diagnosticsFlow).filter(i => {
           if (!atLeastStandard) return false;
-          if (i.label === "AI Diagnostic Assistant" && !isEnterprise) return false;
-          if (i.label === "Pharmacy Management" || i.label === "Medication Dispensing" || i.label === "Pharmacy Stock") {
+          if (i.originalLabel === "AI Diagnostic Assistant" && !isEnterprise) return false;
+          if (["pharmacy dashboard", "pharmacy management", "prescription queue", "medication dispensing", "pharmacy stock", "stock inventory"].includes(i.originalLabel?.toLowerCase())) {
             if (!isPharmacist && !isAdmin && !isDoctor) return false;
           }
-          if (i.label === "Laboratory & Diagnostics" && !isLabTech && !isAdmin && !isDoctor) return false;
+          if (["laboratory", "laboratory & diagnostics"].includes(i.originalLabel?.toLowerCase()) && !isLabTech && !isAdmin && !isDoctor) return false;
           return true;
         }),
-        icon: FlaskConical,
+        icon: Stethoscope,
         badge: !atLeastStandard ? "Standard+" : null,
       },
       {
         id: 'billing_finance',
         title: "Billing & Finance",
         items: getItems(billingFlow).filter(i => {
-          if (i.label === "Finance & Compliance" && !isEnterprise) return false;
+          if (i.originalLabel === "Finance & Compliance" && !isEnterprise) return false;
           if (!isBilling && !isAdmin) return false;
           return true;
         }),
@@ -559,7 +623,7 @@ export default function Sidebar() {
           if (!atLeastProfessional) return false;
           return true;
         }),
-        icon: Box,
+        icon: Building2,
         badge: !atLeastProfessional ? "Professional+" : null,
       },
       {
@@ -587,7 +651,7 @@ export default function Sidebar() {
         title: "Administration",
         items: getItems(adminFlow).filter(i => {
           if (!isAdmin) return false;
-          if ((i.label === "Help Desk" || i.label === "Support Tickets") && !atLeastStandard) return false;
+          if ((i.originalLabel === "Help Desk" || i.originalLabel === "Support Tickets" || i.originalLabel === "Ticketing Management System") && !atLeastStandard) return false;
           return true;
         }),
         icon: Settings,
@@ -708,41 +772,6 @@ export default function Sidebar() {
   // Plan badge color
   const planColor = isEnterprise ? '#f59e0b' : atLeastProfessional ? '#a78bfa' : atLeastStandard ? '#38bdf8' : '#64748b';
 
-  const renderSectionedItems = (items: any[]) => {
-    const sections: Record<string, any[]> = {};
-    items.forEach(item => {
-      const sec = getSection(item.label) || "Other";
-      if (!sections[sec]) sections[sec] = [];
-      sections[sec].push(item);
-    });
-
-    return Object.entries(sections).map(([sectionName, sectionItems]) => (
-      <div key={sectionName} style={{ marginBottom: '8px' }}>
-        {sectionName !== "Other" && (
-          <div style={{
-            padding: '6px 14px 4px', fontSize: '9px', fontWeight: 900,
-            color: 'rgba(255, 255, 255, 0.28)', textTransform: 'uppercase',
-            letterSpacing: '0.8px', display: 'flex', alignItems: 'center', gap: '8px'
-          }}>
-            <span>{sectionName}</span>
-            <span style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.04)' }} />
-          </div>
-        )}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px' }}>
-          {sectionItems.map((menu, mIdx) => (
-            <SidebarLink
-              key={mIdx}
-              to={menu.path}
-              icon={Icons[menu.label] || Icons[menu.icon] || Box}
-              label={menu.label}
-              isSubItem
-            />
-          ))}
-        </div>
-      </div>
-    ));
-  };
-
   return (
     <>
       <div className="mobile-overlay" onClick={() => {
@@ -849,8 +878,19 @@ export default function Sidebar() {
                           paddingLeft: '8px',
                           borderLeft: openGroup === subGroup.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
                           marginLeft: '18px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '2px',
                         }}>
-                          {renderSectionedItems(subGroup.items)}
+                          {subGroup.items.map((menu: any, mIdx: number) => (
+                            <SidebarLink
+                              key={mIdx}
+                              to={menu.path}
+                              icon={Icons[menu.originalLabel] || Icons[menu.label] || Icons[menu.icon] || Box}
+                              label={menu.label}
+                              isSubItem
+                            />
+                          ))}
                         </div>
                       </div>
                     );
@@ -892,8 +932,19 @@ export default function Sidebar() {
                   paddingLeft: '8px',
                   borderLeft: openGroup === group.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
                   marginLeft: '18px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '2px',
                 }}>
-                  {renderSectionedItems(group.items)}
+                  {group.items.map((menu: any, mIdx: number) => (
+                    <SidebarLink
+                      key={mIdx}
+                      to={menu.path}
+                      icon={Icons[menu.originalLabel] || Icons[menu.label] || Icons[menu.icon] || Box}
+                      label={menu.label}
+                      isSubItem
+                    />
+                  ))}
                 </div>
               </div>
             );
@@ -1025,70 +1076,3 @@ function SidebarLink({ to, icon: Icon, label, isSubItem }: { to: string; icon: a
   );
 }
 
-function getSection(label: string): string {
-  const l = label.toLowerCase();
-  // Outpatient (OPD)
-  if (["opd registration", "outpatient registration (opd)", "patient scheduling", "advanced scheduling console", "patient register"].includes(l)) {
-    return "Registration & Scheduling";
-  }
-  if (["doctor's queue", "opd queue", "opd consultation queue", "consultation desk", "doctor's schedule"].includes(l)) {
-    return "Clinical Queues";
-  }
-  if (["clinical archives"].includes(l)) {
-    return "Medical Records";
-  }
-
-  // Inpatient (IPD)
-  if (["admission desk", "inpatient admission (ipd)", "ipd census & daycare"].includes(l)) {
-    return "Admissions";
-  }
-  if (["ipd bed map", "bed management"].includes(l)) {
-    return "Ward Logistics";
-  }
-  if (["discharge summaries", "discharge & summary", "clinical & financial archives"].includes(l)) {
-    return "Discharges & Archives";
-  }
-
-  // Clinical Services
-  if (["laboratory", "laboratory & diagnostics", "ai diagnostic assistant"].includes(l)) {
-    return "Diagnostics & Lab";
-  }
-  if (["pharmacy dashboard", "pharmacy management", "stock inventory", "pharmacy stock", "prescription queue", "medication dispensing"].includes(l)) {
-    return "Pharmacy Operations";
-  }
-
-  // Billing & Finance
-  if (["invoicing & billing", "central billing"].includes(l)) {
-    return "Billing Cycle";
-  }
-  if (["insurance & tpa claims management", "finance & compliance"].includes(l)) {
-    return "Claims & Compliance";
-  }
-
-  // Hospital Operations
-  if (["human resource management system", "hrms", "payroll & compensation processing", "payroll"].includes(l)) {
-    return "Workforce & Payroll";
-  }
-  if (["procurement & supply chain management", "procurement", "pharmacy inventory & stock control", "pharmacy inventory"].includes(l)) {
-    return "Supply Chain";
-  }
-  if (["patient relationship management (crm)", "patient crm"].includes(l)) {
-    return "CRM Relations";
-  }
-
-  // Administration
-  if (["hospital settings (masters)", "hospital settings"].includes(l)) {
-    return "System Settings";
-  }
-  if (["branding & ui settings", "branding settings", "hospital branding & user interface"].includes(l)) {
-    return "Branding & UI";
-  }
-  if (["staff & rbac", "staff & access control (rbac)", "secure configurations", "tenant sensitive configs"].includes(l)) {
-    return "Access & Security";
-  }
-  if (["ticketing management system", "support tickets", "help desk"].includes(l)) {
-    return "Support Desk";
-  }
-
-  return "";
-}
