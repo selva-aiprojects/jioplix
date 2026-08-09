@@ -140,6 +140,9 @@ const ALIAS_MAP: Record<string, string> = {
   "laboratory": "Laboratory",
   "laboratory & diagnostics": "Laboratory",
   "ai diagnostic assistant": "Clinical Decision Support",
+  "radiology & imaging": "Radiology & Imaging",
+  "operation theatre": "Operation Theatre",
+  "blood bank": "Blood Bank",
 
   // Pharmacy
   "prescription queue": "Prescription Queue",
@@ -167,6 +170,7 @@ const ALIAS_MAP: Record<string, string> = {
   "payroll": "Workforce Management",
   "procurement & supply chain management": "Supply Chain",
   "procurement": "Supply Chain",
+  "facility management": "Facility Management",
 
   // Reports & Analytics
   "clinical analytics": "Clinical Reports",
@@ -182,6 +186,7 @@ const ALIAS_MAP: Record<string, string> = {
   "mail management": "Communications",
   "reminder tracker": "Notifications & Reminders",
   "whatsapp reminders": "Notifications & Reminders",
+  "patient portal": "Patient Portal",
 
   // Administration
   "hospital settings (masters)": "Hospital Configuration",
@@ -230,9 +235,13 @@ const normalizePath = (label: string, originalPath: string) => {
     "diagnostic center":         "/tenant/lab",
     "ai diagnostic assistant":   "/tenant/lab/ai",
     "ai lab assistant":          "/tenant/lab/ai",
+    "radiology & imaging":       "/tenant/radiology",
+    "operation theatre":         "/tenant/ot",
+    "blood bank":                 "/tenant/blood-bank",
     "pharmacy management":       "/tenant/pharmacy/dashboard",
     "pharmacy hub":              "/tenant/pharmacy",
     "pharmacy dashboard":        "/tenant/pharmacy/dashboard",
+    "pharmacy reports":          "/tenant/pharmacy",
     "medication dispensing":     "/tenant/pharmacy/queue",
     "prescription queue":        "/tenant/pharmacy/queue",
     "pharmacy stock":            "/tenant/pharmacy/inventory",
@@ -266,12 +275,14 @@ const normalizePath = (label: string, originalPath: string) => {
     "procurement & supply chain management": "/tenant/procurement",
     "pharmacy inventory":        "/tenant/inventory",
     "pharmacy inventory & stock control": "/tenant/inventory",
+    "facility management":        "/tenant/facility",
     // Communication
     "message board":             "/tenant/communication",
     "mail & communications":     "/tenant/mail",
     "whatsapp reminders":        "/tenant/reminders",
     "follow-up center":          "/tenant/reminders",
     "reminder tracker":          "/tenant/reminders",
+    "patient portal":             "/tenant/patient-portal",
     // System
     "hospital settings":         "/tenant/masters",
     "hospital settings (masters)": "/tenant/masters",
@@ -474,13 +485,30 @@ export default function Sidebar() {
 
       if (atLeastProfessional && !hasSome("finance & compliance"))
         dm.push({ label: "Finance & Compliance", path: "/tenant/finance", icon: "Receipt", sort_order: 44 });
+
+      if (atLeastProfessional && !hasSome("facility management"))
+        dm.push({ label: "Facility Management", path: "/tenant/facility", icon: "Building2", sort_order: 45 });
+
+      if (atLeastProfessional && !hasSome("patient portal"))
+        dm.push({ label: "Patient Portal", path: "/tenant/patient-portal", icon: "Users", sort_order: 46 });
     }
 
     if (atLeastStandard && isPharmacist) {
       if (!hasSome("procurement & suppliers"))
         dm.push({ label: "Procurement & Suppliers", path: "/tenant/inventory", icon: "Users", sort_order: 34 });
       if (!hasSome("pharmacy reports"))
-        dm.push({ label: "Pharmacy Reports", path: "/tenant/pharmacy/dashboard", icon: "BarChart2", sort_order: 35 });
+        dm.push({ label: "Pharmacy Reports", path: "/tenant/pharmacy", icon: "BarChart2", sort_order: 35 });
+    }
+
+    if (atLeastStandard) {
+      if (!hasSome("radiology & imaging"))
+        dm.push({ label: "Radiology & Imaging", path: "/tenant/radiology", icon: "Activity", sort_order: 22 });
+      if (!hasSome("operation theatre"))
+        dm.push({ label: "Operation Theatre", path: "/tenant/ot", icon: "Activity", sort_order: 23 });
+      if (!hasSome("blood bank"))
+        dm.push({ label: "Blood Bank", path: "/tenant/blood-bank", icon: "Activity", sort_order: 24 });
+      if (!hasSome("ai diagnostic assistant") && !hasSome("clinical decision support"))
+        dm.push({ label: "AI Diagnostic Assistant", path: "/tenant/lab/ai", icon: "Cpu", sort_order: 25 });
     }
 
     // Automation testing fallback menus
@@ -537,6 +565,7 @@ export default function Sidebar() {
       "Laboratory & Diagnostics",
       "Radiology & Imaging",
       "Operation Theatre",
+      "Blood Bank",
       "AI Diagnostic Assistant",
     ];
     const pharmacyFlow = [

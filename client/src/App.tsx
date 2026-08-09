@@ -63,6 +63,12 @@ import SettingsPage from './modules/tenant/SettingsPage';
 import SecureConfigsPage from './modules/tenant/SecureConfigsPage';
 import AIChatbot from './components/AIChatbot';
 
+import RadiologyPage from './modules/tenant/RadiologyPage';
+import OperationTheatrePage from './modules/tenant/OperationTheatrePage';
+import BloodBankPage from './modules/tenant/BloodBankPage';
+import FacilityManagementPage from './modules/tenant/FacilityManagementPage';
+import PatientPortalPage from './modules/tenant/PatientPortalPage';
+
 import MobilePreviewPortal from './modules/mobile_preview/MobilePreviewPortal';
 
 function ThemeObserver() {
@@ -115,6 +121,12 @@ function App() {
         <Route path="/tenant/lab" element={<RoleGuard allowedRoles={['admin', 'lab_assistant', 'doctor', 'lab_tech']} moduleName="Laboratory"><LabManagementPage /></RoleGuard>} />
         <Route path="/tenant/lab/billing" element={<RoleGuard allowedRoles={['admin', 'receptionist', 'staff']} moduleName="Lab Billing"><LabBillingQueue /></RoleGuard>} />
         <Route path="/tenant/lab/ai" element={<RoleGuard allowedRoles={['admin', 'lab_assistant', 'doctor', 'lab_tech']} moduleName="AI Lab Assistant"><AILabAssistant /></RoleGuard>} />
+
+        <Route path="/tenant/radiology" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist', 'lab_assistant', 'lab_tech', 'pharmacist']} moduleName="Radiology & Imaging"><RadiologyPage /></RoleGuard>} />
+        <Route path="/tenant/ot" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist', 'lab_assistant', 'lab_tech', 'pharmacist']} moduleName="Operation Theatre"><OperationTheatrePage /></RoleGuard>} />
+        <Route path="/tenant/blood-bank" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist', 'lab_assistant', 'lab_tech', 'pharmacist']} moduleName="Blood Bank"><BloodBankPage /></RoleGuard>} />
+        <Route path="/tenant/facility" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist', 'lab_assistant', 'lab_tech', 'pharmacist']} moduleName="Facility Management"><FacilityManagementPage /></RoleGuard>} />
+        <Route path="/tenant/patient-portal" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist', 'lab_assistant', 'lab_tech', 'pharmacist']} moduleName="Patient Portal"><PatientPortalPage /></RoleGuard>} />
         <Route path="/tenant/pharmacy" element={<RoleGuard allowedRoles={['admin', 'pharmacist', 'doctor']} moduleName="Pharmacy"><PharmacyManagementPage /></RoleGuard>} />
         <Route path="/tenant/pharmacy/dashboard" element={<RoleGuard allowedRoles={['admin', 'pharmacist']} moduleName="Pharmacy Dashboard"><PharmacyDashboard /></RoleGuard>} />
         <Route path="/tenant/pharmacy/inventory" element={<RoleGuard allowedRoles={['admin', 'pharmacist']} moduleName="Stock Inventory"><InventoryList /></RoleGuard>} />
