@@ -62,7 +62,12 @@ export default function LoginPage() {
       setFacilities(list);
       const subdomain = getSubdomain();
       if (subdomain) {
-        const matched = list.find(f => f.domain === subdomain);
+        const subClean = subdomain.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const matched = list.find(f => {
+          const dClean = (f.domain || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+          const cClean = (f.code || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+          return f.domain === subdomain || f.code === subdomain || (dClean && dClean === subClean) || (cClean && cClean === subClean);
+        });
         if (matched) {
           setFacility(matched.id);
           setDomainFacility(matched.id);

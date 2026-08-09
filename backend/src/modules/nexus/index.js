@@ -640,7 +640,7 @@ router.get("/tenants", async (req, res, next) => {
 router.get("/tenants/public", async (req, res, next) => {
   try {
     const tenants = await req.prisma.$queryRawUnsafe(`
-      SELECT id, name, domain
+      SELECT id, name, domain, code
       FROM nexus.tenants
     `);
     res.json(tenants);

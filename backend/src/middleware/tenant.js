@@ -21,10 +21,10 @@ async function resolveTenantFromDomain(host) {
   const subdomain = extractSubdomain(host);
   if (!subdomain) return null;
   // SECURITY: subdomain is derived from the Host header; validate before SQL use.
-  // Use positional param for the value, not string interpolation.
+  const cleanSub = subdomain.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
   const tenants = await prisma.$queryRawUnsafe(
-    `SELECT id, db_name, name FROM nexus.tenants WHERE domain = $1`,
-    subdomain
+    `SELECT id, db_name, name FROM nexus.tenants WHERE domain = $1 OR code = $1 OR LOWER(REPLACE(domain, '_', '')) = $2 OR LOWER(REPLACE(code, '_', '')) = $2 LIMIT 1`,
+    subdomain, cleanSub
   );
   if (tenants && tenants.length > 0) {
     return tenants[0];

@@ -71,6 +71,31 @@ import PatientPortalPage from './modules/tenant/PatientPortalPage';
 
 import MobilePreviewPortal from './modules/mobile_preview/MobilePreviewPortal';
 
+const RESERVED_SUBDOMAINS = ['dev', 'staging', 'stage', 'test', 'www', 'api', 'app', 'mail', 'admin', 'support', 'help', 'docs', 'status', 'uat', 'qa'];
+
+function getTenantSubdomain(): string | null {
+  if (typeof window === 'undefined') return null;
+  const host = window.location.hostname;
+  if (host.includes("localhost") || host.includes("127.0.0.1") || host.includes("::1")) return null;
+  const parts = host.split(".");
+  if (parts.length >= 3 && !parts[0].startsWith("www") && !RESERVED_SUBDOMAINS.includes(parts[0])) return parts[0];
+  return null;
+}
+
+function SubdomainObserver() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const sub = getTenantSubdomain();
+    if (sub && location.pathname === '/') {
+      navigate('/login', { replace: true });
+    }
+  }, [location.pathname, navigate]);
+
+  return null;
+}
+
 function ThemeObserver() {
   const location = useLocation();
   useEffect(() => {
@@ -88,6 +113,7 @@ function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ThemeObserver />
+      <SubdomainObserver />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
