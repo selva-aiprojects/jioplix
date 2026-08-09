@@ -68,6 +68,7 @@ import RadiologyPage from './modules/tenant/RadiologyPage';
 import OperationTheatrePage from './modules/tenant/OperationTheatrePage';
 import BloodBankPage from './modules/tenant/BloodBankPage';
 import FacilityManagementPage from './modules/tenant/FacilityManagementPage';
+import PatientPortalPage from './modules/tenant/PatientPortalPage';
 import MobilePreviewPortal from './modules/mobile_preview/MobilePreviewPortal';
 
 // New Enterprise & Advanced Modules
