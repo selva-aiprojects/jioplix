@@ -306,6 +306,44 @@ const normalizePath = (label: string, originalPath: string) => {
     "clinical & financial archives": "/tenant/archives",
     "secure configurations":     "/tenant/settings/secure",
     "tenant sensitive configs":  "/tenant/settings/secure",
+
+    // 20 Enterprise & Advanced Modules
+    "emergency / casualty":       "/tenant/emergency",
+    "emergency":                  "/tenant/emergency",
+    "nursing desk":               "/tenant/nursing",
+    "nursing":                    "/tenant/nursing",
+    "icu & critical care":        "/tenant/icu",
+    "icu":                        "/tenant/icu",
+    "mrd & him":                  "/tenant/mrd",
+    "mrd":                        "/tenant/mrd",
+    "emr documentation":          "/tenant/emr",
+    "emr":                        "/tenant/emr",
+    "integration hub":            "/tenant/integration",
+    "integration":                "/tenant/integration",
+    "infection control":          "/tenant/infection-control",
+    "quality & safety":           "/tenant/quality",
+    "quality":                    "/tenant/quality",
+    "cssd":                       "/tenant/cssd",
+    "diet & nutrition":           "/tenant/dietetics",
+    "dietetics":                  "/tenant/dietetics",
+    "ambulance & transport":      "/tenant/ambulance",
+    "ambulance":                  "/tenant/ambulance",
+    "mortuary":                   "/tenant/mortuary",
+    "telemedicine":               "/tenant/telemedicine",
+    "referral management":        "/tenant/referrals",
+    "referrals":                  "/tenant/referrals",
+    "consent management":         "/tenant/consent",
+    "consent":                    "/tenant/consent",
+    "audit & governance":         "/tenant/audit-governance",
+    "audit":                      "/tenant/audit-governance",
+    "abdm gateway":               "/tenant/abdm-hub",
+    "abdm":                       "/tenant/abdm-hub",
+    "fhir & hl7 layer":           "/tenant/fhir-hl7",
+    "fhir":                       "/tenant/fhir-hl7",
+    "dicom & pacs viewer":        "/tenant/dicom-pacs",
+    "dicom":                      "/tenant/dicom-pacs",
+    "medical device iot":         "/tenant/device-telemetry",
+    "device telemetry":           "/tenant/device-telemetry",
   };
   return overrides[l] || originalPath;
 };
@@ -509,6 +547,28 @@ export default function Sidebar() {
         dm.push({ label: "Blood Bank", path: "/tenant/blood-bank", icon: "Activity", sort_order: 24 });
       if (!hasSome("ai diagnostic assistant") && !hasSome("clinical decision support"))
         dm.push({ label: "AI Diagnostic Assistant", path: "/tenant/lab/ai", icon: "Cpu", sort_order: 25 });
+
+      // 20 Enterprise & Advanced Modules
+      if (!hasSome("emergency"))        dm.push({ label: "Emergency / Casualty", path: "/tenant/emergency", icon: "HeartPulse", sort_order: 60 });
+      if (!hasSome("nursing"))          dm.push({ label: "Nursing Desk", path: "/tenant/nursing", icon: "ClipboardList", sort_order: 61 });
+      if (!hasSome("icu"))              dm.push({ label: "ICU & Critical Care", path: "/tenant/icu", icon: "HeartPulse", sort_order: 62 });
+      if (!hasSome("mrd"))              dm.push({ label: "MRD & HIM", path: "/tenant/mrd", icon: "Archive", sort_order: 63 });
+      if (!hasSome("emr"))              dm.push({ label: "EMR Documentation", path: "/tenant/emr", icon: "Stethoscope", sort_order: 64 });
+      if (!hasSome("integration"))      dm.push({ label: "Integration Hub", path: "/tenant/integration", icon: "Cpu", sort_order: 65 });
+      if (!hasSome("infection control")) dm.push({ label: "Infection Control", path: "/tenant/infection-control", icon: "ShieldCheck", sort_order: 66 });
+      if (!hasSome("quality"))          dm.push({ label: "Quality & Safety", path: "/tenant/quality", icon: "ShieldCheck", sort_order: 67 });
+      if (!hasSome("cssd"))             dm.push({ label: "CSSD", path: "/tenant/cssd", icon: "Package", sort_order: 68 });
+      if (!hasSome("dietetics") && !hasSome("diet")) dm.push({ label: "Diet & Nutrition", path: "/tenant/dietetics", icon: "Users", sort_order: 69 });
+      if (!hasSome("ambulance"))        dm.push({ label: "Ambulance & Transport", path: "/tenant/ambulance", icon: "Building2", sort_order: 70 });
+      if (!hasSome("mortuary"))         dm.push({ label: "Mortuary", path: "/tenant/mortuary", icon: "Archive", sort_order: 71 });
+      if (!hasSome("telemedicine"))     dm.push({ label: "Telemedicine", path: "/tenant/telemedicine", icon: "MessageSquare", sort_order: 72 });
+      if (!hasSome("referral"))         dm.push({ label: "Referral Management", path: "/tenant/referrals", icon: "Users", sort_order: 73 });
+      if (!hasSome("consent"))          dm.push({ label: "Consent Management", path: "/tenant/consent", icon: "FileText", sort_order: 74 });
+      if (!hasSome("audit"))            dm.push({ label: "Audit & Governance", path: "/tenant/audit-governance", icon: "ShieldCheck", sort_order: 75 });
+      if (!hasSome("abdm"))             dm.push({ label: "ABDM Gateway", path: "/tenant/abdm-hub", icon: "ShieldCheck", sort_order: 76 });
+      if (!hasSome("fhir"))             dm.push({ label: "FHIR & HL7 Layer", path: "/tenant/fhir-hl7", icon: "Cpu", sort_order: 77 });
+      if (!hasSome("dicom"))            dm.push({ label: "DICOM & PACS Viewer", path: "/tenant/dicom-pacs", icon: "BarChart2", sort_order: 78 });
+      if (!hasSome("device telemetry")) dm.push({ label: "Medical Device IoT", path: "/tenant/device-telemetry", icon: "HeartPulse", sort_order: 79 });
     }
 
     // Automation testing fallback menus
@@ -630,6 +690,32 @@ export default function Sidebar() {
       "Help Desk",
     ];
 
+    const enterpriseClinicalFlow = [
+      "Emergency / Casualty",
+      "Nursing Desk",
+      "ICU & Critical Care",
+      "MRD & HIM",
+      "EMR Documentation",
+      "Infection Control",
+      "Quality & Safety",
+      "CSSD",
+      "Diet & Nutrition",
+      "Ambulance & Transport",
+      "Mortuary",
+    ];
+
+    const digitalHealthFlow = [
+      "Integration Hub",
+      "Telemedicine",
+      "Referral Management",
+      "Consent Management",
+      "Audit & Governance",
+      "ABDM Gateway",
+      "FHIR & HL7 Layer",
+      "DICOM & PACS Viewer",
+      "Medical Device IoT",
+    ];
+
     const getItems = (labels: string[]) =>
       pm
         .filter(m => labels.some(l => l.toLowerCase() === m.label.toLowerCase()))
@@ -675,6 +761,20 @@ export default function Sidebar() {
             badge: !atLeastProfessional ? "Professional+" : null,
           }
         ]
+      },
+      {
+        id: 'enterprise_clinical',
+        title: "Enterprise Clinical Ops",
+        items: getItems(enterpriseClinicalFlow),
+        icon: Stethoscope,
+        badge: "Enterprise",
+      },
+      {
+        id: 'digital_health',
+        title: "Digital Health & Interoperability",
+        items: getItems(digitalHealthFlow),
+        icon: Cpu,
+        badge: "Enterprise",
       },
       {
         id: 'clinical_services',

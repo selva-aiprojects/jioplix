@@ -40,6 +40,7 @@ import FinancePage from './modules/tenant/finance/FinancePage';
 import InventoryPage from './modules/tenant/inventory/InventoryPage';
 import BillingPage from './modules/billing/BillingPage';
 import RoleGuard from './components/RoleGuard';
+import PlanGateGuard from './components/PlanGateGuard';
 import AppointmentsPage from './modules/appointments/AppointmentsPage';
 import PatientsPage from './modules/patients/PatientsPage';
 import NexusDashboardPage from './modules/nexus/NexusDashboardPage';
@@ -67,9 +68,29 @@ import RadiologyPage from './modules/tenant/RadiologyPage';
 import OperationTheatrePage from './modules/tenant/OperationTheatrePage';
 import BloodBankPage from './modules/tenant/BloodBankPage';
 import FacilityManagementPage from './modules/tenant/FacilityManagementPage';
-import PatientPortalPage from './modules/tenant/PatientPortalPage';
-
 import MobilePreviewPortal from './modules/mobile_preview/MobilePreviewPortal';
+
+// New Enterprise & Advanced Modules
+import EmergencyPage from './modules/tenant/emergency/EmergencyPage';
+import NursingPage from './modules/tenant/nursing/NursingPage';
+import ICUPage from './modules/tenant/icu/ICUPage';
+import MRDPage from './modules/tenant/mrd/MRDPage';
+import EMRPage from './modules/tenant/emr/EMRPage';
+import IntegrationHubPage from './modules/tenant/integration/IntegrationHubPage';
+import InfectionControlPage from './modules/tenant/infection_control/InfectionControlPage';
+import QualityPage from './modules/tenant/quality/QualityPage';
+import CSSDPage from './modules/tenant/cssd/CSSDPage';
+import DieteticsPage from './modules/tenant/dietetics/DieteticsPage';
+import AmbulancePage from './modules/tenant/ambulance/AmbulancePage';
+import MortuaryPage from './modules/tenant/mortuary/MortuaryPage';
+import TelemedicinePage from './modules/tenant/telemedicine/TelemedicinePage';
+import ReferralsPage from './modules/tenant/referrals/ReferralsPage';
+import ConsentPage from './modules/tenant/consent/ConsentPage';
+import AuditGovernancePage from './modules/tenant/audit_governance/AuditGovernancePage';
+import ABDMHubPage from './modules/tenant/abdm_hub/ABDMHubPage';
+import FHIRHL7Page from './modules/tenant/fhir_hl7/FHIRHL7Page';
+import DICOMPACSPage from './modules/tenant/dicom_pacs/DICOMPACSPage';
+import DeviceTelemetryPage from './modules/tenant/device_telemetry/DeviceTelemetryPage';
 
 const RESERVED_SUBDOMAINS = ['dev', 'staging', 'stage', 'test', 'www', 'api', 'app', 'mail', 'admin', 'support', 'help', 'docs', 'status', 'uat', 'qa'];
 
@@ -231,6 +252,28 @@ function App() {
         <Route path="/billing" element={<RoleGuard allowedRoles={['admin', 'receptionist', 'staff', 'billing']} moduleName="Billing Desk"><BillingPage /></RoleGuard>} />
         <Route path="/appointments" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Appointments"><AppointmentsPage /></RoleGuard>} />
         <Route path="/patients" element={<RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Patient Directory"><PatientsPage /></RoleGuard>} />
+        
+        {/* 20 Enterprise / Premium Subscription Restricted Module Routes */}
+        <Route path="/tenant/emergency" element={<PlanGateGuard moduleName="Emergency / Casualty" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Emergency / Casualty"><EmergencyPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/nursing" element={<PlanGateGuard moduleName="Nursing Desk" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'nurse', 'doctor']} moduleName="Nursing Desk"><NursingPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/icu" element={<PlanGateGuard moduleName="ICU & Critical Care" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="ICU & Critical Care"><ICUPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/mrd" element={<PlanGateGuard moduleName="MRD & HIM" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'staff']} moduleName="MRD & HIM"><MRDPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/emr" element={<PlanGateGuard moduleName="EMR Documentation" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="EMR Documentation"><EMRPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/integration" element={<PlanGateGuard moduleName="Integration Hub" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin']} moduleName="Integration Hub"><IntegrationHubPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/infection-control" element={<PlanGateGuard moduleName="Infection Control" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Infection Control"><InfectionControlPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/quality" element={<PlanGateGuard moduleName="Quality & Safety" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Quality & Safety"><QualityPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/cssd" element={<PlanGateGuard moduleName="CSSD" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'nurse', 'staff']} moduleName="CSSD"><CSSDPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/dietetics" element={<PlanGateGuard moduleName="Diet & Nutrition" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'nurse', 'staff']} moduleName="Diet & Nutrition"><DieteticsPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/ambulance" element={<PlanGateGuard moduleName="Ambulance & Transport" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'receptionist', 'nurse']} moduleName="Ambulance & Transport"><AmbulancePage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/mortuary" element={<PlanGateGuard moduleName="Mortuary" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'staff']} moduleName="Mortuary"><MortuaryPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/telemedicine" element={<PlanGateGuard moduleName="Telemedicine" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Telemedicine"><TelemedicinePage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/referrals" element={<PlanGateGuard moduleName="Referral Management" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'receptionist']} moduleName="Referral Management"><ReferralsPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/consent" element={<PlanGateGuard moduleName="Consent Management" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'nurse', 'receptionist']} moduleName="Consent Management"><ConsentPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/audit-governance" element={<PlanGateGuard moduleName="Audit & Governance" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin']} moduleName="Audit & Governance"><AuditGovernancePage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/abdm-hub" element={<PlanGateGuard moduleName="ABDM Gateway" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'receptionist']} moduleName="ABDM Gateway"><ABDMHubPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/fhir-hl7" element={<PlanGateGuard moduleName="FHIR & HL7 Layer" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin']} moduleName="FHIR & HL7 Layer"><FHIRHL7Page /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/dicom-pacs" element={<PlanGateGuard moduleName="DICOM & PACS Viewer" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'lab_tech']} moduleName="DICOM & PACS Viewer"><DICOMPACSPage /></RoleGuard></PlanGateGuard>} />
+        <Route path="/tenant/device-telemetry" element={<PlanGateGuard moduleName="Medical Device IoT" requiredPlan="Enterprise / Premium"><RoleGuard allowedRoles={['admin', 'doctor', 'nurse']} moduleName="Medical Device IoT"><DeviceTelemetryPage /></RoleGuard></PlanGateGuard>} />
         
         {/* Nexus Routes */}
         <Route path="/nexus/dashboard" element={<NexusDashboardPage />} />

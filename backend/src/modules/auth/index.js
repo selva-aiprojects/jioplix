@@ -235,7 +235,28 @@ router.post("/login", loginLimiter, async (req, res) => {
                 ('Dashboard', '/tenant/dashboard', 'Dashboard', 'basic', 0),
                 ('Invoicing & Billing', '/billing', 'Billing', 'basic', 17),
                 ('IPD Census & Daycare', '/tenant/ipd/admissions', 'Clipboard', 'professional', 19),
-                ('Discharge Summaries', '/tenant/ipd/discharge', 'Receipt', 'professional', 20)
+                ('Discharge Summaries', '/tenant/ipd/discharge', 'Receipt', 'professional', 20),
+                -- 20 Enterprise / Premium Subscription Restricted Modules
+                ('Emergency / Casualty', '/tenant/emergency', 'HeartPulse', 'enterprise', 21),
+                ('Nursing Desk', '/tenant/nursing', 'ClipboardList', 'enterprise', 22),
+                ('ICU & Critical Care', '/tenant/icu', 'HeartPulse', 'enterprise', 23),
+                ('MRD & HIM', '/tenant/mrd', 'Archive', 'enterprise', 24),
+                ('EMR Documentation', '/tenant/emr', 'Stethoscope', 'enterprise', 25),
+                ('Integration Hub', '/tenant/integration', 'Cpu', 'enterprise', 26),
+                ('Infection Control', '/tenant/infection-control', 'ShieldCheck', 'enterprise', 27),
+                ('Quality & Safety', '/tenant/quality', 'ShieldCheck', 'enterprise', 28),
+                ('CSSD', '/tenant/cssd', 'Package', 'enterprise', 29),
+                ('Diet & Nutrition', '/tenant/dietetics', 'Users', 'enterprise', 30),
+                ('Ambulance & Transport', '/tenant/ambulance', 'Building2', 'enterprise', 31),
+                ('Mortuary', '/tenant/mortuary', 'Archive', 'enterprise', 32),
+                ('Telemedicine', '/tenant/telemedicine', 'MessageSquare', 'enterprise', 33),
+                ('Referral Management', '/tenant/referrals', 'Users', 'enterprise', 34),
+                ('Consent Management', '/tenant/consent', 'FileText', 'enterprise', 35),
+                ('Audit & Governance', '/tenant/audit-governance', 'ShieldCheck', 'enterprise', 36),
+                ('ABDM Gateway', '/tenant/abdm-hub', 'ShieldCheck', 'enterprise', 37),
+                ('FHIR & HL7 Layer', '/tenant/fhir-hl7', 'Cpu', 'enterprise', 38),
+                ('DICOM & PACS Viewer', '/tenant/dicom-pacs', 'BarChart2', 'enterprise', 39),
+                ('Medical Device IoT', '/tenant/device-telemetry', 'HeartPulse', 'enterprise', 40)
                 ON CONFLICT (label) DO NOTHING;
 
                 -- Link All Menus to ADMIN
@@ -257,7 +278,10 @@ router.post("/login", loginLimiter, async (req, res) => {
                   'Appointment List', 'Doctor Availability and Book Appointments',
                   'Laboratory', 'Pharmacy Dashboard', 'Stock Inventory', 'Prescription Queue',
                   'IPD Bed Map', 'IPD Census & Daycare',
-                  'Help & Support', 'Ticketing Management System', 'Help Desk'
+                  'Help & Support', 'Ticketing Management System', 'Help Desk',
+                  'Emergency / Casualty', 'Nursing Desk', 'ICU & Critical Care', 'MRD & HIM',
+                  'EMR Documentation', 'Infection Control', 'Quality & Safety', 'Telemedicine',
+                  'Referral Management', 'Consent Management', 'ABDM Gateway', 'DICOM & PACS Viewer', 'Medical Device IoT'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 
@@ -270,7 +294,10 @@ router.post("/login", loginLimiter, async (req, res) => {
                 AND m.label IN (
                   'Dashboard', 'OPD Registration', 'Doctor''s Queue', 'Prescription Queue',
                   'IPD Bed Map', 'IPD Census & Daycare', 'Admission Desk', 'Discharge Summaries',
-                  'Help & Support', 'Help Desk'
+                  'Help & Support', 'Help Desk',
+                  'Emergency / Casualty', 'Nursing Desk', 'ICU & Critical Care', 'EMR Documentation',
+                  'Infection Control', 'Quality & Safety', 'CSSD', 'Diet & Nutrition', 'Ambulance & Transport',
+                  'Telemedicine', 'Consent Management', 'Medical Device IoT'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 
@@ -283,7 +310,9 @@ router.post("/login", loginLimiter, async (req, res) => {
                 AND m.label IN (
                   'Dashboard', 'OPD Registration', 'OPD Queue', 'Doctor''s Queue',
                   'Appointment List', 'Doctor Availability and Book Appointments',
-                  'Invoicing & Billing', 'Help & Support', 'Ticketing Management System', 'Help Desk'
+                  'Invoicing & Billing', 'Help & Support', 'Ticketing Management System', 'Help Desk',
+                  'Emergency / Casualty', 'Ambulance & Transport', 'Telemedicine', 'Referral Management',
+                  'Consent Management', 'ABDM Gateway'
                 )
                 ON CONFLICT (role_id, menu_id) DO NOTHING;
 

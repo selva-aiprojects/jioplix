@@ -9,11 +9,13 @@ interface PlanGateGuardProps {
   children: React.ReactNode;
 }
 
-export default function PlanGateGuard({ moduleName, requiredPlan = "Professional or Enterprise", children }: PlanGateGuardProps) {
+export default function PlanGateGuard({ moduleName, requiredPlan = "Enterprise / Premium", children }: PlanGateGuardProps) {
   const plan = (localStorage.getItem("tenantPlan") || "basic").toLowerCase();
-  const atLeastProfessional = ["professional", "enterprise"].includes(plan);
+  
+  const isEnterprise = ["enterprise", "premium"].includes(plan);
+  const isAllowed = requiredPlan.toLowerCase().includes("enterprise") ? isEnterprise : ["professional", "enterprise", "premium"].includes(plan);
 
-  if (atLeastProfessional) {
+  if (isAllowed) {
     return <>{children}</>;
   }
 

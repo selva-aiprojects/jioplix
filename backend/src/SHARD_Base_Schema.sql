@@ -1390,3 +1390,383 @@ CREATE INDEX IF NOT EXISTS idx_helpdesk_notes_ticket ON helpdesk_ticket_notes (t
 CREATE INDEX IF NOT EXISTS idx_helpdesk_escalations_ticket ON helpdesk_escalations (ticket_id);
 CREATE INDEX IF NOT EXISTS idx_helpdesk_equipment_department ON helpdesk_equipment (department_id);
 CREATE INDEX IF NOT EXISTS idx_helpdesk_equipment_status ON helpdesk_equipment (status);
+
+-- ================= 20 ENTERPRISE & ADVANCED MODULE SCHEMAS =================
+CREATE TABLE IF NOT EXISTS emergency_triage (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_name VARCHAR(255) NOT NULL,
+  mrn VARCHAR(100),
+  age INT,
+  gender VARCHAR(20),
+  esi_level INT NOT NULL DEFAULT 3,
+  chief_complaint TEXT,
+  vitals JSONB DEFAULT '{}',
+  bed_bay VARCHAR(100),
+  status VARCHAR(50) DEFAULT 'WAITING',
+  disposition VARCHAR(100),
+  triage_nurse VARCHAR(255),
+  attending_physician VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS emergency_code_alerts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code_type VARCHAR(50) NOT NULL,
+  location VARCHAR(255) NOT NULL,
+  activated_by VARCHAR(255),
+  status VARCHAR(30) DEFAULT 'ACTIVE',
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS nursing_emar (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id VARCHAR(100) NOT NULL,
+  patient_name VARCHAR(255) NOT NULL,
+  bed_no VARCHAR(50),
+  medication_name VARCHAR(255) NOT NULL,
+  dosage VARCHAR(100) NOT NULL,
+  route VARCHAR(50) DEFAULT 'ORAL',
+  scheduled_time TIMESTAMP NOT NULL,
+  status VARCHAR(30) DEFAULT 'PENDING',
+  administered_at TIMESTAMP,
+  administered_by VARCHAR(255),
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS nursing_vitals_news (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id VARCHAR(100) NOT NULL,
+  respiration_rate INT,
+  spo2 INT,
+  sys_bp INT,
+  dia_bp INT,
+  pulse INT,
+  temperature NUMERIC(4,1),
+  consciousness VARCHAR(30) DEFAULT 'ALERT',
+  news2_score INT DEFAULT 0,
+  risk_level VARCHAR(30) DEFAULT 'LOW',
+  recorded_by VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS nursing_sbar_handovers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ward_name VARCHAR(100) NOT NULL,
+  outgoing_nurse VARCHAR(255) NOT NULL,
+  incoming_nurse VARCHAR(255) NOT NULL,
+  situation TEXT NOT NULL,
+  background TEXT NOT NULL,
+  assessment TEXT NOT NULL,
+  recommendation TEXT NOT NULL,
+  shift_type VARCHAR(30) DEFAULT 'DAY',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS icu_telemetry (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  bed_no VARCHAR(50) NOT NULL,
+  patient_name VARCHAR(255) NOT NULL,
+  ventilator_mode VARCHAR(50),
+  fio2 INT,
+  peep INT,
+  abg_ph NUMERIC(3,2),
+  abg_paco2 INT,
+  abg_pao2 INT,
+  gcs_score INT DEFAULT 15,
+  sofa_score INT DEFAULT 0,
+  apache_score INT DEFAULT 0,
+  critical_alarm BOOLEAN DEFAULT FALSE,
+  alarm_reason VARCHAR(255),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS mrd_records (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  mrn VARCHAR(100) NOT NULL UNIQUE,
+  patient_name VARCHAR(255) NOT NULL,
+  rack_no VARCHAR(50),
+  shelf_no VARCHAR(50),
+  box_no VARCHAR(50),
+  icd10_codes JSONB DEFAULT '[]',
+  cpt_codes JSONB DEFAULT '[]',
+  is_mlc BOOLEAN DEFAULT FALSE,
+  mlc_number VARCHAR(100),
+  police_station VARCHAR(255),
+  chart_status VARCHAR(50) DEFAULT 'INCOMPLETE',
+  missing_signatures TEXT[],
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS emr_soap_notes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  encounter_id VARCHAR(100) NOT NULL,
+  patient_id VARCHAR(100) NOT NULL,
+  doctor_name VARCHAR(255) NOT NULL,
+  specialty VARCHAR(100),
+  subjective TEXT,
+  objective TEXT,
+  assessment TEXT,
+  plan TEXT,
+  cpoe_orders JSONB DEFAULT '[]',
+  is_locked BOOLEAN DEFAULT FALSE,
+  signed_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS integration_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  protocol VARCHAR(50) NOT NULL,
+  message_type VARCHAR(100),
+  direction VARCHAR(20) DEFAULT 'INBOUND',
+  status VARCHAR(30) DEFAULT 'SUCCESS',
+  payload TEXT,
+  error_message TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS infection_surveillance (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_name VARCHAR(255) NOT NULL,
+  ward_location VARCHAR(100) NOT NULL,
+  hai_type VARCHAR(50) NOT NULL,
+  organism_identified VARCHAR(255),
+  isolation_type VARCHAR(50) DEFAULT 'NONE',
+  asp_authorization_status VARCHAR(50) DEFAULT 'APPROVED',
+  reported_by VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS quality_incidents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  incident_type VARCHAR(50) NOT NULL,
+  department VARCHAR(100) NOT NULL,
+  severity VARCHAR(30) DEFAULT 'MODERATE',
+  description TEXT NOT NULL,
+  root_cause_analysis TEXT,
+  action_taken TEXT,
+  status VARCHAR(30) DEFAULT 'OPEN',
+  reported_by VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS cssd_batches (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  batch_number VARCHAR(100) NOT NULL UNIQUE,
+  sterilizer_id VARCHAR(50) NOT NULL,
+  sterilization_method VARCHAR(50) DEFAULT 'AUTOCLAVE',
+  biological_indicator VARCHAR(20) DEFAULT 'PASS',
+  chemical_indicator VARCHAR(20) DEFAULT 'PASS',
+  tray_count INT DEFAULT 1,
+  expiry_date TIMESTAMP NOT NULL,
+  status VARCHAR(30) DEFAULT 'STERILE',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS dietetics_orders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_name VARCHAR(255) NOT NULL,
+  bed_no VARCHAR(50) NOT NULL,
+  diet_type VARCHAR(100) NOT NULL,
+  allergies TEXT,
+  calories_target INT,
+  protein_g INT,
+  kitchen_status VARCHAR(30) DEFAULT 'ORDERED',
+  dietitian_name VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ambulance_trips (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vehicle_no VARCHAR(50) NOT NULL,
+  ambulance_type VARCHAR(50) DEFAULT 'ALS',
+  driver_name VARCHAR(255) NOT NULL,
+  paramedic_name VARCHAR(255),
+  pickup_location VARCHAR(255) NOT NULL,
+  destination VARCHAR(255) DEFAULT 'EMERGENCY_ROOM',
+  patient_name VARCHAR(255),
+  trip_status VARCHAR(30) DEFAULT 'DISPATCHED',
+  eta_minutes INT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS mortuary_records (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  deceased_name VARCHAR(255) NOT NULL,
+  mrn VARCHAR(100),
+  chamber_no VARCHAR(50) NOT NULL,
+  date_of_death TIMESTAMP NOT NULL,
+  cause_of_death TEXT,
+  autopsy_requested BOOLEAN DEFAULT FALSE,
+  is_mlc BOOLEAN DEFAULT FALSE,
+  handover_to VARCHAR(255),
+  handover_status VARCHAR(30) DEFAULT 'IN_STORAGE',
+  released_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS telemedicine_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_name VARCHAR(255) NOT NULL,
+  doctor_name VARCHAR(255) NOT NULL,
+  specialty VARCHAR(100),
+  scheduled_start TIMESTAMP NOT NULL,
+  meeting_link TEXT NOT NULL,
+  session_status VARCHAR(30) DEFAULT 'SCHEDULED',
+  clinical_summary TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS referral_ledger (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  referral_type VARCHAR(20) DEFAULT 'INBOUND',
+  referring_doctor VARCHAR(255) NOT NULL,
+  referring_hospital VARCHAR(255),
+  patient_name VARCHAR(255) NOT NULL,
+  specialty_required VARCHAR(100),
+  assigned_doctor VARCHAR(255),
+  referral_status VARCHAR(30) DEFAULT 'PENDING',
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS patient_clinical_consents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_name VARCHAR(255) NOT NULL,
+  mrn VARCHAR(100),
+  consent_type VARCHAR(100) NOT NULL,
+  procedure_name VARCHAR(255),
+  witness_name VARCHAR(255),
+  signature_captured BOOLEAN DEFAULT TRUE,
+  language VARCHAR(20) DEFAULT 'EN',
+  ip_address VARCHAR(50),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS clinical_governance_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  actor_user VARCHAR(255) NOT NULL,
+  role VARCHAR(100),
+  action_type VARCHAR(100) NOT NULL,
+  resource_affected VARCHAR(255) NOT NULL,
+  reason_given TEXT,
+  ip_address VARCHAR(50),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS abdm_care_contexts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id VARCHAR(100) NOT NULL,
+  abha_id VARCHAR(100) NOT NULL,
+  care_context_reference VARCHAR(100) NOT NULL UNIQUE,
+  display_name VARCHAR(255) NOT NULL,
+  hip_status VARCHAR(30) DEFAULT 'LINKED',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS pacs_studies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  study_instance_uid VARCHAR(255) NOT NULL UNIQUE,
+  patient_name VARCHAR(255) NOT NULL,
+  mrn VARCHAR(100) NOT NULL,
+  modality VARCHAR(20) NOT NULL,
+  study_description TEXT,
+  series_count INT DEFAULT 1,
+  instances_count INT DEFAULT 12,
+  radiologist_report TEXT,
+  report_status VARCHAR(30) DEFAULT 'UNREAD',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS device_streams (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  device_id VARCHAR(100) NOT NULL,
+  device_type VARCHAR(50) NOT NULL,
+  location_bed VARCHAR(50) NOT NULL,
+  patient_name VARCHAR(255),
+  heart_rate INT,
+  spo2 INT,
+  bp_sys INT,
+  bp_dia INT,
+  resp_rate INT,
+  alarm_active BOOLEAN DEFAULT FALSE,
+  alarm_type VARCHAR(100),
+  last_ping TIMESTAMP DEFAULT NOW()
+);
+
+-- ================= 20 ENTERPRISE MODULE INDEXES =================
+CREATE INDEX IF NOT EXISTS idx_emergency_triage_esi ON emergency_triage(esi_level, status);
+CREATE INDEX IF NOT EXISTS idx_emergency_code_alerts_status ON emergency_code_alerts(status, code_type);
+CREATE INDEX IF NOT EXISTS idx_nursing_emar_patient ON nursing_emar(patient_id, scheduled_time);
+CREATE INDEX IF NOT EXISTS idx_nursing_vitals_news ON nursing_vitals_news(patient_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_icu_telemetry_bed ON icu_telemetry(bed_no);
+CREATE INDEX IF NOT EXISTS idx_mrd_records_mrn ON mrd_records(mrn);
+CREATE INDEX IF NOT EXISTS idx_emr_soap_encounter ON emr_soap_notes(encounter_id, patient_id);
+CREATE INDEX IF NOT EXISTS idx_integration_logs_protocol ON integration_logs(protocol, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_infection_surveillance_hai ON infection_surveillance(hai_type, ward_location);
+CREATE INDEX IF NOT EXISTS idx_quality_incidents_status ON quality_incidents(status, severity);
+CREATE INDEX IF NOT EXISTS idx_cssd_batches_batch ON cssd_batches(batch_number);
+CREATE INDEX IF NOT EXISTS idx_dietetics_orders_bed ON dietetics_orders(bed_no);
+CREATE INDEX IF NOT EXISTS idx_ambulance_trips_status ON ambulance_trips(trip_status);
+CREATE INDEX IF NOT EXISTS idx_mortuary_records_chamber ON mortuary_records(chamber_no);
+CREATE INDEX IF NOT EXISTS idx_telemedicine_sessions_doctor ON telemedicine_sessions(doctor_name, scheduled_start);
+CREATE INDEX IF NOT EXISTS idx_referral_ledger_doctor ON referral_ledger(referring_doctor);
+CREATE INDEX IF NOT EXISTS idx_patient_consents_patient ON patient_clinical_consents(patient_name, consent_type);
+CREATE INDEX IF NOT EXISTS idx_clinical_governance_actor ON clinical_governance_logs(actor_user, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_abdm_care_contexts_abha ON abdm_care_contexts(abha_id);
+CREATE INDEX IF NOT EXISTS idx_pacs_studies_uid ON pacs_studies(study_instance_uid, mrn);
+CREATE INDEX IF NOT EXISTS idx_device_streams_bed ON device_streams(location_bed);
+
+-- ================= STORED FUNCTIONS & TRIGGERS =================
+CREATE OR REPLACE FUNCTION fn_calculate_news2_score(
+  p_respiration INT,
+  p_spo2 INT,
+  p_sys_bp INT,
+  p_pulse INT,
+  p_temp NUMERIC,
+  p_consciousness VARCHAR
+) RETURNS INT AS $$
+DECLARE
+  v_score INT := 0;
+BEGIN
+  IF p_respiration <= 8 OR p_respiration >= 25 THEN v_score := v_score + 3;
+  ELSIF p_respiration >= 21 THEN v_score := v_score + 2; END IF;
+
+  IF p_spo2 <= 91 THEN v_score := v_score + 3;
+  ELSIF p_spo2 <= 93 THEN v_score := v_score + 2; END IF;
+
+  IF p_sys_bp <= 90 THEN v_score := v_score + 3;
+  ELSIF p_sys_bp <= 100 THEN v_score := v_score + 2; END IF;
+
+  IF p_pulse <= 40 OR p_pulse >= 131 THEN v_score := v_score + 3;
+  ELSIF p_pulse >= 111 THEN v_score := v_score + 2; END IF;
+
+  IF p_temp <= 35.0 THEN v_score := v_score + 3;
+  ELSIF p_temp >= 39.1 THEN v_score := v_score + 2; END IF;
+
+  IF UPPER(p_consciousness) != 'ALERT' THEN v_score := v_score + 3; END IF;
+
+  RETURN v_score;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_auto_update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_emergency_triage_updated ON emergency_triage;
+CREATE TRIGGER trg_emergency_triage_updated
+BEFORE UPDATE ON emergency_triage
+FOR EACH ROW EXECUTE FUNCTION fn_auto_update_timestamp();
+
+DROP TRIGGER IF EXISTS trg_icu_telemetry_updated ON icu_telemetry;
+CREATE TRIGGER trg_icu_telemetry_updated
+BEFORE UPDATE ON icu_telemetry
+FOR EACH ROW EXECUTE FUNCTION fn_auto_update_timestamp();
+
