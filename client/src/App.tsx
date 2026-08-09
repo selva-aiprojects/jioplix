@@ -82,6 +82,56 @@ function getTenantSubdomain(): string | null {
   return null;
 }
 
+function TenantSecurityGuard() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const currentSub = getTenantSubdomain();
+    const storedSub = localStorage.getItem("activeSubdomain");
+
+    // 1. Cross-Tenant Subdomain Switch Protection:
+    // If user switches host subdomain, immediately wipe all session data to eliminate cross-tenant leakage
+    if (currentSub) {
+      if (storedSub && storedSub !== currentSub) {
+        console.warn(`[SECURITY_GUARD] Subdomain change detected (${storedSub} -> ${currentSub}). Purging session.`);
+        localStorage.clear();
+        sessionStorage.clear();
+        localStorage.setItem("activeSubdomain", currentSub);
+        navigate('/login', { replace: true });
+        return;
+      }
+      localStorage.setItem("activeSubdomain", currentSub);
+
+      // 2. Token Claim & Role Validation
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const parts = token.split('.');
+          if (parts.length === 3) {
+            const payload = JSON.parse(atob(parts[1]));
+            // Block Nexus tokens on tenant subdomains
+            if (payload.type === 'nexus' || payload.role === 'nexus') {
+              console.warn("[SECURITY_GUARD] Nexus token blocked on tenant subdomain. Purging session.");
+              localStorage.clear();
+              sessionStorage.clear();
+              navigate('/login', { replace: true });
+              return;
+            }
+          }
+        } catch {
+          localStorage.clear();
+          sessionStorage.clear();
+          navigate('/login', { replace: true });
+          return;
+        }
+      }
+    }
+  }, [location.pathname, navigate]);
+
+  return null;
+}
+
 function SubdomainObserver() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -112,6 +162,7 @@ function App() {
 
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TenantSecurityGuard />
       <ThemeObserver />
       <SubdomainObserver />
       <Routes>
