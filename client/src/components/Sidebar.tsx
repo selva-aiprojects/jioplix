@@ -466,30 +466,38 @@ export default function Sidebar() {
 
     const gs = [
       {
-        id: 'opd',
-        title: "Outpatient (OPD)",
-        items: getItems(opdFlow).filter(i => {
-          // Doctor's Schedule visible to doctor + admin
-          if (i.label === "Doctor's Schedule" && !isDoctor) return false;
-          return true;
-        }),
+        id: 'patient_care',
+        title: "Patient Care",
         icon: HeartPulse,
-        badge: null,
+        isParent: true,
+        subGroups: [
+          {
+            id: 'opd',
+            title: "Outpatient (OPD)",
+            items: getItems(opdFlow).filter(i => {
+              // Doctor's Schedule visible to doctor + admin
+              if (i.label === "Doctor's Schedule" && !isDoctor) return false;
+              return true;
+            }),
+            icon: HeartPulse,
+            badge: null,
+          },
+          {
+            id: 'ipd',
+            title: "Inpatient (IPD)",
+            items: getItems(ipdFlow).filter(() => {
+              if (!atLeastProfessional) return false;
+              if (!isClinical) return false;
+              return true;
+            }),
+            icon: Bed,
+            badge: !atLeastProfessional ? "Professional+" : null,
+          }
+        ]
       },
       {
-        id: 'ipd',
-        title: "Inpatient (IPD)",
-        items: getItems(ipdFlow).filter(() => {
-          if (!atLeastProfessional) return false;
-          if (!isClinical) return false;
-          return true;
-        }),
-        icon: Bed,
-        badge: !atLeastProfessional ? "Professional+" : null,
-      },
-      {
-        id: 'diagnostics',
-        title: "Diagnostics & Pharmacy",
+        id: 'clinical_services',
+        title: "Clinical Services",
         items: getItems(diagnosticsFlow).filter(i => {
           if (!atLeastStandard) return false;
           if (i.label === "AI Diagnostic Assistant" && !isEnterprise) return false;
@@ -503,7 +511,7 @@ export default function Sidebar() {
         badge: !atLeastStandard ? "Standard+" : null,
       },
       {
-        id: 'billing',
+        id: 'billing_finance',
         title: "Billing & Finance",
         items: getItems(billingFlow).filter(i => {
           if (i.label === "Finance & Compliance" && !isEnterprise) return false;
@@ -514,17 +522,7 @@ export default function Sidebar() {
         badge: null,
       },
       {
-        id: 'analytics',
-        title: "Reports & Analytics",
-        items: getItems(["Clinical Analytics", "Operations Analytics"]).filter(() => {
-          if (!atLeastProfessional || !isAdmin) return false;
-          return true;
-        }),
-        icon: BarChart2,
-        badge: !atLeastProfessional ? "Professional+" : null,
-      },
-      {
-        id: 'nonclinical',
+        id: 'hospital_operations',
         title: "Hospital Operations",
         items: getItems(nonClinicalFlow).filter(() => {
           if (!atLeastProfessional) return false;
@@ -534,8 +532,18 @@ export default function Sidebar() {
         badge: !atLeastProfessional ? "Professional+" : null,
       },
       {
-        id: 'communication',
-        title: "Communication & Engagement",
+        id: 'reports_analytics',
+        title: "Reports & Analytics",
+        items: getItems(["Clinical Analytics", "Operations Analytics"]).filter(() => {
+          if (!atLeastProfessional || !isAdmin) return false;
+          return true;
+        }),
+        icon: BarChart2,
+        badge: !atLeastProfessional ? "Professional+" : null,
+      },
+      {
+        id: 'patient_engagement',
+        title: "Patient Engagement",
         items: getItems(commFlow).filter(() => {
           if (!atLeastProfessional) return false;
           return true;
@@ -557,7 +565,13 @@ export default function Sidebar() {
     ];
 
     const gLabels = new Set<string>();
-    gs.forEach(g => g.items.forEach(i => gLabels.add(i.label.toLowerCase())));
+    gs.forEach(g => {
+      if (g.subGroups) {
+        g.subGroups.forEach((sg: any) => sg.items.forEach((i: any) => gLabels.add(i.label.toLowerCase())));
+      } else {
+        g.items.forEach((i: any) => gLabels.add(i.label.toLowerCase()));
+      }
+    });
 
     // Main top-level platform dashboard link ONLY
     const mainDashboardMatches = pm.filter(m =>
@@ -569,7 +583,7 @@ export default function Sidebar() {
       ? [mainDashboardMatches[0]]
       : [{ label: 'Dashboard', path: '/tenant/dashboard', icon: 'Dashboard' }];
 
-    // Leftover unmapped items (excluding main platform dashboard) -> sweep into Non-Clinical Operations
+    // Leftover unmapped items (excluding main platform dashboard) -> sweep into Hospital Operations
     const ug = pm.filter(m =>
       !gLabels.has(m.label.toLowerCase()) &&
       m.path !== '/tenant/dashboard' &&
@@ -578,9 +592,9 @@ export default function Sidebar() {
     );
 
     if (ug.length > 0) {
-      const ncGroup = gs.find(g => g.id === 'nonclinical');
-      if (ncGroup) {
-        ncGroup.items = [...ncGroup.items, ...ug];
+      const hoGroup = gs.find(g => g.id === 'hospital_operations');
+      if (hoGroup) {
+        hoGroup.items = [...hoGroup.items, ...ug];
       }
     }
 
@@ -691,50 +705,120 @@ export default function Sidebar() {
           ))}
 
           {/* Grouped sections */}
-          {groups.map((group) => group.items.length > 0 && (
-            <div key={group.id} style={{ marginBottom: '4px' }}>
-              <button
-                onClick={() => toggleGroup(group.id)}
-                style={{
-                  width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-                  padding: '10px 14px', background: 'none', border: 'none',
-                  color: openGroup === group.id ? 'white' : 'var(--sidebar-text, #94a3b8)',
-                  cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
-                  textTransform: 'uppercase', letterSpacing: '0.6px',
-                }}
-              >
-                <group.icon size={15} style={{ opacity: openGroup === group.id ? 1 : 0.5, flexShrink: 0 }} />
-                <span style={{ flex: 1, textAlign: 'left' }}>{group.title}</span>
-                {group.badge && (
-                  <span style={{
-                    fontSize: '8px', fontWeight: 800, color: '#64748b',
-                    background: 'rgba(255,255,255,0.05)', padding: '2px 6px',
-                    borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.3px'
-                  }}>{group.badge}</span>
-                )}
-                <ChevronDown size={13} style={{ transform: openGroup === group.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
-              </button>
+          {groups.map((group) => {
+            if (group.isParent) {
+              const hasVisibleItems = group.subGroups?.some((sg: any) => sg.items.length > 0);
+              if (!hasVisibleItems) return null;
+              return (
+                <div key={group.id} style={{ marginBottom: '14px', marginTop: '10px' }}>
+                  {/* Visual separator/title for multi-level category */}
+                  <div style={{
+                    padding: '8px 14px 8px', fontSize: '10px', fontWeight: 900,
+                    color: 'rgba(255, 255, 255, 0.35)', textTransform: 'uppercase',
+                    letterSpacing: '1px', borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    marginBottom: '8px'
+                  }}>
+                    {group.title}
+                  </div>
+                  {/* Render subgroups */}
+                  {group.subGroups?.map((subGroup: any) => {
+                    if (subGroup.items.length === 0) return null;
+                    return (
+                      <div key={subGroup.id} style={{ marginBottom: '4px' }}>
+                        <button
+                          onClick={() => toggleGroup(subGroup.id)}
+                          style={{
+                            width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                            padding: '10px 14px', background: 'none', border: 'none',
+                            color: openGroup === subGroup.id ? 'white' : 'var(--sidebar-text, #94a3b8)',
+                            cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
+                            textTransform: 'uppercase', letterSpacing: '0.6px',
+                          }}
+                        >
+                          <subGroup.icon size={15} style={{ opacity: openGroup === subGroup.id ? 1 : 0.5, flexShrink: 0 }} />
+                          <span style={{ flex: 1, textAlign: 'left' }}>{subGroup.title}</span>
+                          {subGroup.badge && (
+                            <span style={{
+                              fontSize: '8px', fontWeight: 800, color: '#64748b',
+                              background: 'rgba(255,255,255,0.05)', padding: '2px 6px',
+                              borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.3px'
+                            }}>{subGroup.badge}</span>
+                          )}
+                          <ChevronDown size={13} style={{ transform: openGroup === subGroup.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
+                        </button>
 
-              <div style={{
-                maxHeight: openGroup === group.id ? '1000px' : '0',
-                overflow: 'hidden',
-                transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                paddingLeft: '8px',
-                borderLeft: openGroup === group.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
-                marginLeft: '18px',
-              }}>
-                {group.items.map((menu, mIdx) => (
-                  <SidebarLink
-                    key={mIdx}
-                    to={menu.path}
-                    icon={Icons[menu.label] || Icons[menu.icon] || Box}
-                    label={menu.label}
-                    isSubItem
-                  />
-                ))}
+                        <div style={{
+                          maxHeight: openGroup === subGroup.id ? '1000px' : '0',
+                          overflow: 'hidden',
+                          transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          paddingLeft: '8px',
+                          borderLeft: openGroup === subGroup.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
+                          marginLeft: '18px',
+                        }}>
+                          {subGroup.items.map((menu: any, mIdx: number) => (
+                            <SidebarLink
+                              key={mIdx}
+                              to={menu.path}
+                              icon={Icons[menu.label] || Icons[menu.icon] || Box}
+                              label={menu.label}
+                              isSubItem
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            }
+
+            // Normal single-level group
+            if (!group.items || group.items.length === 0) return null;
+            return (
+              <div key={group.id} style={{ marginBottom: '4px' }}>
+                <button
+                  onClick={() => toggleGroup(group.id)}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                    padding: '10px 14px', background: 'none', border: 'none',
+                    color: openGroup === group.id ? 'white' : 'var(--sidebar-text, #94a3b8)',
+                    cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
+                    textTransform: 'uppercase', letterSpacing: '0.6px',
+                  }}
+                >
+                  <group.icon size={15} style={{ opacity: openGroup === group.id ? 1 : 0.5, flexShrink: 0 }} />
+                  <span style={{ flex: 1, textAlign: 'left' }}>{group.title}</span>
+                  {group.badge && (
+                    <span style={{
+                      fontSize: '8px', fontWeight: 800, color: '#64748b',
+                      background: 'rgba(255,255,255,0.05)', padding: '2px 6px',
+                      borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.3px'
+                    }}>{group.badge}</span>
+                  )}
+                  <ChevronDown size={13} style={{ transform: openGroup === group.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
+                </button>
+
+                <div style={{
+                  maxHeight: openGroup === group.id ? '1000px' : '0',
+                  overflow: 'hidden',
+                  transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  paddingLeft: '8px',
+                  borderLeft: openGroup === group.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
+                  marginLeft: '18px',
+                }}>
+                  {group.items.map((menu: any, mIdx: number) => (
+                    <SidebarLink
+                      key={mIdx}
+                      to={menu.path}
+                      icon={Icons[menu.label] || Icons[menu.icon] || Box}
+                      label={menu.label}
+                      isSubItem
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </nav>
 
         {/* Footer branding */}
