@@ -6,26 +6,26 @@ function getBaseUrl() {
     const host = window.location.hostname;
     const port = window.location.port;
 
-    // If running on SME deployment port 3001, route API to port 5001 on the same server IP/host
+    // Port 3001: local dev Vite fallback → backend at 4000
+    //            production SME deployment → 5001
     if (port === '3001') {
-      return `${window.location.protocol}//${host}:5001`;
+      const isLocalDev = ['localhost', '127.0.0.1', '::1'].includes(host);
+      return `${window.location.protocol}//${host}:${isLocalDev ? '4000' : '5001'}`;
     }
-    // If running on Docker deployment port 3000, route API to port 5000 on the same server IP/host
+    // Port 3000: Vite dev server (with proxy) or Docker → backend at 4000
     if (port === '3000') {
       return `${window.location.protocol}//${host}:4000`;
     }
-    // If local dev server (port 5173 or localhost without docker)
+    // Port 5173: raw Vite dev (no port override) → backend at 4000
     if (['localhost', '127.0.0.1', '::1'].includes(host)) {
       return 'http://localhost:4000';
     }
-    // The Vercel project serves the SPA and `/api` serverless function together.
-    // Keeping production calls same-origin prevents a frontend deployment from
-    // accidentally authenticating against a different (or stale) backend project.
+    // Production (Vercel / jioplix.com): same-origin API
     if (host.includes('vercel.app') || host.includes('jioplix')) {
       return window.location.origin;
     }
   }
-  // SSR/build fallback. Browser deployments use `window.location.origin` above.
+  // SSR/build fallback
   return '';
 }
 

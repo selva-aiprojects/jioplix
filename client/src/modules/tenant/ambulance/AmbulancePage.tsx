@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
-import { Plus } from "lucide-react";
+import { Siren, Plus, Search, Filter, Clock, CheckCircle2, Navigation, Activity } from "lucide-react";
 
 export default function AmbulancePage() {
   const [trips, setTrips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Form states
   const [vehicleNo, setVehicleNo] = useState("AMB-102 (ALS)");
@@ -61,6 +62,14 @@ export default function AmbulancePage() {
     }
   };
 
+  const filteredTrips = trips.filter(t => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return t.vehicle_no?.toLowerCase().includes(q) || t.driver_name?.toLowerCase().includes(q) || t.pickup_location?.toLowerCase().includes(q);
+  });
+
+  const alsFleetCount = trips.filter(t => t.ambulance_type?.includes("ALS")).length;
+
   return (
     <div className="dashboard-layout" style={{ minHeight: "100vh", background: "var(--app-bg, #f8fafc)" }}>
       <Sidebar />
@@ -68,20 +77,75 @@ export default function AmbulancePage() {
         <Header title="Ambulance & Emergency Patient Transport" subtitle="Fleet Management, Dispatch Console & Live GPS Transport Monitor" />
 
         <div style={{ padding: "24px" }}>
-          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h3 style={{ color: "#0f172a", margin: 0, fontWeight: 800, fontSize: "18px" }}>Active Dispatch & Transport Trips</h3>
-              <button 
-                onClick={() => setShowModal(true)}
-                style={{ background: "#ef4444", color: "#ffffff", border: "none", padding: "10px 18px", borderRadius: "10px", fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", boxShadow: "0 4px 14px rgba(239, 68, 68, 0.35)" }}
-              >
-                <Plus size={16} /> Dispatch Emergency Unit
-              </button>
+          {/* Top KPI Metrics Bar */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fef2f2", color: "#ef4444", display: "grid", placeItems: "center" }}>
+                <Siren size={24} className="animate-pulse" />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Active Emergency Dispatches</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#dc2626" }}>{trips.length} Trips</div>
+              </div>
             </div>
 
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
+                <Navigation size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ALS Ambulance Fleet</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>{alsFleetCount} Units</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#c2410c", display: "grid", placeItems: "center" }}>
+                <Clock size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Avg Dispatch Response</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>8.5 Mins</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
+                <CheckCircle2 size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>GPS Telemetry</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#16a34a" }}>Online</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Search & Actions Bar */}
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+            <div style={{ position: "relative", flex: 1, minWidth: "260px" }}>
+              <Search size={18} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+              <input 
+                type="text" 
+                placeholder="Search vehicle no, driver, location..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ width: "100%", padding: "10px 14px 10px 42px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "12px", color: "#0f172a", fontSize: "14px" }}
+              />
+            </div>
+            <button 
+              onClick={() => setShowModal(true)}
+              style={{ background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)", color: "#ffffff", padding: "12px 20px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 14px rgba(239, 68, 68, 0.35)", fontSize: "14px" }}
+            >
+              <Plus size={18} /> Dispatch Emergency Unit
+            </button>
+          </div>
+
+          {/* Transport Table */}
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)" }}>
+            <h3 style={{ color: "#0f172a", margin: "0 0 20px 0", fontWeight: 800, fontSize: "18px" }}>Active Dispatch & Transport Trips</h3>
             {loading ? (
               <div style={{ color: "#64748b", padding: "20px" }}>Loading fleet dispatch data...</div>
-            ) : trips.length === 0 ? (
+            ) : filteredTrips.length === 0 ? (
               <div style={{ color: "#64748b", textAlign: "center", padding: "30px" }}>No active emergency dispatches. All ambulance units on standby. Click "Dispatch Emergency Unit" to trigger trip.</div>
             ) : (
               <div style={{ overflowX: "auto" }}>
@@ -97,7 +161,7 @@ export default function AmbulancePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {trips.map(t => (
+                    {filteredTrips.map(t => (
                       <tr key={t.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                         <td style={{ padding: "14px 16px", fontWeight: 900, color: "#dc2626" }}>{t.vehicle_no}</td>
                         <td style={{ padding: "14px 16px", color: "#0f172a", fontWeight: 700 }}>{t.ambulance_type}</td>
@@ -170,3 +234,4 @@ export default function AmbulancePage() {
     </div>
   );
 }
+

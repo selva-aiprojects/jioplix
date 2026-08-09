@@ -805,7 +805,7 @@ export default function Sidebar() {
       },
       {
         id: 'hospital_operations',
-        title: "HOSPITAL OPERATIONS",
+        title: "NON-CLINICAL OPERATIONS",
         items: getItems(nonClinicalFlow).filter(() => {
           return atLeastProfessional;
         }),

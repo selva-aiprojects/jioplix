@@ -4,6 +4,7 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { Package, AlertTriangle, ClipboardList, FlaskConical, Search, Filter, PlusCircle, RefreshCw } from "lucide-react";
 
 function getHeaders() {
   const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
@@ -163,13 +164,83 @@ export default function InventoryPage() {
     { id: "analytics" as const, label: "Expiry & Consumption" },
   ];
 
+  const lowStockCount = Number(dash?.low_stock_count || 0);
+  const expiringCount = Number(dash?.expiring_soon || 0);
+
   return (
     <PlanGateGuard moduleName="Pharmacy Inventory & Stock Control">
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Pharmacy Inventory & Stock Control" />
-        <div style={{ padding: "20px 24px" }}>
+        <Header title="Pharmacy Inventory & Stock Control" subtitle="Medicine indents, stock issues, narcotics register, reorder levels & expiry analytics" />
+        <div style={{ padding: "24px" }}>
+
+          {/* KPI Cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#eff6ff", color: "#2563eb", display: "grid", placeItems: "center" }}>
+                <Package size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Total SKUs</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e40af" }}>{Number(dash?.total_items || 0)} Items</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: lowStockCount > 0 ? "#fef2f2" : "#f0fdf4", color: lowStockCount > 0 ? "#dc2626" : "#16a34a", display: "grid", placeItems: "center" }}>
+                <AlertTriangle size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Low Stock Alerts</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: lowStockCount > 0 ? "#dc2626" : "#15803d" }}>{lowStockCount} Items</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#ea580c", display: "grid", placeItems: "center" }}>
+                <ClipboardList size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Pending Indents</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{indents.filter((i: any) => i.status === "PENDING").length} Pending</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fdf4ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
+                <FlaskConical size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Narcotics Logs</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#7c3aed" }}>{narcotics.length} Entries</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions & Filter Bar */}
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "16px 20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+            <div style={{ display: "flex", gap: "10px", flex: 1, minWidth: "300px", flexWrap: "wrap" }}>
+              <div style={{ position: "relative", flex: 1, minWidth: "180px" }}>
+                <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+                <input type="text" placeholder="Search medicine, batch, department..." style={{ width: "100%", padding: "9px 14px 9px 38px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "13px", background: "#f8fafc" }} />
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Filter size={14} color="#64748b" />
+                <select style={{ padding: "9px 14px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "13px", background: "#f8fafc", fontWeight: 700 }}>
+                  <option>All Status</option>
+                  <option>PENDING</option>
+                  <option>APPROVED</option>
+                  <option>ISSUED</option>
+                </select>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button className="button-primary" style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px" }}>
+                <PlusCircle size={15} /> New Indent
+              </button>
+              <button onClick={runReorder} disabled={busy} style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", padding: "9px 14px", border: "1px solid #cbd5e1", borderRadius: "12px", background: "white", cursor: "pointer", fontWeight: 600, color: "#334155" }}>
+                <RefreshCw size={14} /> Run Reorder
+              </button>
+            </div>
+          </div>
           {error && (
             <div style={{ background: "#fef2f2", color: "#b91c1c", padding: "12px 16px", borderRadius: "12px", marginBottom: "16px", fontSize: "13px", fontWeight: 600 }}>
               {error}

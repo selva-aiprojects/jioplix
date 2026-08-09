@@ -1,25 +1,24 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
-import { Cpu, Plus, Activity, Bell } from "lucide-react";
+import { HeartPulse, Plus, Activity, AlertTriangle, ShieldCheck, Zap, Search, Filter } from "lucide-react";
 
 export default function ICUPage() {
   const [beds, setBeds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Form states
-  const [bedNo, setBedNo] = useState("ICU-Bed 01");
+  // Flowsheet Form state
+  const [bedNo, setBedNo] = useState("ICU Bed 01");
   const [patientName, setPatientName] = useState("");
-  const [ventMode, setVentMode] = useState("SIMV");
-  const [fio2, setFio2] = useState("40");
-  const [peep, setPeep] = useState("5");
+  const [ventMode, setVentMode] = useState("SIMV + PS");
+  const [fio2, setFio2] = useState("45");
+  const [peep, setPeep] = useState("8");
   const [abgPh, setAbgPh] = useState("7.38");
-  const [gcsScore, setGcsScore] = useState("14");
-  const [sofaScore, setSofaScore] = useState("2");
+  const [gcsScore, setGcsScore] = useState("13");
+  const [sofaScore, setSofaScore] = useState("4");
   const [apacheScore, setApacheScore] = useState("12");
-  const [criticalAlarm, setCriticalAlarm] = useState(false);
-  const [alarmReason, setAlarmReason] = useState("");
 
   const fetchICUData = async () => {
     try {
@@ -55,126 +54,198 @@ export default function ICUPage() {
           ventilator_mode: ventMode,
           fio2: parseInt(fio2) || 40,
           peep: parseInt(peep) || 5,
-          abg_ph: parseFloat(abgPh) || 7.38,
-          gcs_score: parseInt(gcsScore) || 14,
+          abg_ph: parseFloat(abgPh) || 7.4,
+          gcs_score: parseInt(gcsScore) || 15,
           sofa_score: parseInt(sofaScore) || 2,
-          apache_score: parseInt(apacheScore) || 12,
-          critical_alarm: criticalAlarm,
-          alarm_reason: alarmReason
+          apache_ii_score: parseInt(apacheScore) || 10
         })
       });
       setShowModal(false);
       setPatientName("");
       fetchICUData();
     } catch (e) {
-      alert("Failed to log ICU flowsheet");
+      alert("Failed to submit flowsheet record");
     }
   };
+
+  const filteredBeds = beds.filter(b => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return b.patient_name?.toLowerCase().includes(q) || b.bed_no?.toLowerCase().includes(q) || b.ventilator_mode?.toLowerCase().includes(q);
+  });
+
+  const ventilatedCount = beds.filter(b => b.ventilator_mode && b.ventilator_mode !== "OFF").length;
+  const criticalSOFACount = beds.filter(b => b.sofa_score >= 8).length;
 
   return (
     <div className="dashboard-layout" style={{ minHeight: "100vh", background: "var(--app-bg, #f8fafc)" }}>
       <Sidebar />
       <main className="main-content" style={{ paddingBottom: "60px" }}>
-        <Header title="ICU & Critical Care Unit Command Center" subtitle="Multi-Bed Telemetry, Ventilator Parameters, ABG & APACHE II / SOFA Risk Scoring" />
+        <Header title="ICU & Critical Care Workstation" subtitle="Intensive Care Bed Flowsheet, Ventilator Telemetry, SOFA/APACHE Risk Scores & Invasive Lines" />
 
         <div style={{ padding: "24px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <h3 style={{ color: "#0f172a", margin: 0, fontWeight: 800, fontSize: "18px" }}>Active ICU Bed Telemetry Grid</h3>
+          {/* Top KPI Metrics Bar */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
+                <HeartPulse size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ICU Beds Occupied</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>{beds.length} Active</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#faf5ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
+                <Activity size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Mechanical Ventilation</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#9333ea" }}>{ventilatedCount} Patients</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff1f2", color: "#e11d48", display: "grid", placeItems: "center" }}>
+                <AlertTriangle size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>High SOFA Risk</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#e11d48" }}>{criticalSOFACount} Critical</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
+                <ShieldCheck size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Telemetry Monitors</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#16a34a" }}>100% Online</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Search & Actions Bar */}
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+            <div style={{ position: "relative", flex: 1, minWidth: "260px" }}>
+              <Search size={18} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+              <input 
+                type="text" 
+                placeholder="Search patient, ICU bed, mode..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ width: "100%", padding: "10px 14px 10px 42px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "12px", color: "#0f172a", fontSize: "14px" }}
+              />
+            </div>
             <button 
               onClick={() => setShowModal(true)}
-              style={{ background: "#0ea5e9", color: "#ffffff", border: "none", padding: "10px 18px", borderRadius: "10px", fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px" }}
+              style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", color: "#ffffff", padding: "12px 20px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 14px rgba(14, 165, 233, 0.35)", fontSize: "14px" }}
             >
-              <Plus size={16} /> Log Bed Flowsheet Entry
+              <Plus size={18} /> Log Bed Flowsheet Entry
             </button>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px" }}>
+          {/* ICU Bed Grid / Table */}
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)" }}>
+            <h3 style={{ color: "#0f172a", margin: "0 0 20px 0", fontWeight: 800, fontSize: "18px" }}>Active ICU Bed Worklist</h3>
             {loading ? (
-              <div style={{ color: "#64748b", padding: "30px", fontWeight: 600 }}>Loading ICU bed telemetry...</div>
-            ) : beds.length === 0 ? (
-              <div style={{ gridColumn: "1 / -1", background: "#ffffff", padding: "40px", borderRadius: "20px", border: "1px solid #e2e8f0", textAlign: "center", color: "#475569", boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)" }}>
-                <Cpu size={48} color="#0284c7" style={{ marginBottom: "12px" }} />
-                <h3 style={{ color: "#0f172a", fontWeight: 800, margin: "0 0 8px 0" }}>ICU Telemetry Bed Grid Ready</h3>
-                <p style={{ color: "#64748b", margin: 0 }}>Click "Log Bed Flowsheet Entry" to assign patient monitoring parameters.</p>
-              </div>
+              <div style={{ color: "#64748b", padding: "20px" }}>Loading ICU telemetry data...</div>
+            ) : filteredBeds.length === 0 ? (
+              <div style={{ color: "#64748b", textAlign: "center", padding: "30px" }}>No ICU bed flowsheets recorded. Click "Log Bed Flowsheet Entry" to create.</div>
             ) : (
-              beds.map((b) => (
-                <div key={b.id} style={{ background: b.critical_alarm ? "#fff1f2" : "#ffffff", border: `1px solid ${b.critical_alarm ? "#fda4af" : "#e2e8f0"}`, borderRadius: "20px", padding: "20px", boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                    <span style={{ fontWeight: 900, color: "#0284c7", fontSize: "16px" }}>{b.bed_no}</span>
-                    <span style={{ background: b.critical_alarm ? "#ef4444" : "#10b981", color: "#ffffff", fontSize: "11px", fontWeight: 900, padding: "4px 10px", borderRadius: "6px" }}>
-                      {b.critical_alarm ? "CRITICAL ALARM" : "STABLE"}
-                    </span>
-                  </div>
-
-                  <h4 style={{ color: "#0f172a", margin: "0 0 12px 0", fontSize: "16px", fontWeight: 800 }}>{b.patient_name}</h4>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", fontSize: "13px", background: "#f8fafc", padding: "12px", borderRadius: "12px", marginBottom: "12px", border: "1px solid #f1f5f9" }}>
-                    <div><span style={{ color: "#64748b", fontWeight: 600 }}>Vent Mode:</span> <strong style={{ color: "#0f172a" }}>{b.ventilator_mode || 'SIMV'}</strong></div>
-                    <div><span style={{ color: "#64748b", fontWeight: 600 }}>FiO2 / PEEP:</span> <strong style={{ color: "#0f172a" }}>{b.fio2 || 40}% / {b.peep || 5}</strong></div>
-                    <div><span style={{ color: "#64748b", fontWeight: 600 }}>ABG pH:</span> <strong style={{ color: "#0f172a" }}>{b.abg_ph || '7.38'}</strong></div>
-                    <div><span style={{ color: "#64748b", fontWeight: 600 }}>GCS Score:</span> <strong style={{ color: "#0f172a" }}>{b.gcs_score || 14}/15</strong></div>
-                  </div>
-
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#334155", fontWeight: 700 }}>
-                    <span>SOFA Score: <strong style={{ color: "#d97706" }}>{b.sofa_score || 2}</strong></span>
-                    <span>APACHE II: <strong style={{ color: "#d97706" }}>{b.apache_score || 12}</strong></span>
-                  </div>
-                </div>
-              ))
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
+                  <thead>
+                    <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", textAlign: "left" }}>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Bed / Patient</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Ventilator Settings</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>ABG pH</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>GCS Score</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>SOFA / APACHE II</th>
+                      <th style={{ padding: "14px 16px", color: "#475569", fontWeight: 800, textTransform: "uppercase", fontSize: "12px" }}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredBeds.map(b => (
+                      <tr key={b.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "14px 16px", fontWeight: 900, color: "#0f172a" }}>
+                          {b.bed_no} <div style={{ fontSize: "13px", color: "#0284c7", fontWeight: 700, marginTop: "2px" }}>{b.patient_name}</div>
+                        </td>
+                        <td style={{ padding: "14px 16px", color: "#334155", fontWeight: 700 }}>
+                          {b.ventilator_mode} <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>FiO2: {b.fio2}% | PEEP: {b.peep}</div>
+                        </td>
+                        <td style={{ padding: "14px 16px", color: "#0f172a", fontWeight: 800 }}>{b.abg_ph}</td>
+                        <td style={{ padding: "14px 16px", color: "#334155", fontWeight: 700 }}>{b.gcs_score} / 15</td>
+                        <td style={{ padding: "14px 16px" }}>
+                          <span style={{ color: b.sofa_score >= 8 ? "#dc2626" : "#0f172a", fontWeight: 900 }}>SOFA: {b.sofa_score}</span> • <span style={{ color: "#64748b", fontWeight: 700 }}>APACHE: {b.apache_ii_score}</span>
+                        </td>
+                        <td style={{ padding: "14px 16px" }}>
+                          <span style={{ background: "#dcfce7", color: "#15803d", padding: "4px 10px", borderRadius: "8px", fontWeight: 800, fontSize: "12px" }}>
+                            CRITICAL MONITORED
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Create Flowsheet Modal */}
+        {/* Modal */}
         {showModal && (
           <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-            <div style={{ background: "#ffffff", padding: "32px", borderRadius: "24px", width: "100%", maxWidth: "520px", border: "1px solid #e2e8f0", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)" }}>
+            <div style={{ background: "#ffffff", padding: "32px", borderRadius: "24px", width: "100%", maxWidth: "540px", border: "1px solid #e2e8f0", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)" }}>
               <h3 style={{ color: "#0f172a", marginTop: 0, fontWeight: 900, fontSize: "20px" }}>Log ICU Bed Flowsheet Entry</h3>
               <form onSubmit={handleCreateFlowsheet} style={{ display: "flex", flexDirection: "column", gap: "14px", marginTop: "16px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div>
-                    <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>Bed Bay No</label>
+                    <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>ICU Bed Number</label>
                     <input type="text" required value={bedNo} onChange={e=>setBedNo(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
                   </div>
                   <div>
-                    <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>Patient Name</label>
+                    <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>Patient Full Name</label>
                     <input type="text" required value={patientName} onChange={e=>setPatientName(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
                   </div>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
                   <div>
-                    <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>Vent Mode</label>
-                    <select value={ventMode} onChange={e=>setVentMode(e.target.value)} style={{ width: "100%", padding: "10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }}>
-                      <option>SIMV</option><option>AC/VC</option><option>CPAP</option><option>BiPAP</option>
-                    </select>
+                    <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>Vent Mode</label>
+                    <input type="text" value={ventMode} onChange={e=>setVentMode(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
                   </div>
                   <div>
-                    <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>FiO2 (%)</label>
-                    <input type="number" value={fio2} onChange={e=>setFio2(e.target.value)} style={{ width: "100%", padding: "10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
+                    <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>FiO2 (%)</label>
+                    <input type="number" value={fio2} onChange={e=>setFio2(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
                   </div>
                   <div>
-                    <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>PEEP</label>
-                    <input type="number" value={peep} onChange={e=>setPeep(e.target.value)} style={{ width: "100%", padding: "10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
+                    <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>PEEP</label>
+                    <input type="number" value={peep} onChange={e=>setPeep(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
                   </div>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "10px" }}>
                   <div>
-                    <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>GCS (3-15)</label>
-                    <input type="number" value={gcsScore} onChange={e=>setGcsScore(e.target.value)} style={{ width: "100%", padding: "10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
+                    <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>ABG pH</label>
+                    <input type="text" value={abgPh} onChange={e=>setAbgPh(e.target.value)} style={{ width: "100%", padding: "8px 10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "8px", marginTop: "4px" }} />
                   </div>
                   <div>
-                    <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>SOFA Score</label>
-                    <input type="number" value={sofaScore} onChange={e=>setSofaScore(e.target.value)} style={{ width: "100%", padding: "10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
+                    <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>GCS (3-15)</label>
+                    <input type="number" value={gcsScore} onChange={e=>setGcsScore(e.target.value)} style={{ width: "100%", padding: "8px 10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "8px", marginTop: "4px" }} />
+                  </div>
+                  <div>
+                    <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>SOFA</label>
+                    <input type="number" value={sofaScore} onChange={e=>setSofaScore(e.target.value)} style={{ width: "100%", padding: "8px 10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "8px", marginTop: "4px" }} />
                   </div>
                   <div>
                     <label style={{ color: "#334155", fontSize: "12px", fontWeight: 700 }}>APACHE II</label>
-                    <input type="number" value={apacheScore} onChange={e=>setApacheScore(e.target.value)} style={{ width: "100%", padding: "10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "4px" }} />
+                    <input type="number" value={apacheScore} onChange={e=>setApacheScore(e.target.value)} style={{ width: "100%", padding: "8px 10px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "8px", marginTop: "4px" }} />
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
                   <button type="button" onClick={() => setShowModal(false)} style={{ flex: 1, padding: "12px", background: "#f1f5f9", color: "#475569", border: "none", borderRadius: "10px", fontWeight: 800, cursor: "pointer" }}>Cancel</button>
-                  <button type="submit" style={{ flex: 1, padding: "12px", background: "#0ea5e9", color: "#ffffff", border: "none", borderRadius: "10px", fontWeight: 800, cursor: "pointer" }}>Save Telemetry</button>
+                  <button type="submit" style={{ flex: 1, padding: "12px", background: "#0ea5e9", color: "#ffffff", border: "none", borderRadius: "10px", fontWeight: 800, cursor: "pointer" }}>Save Flowsheet Entry</button>
                 </div>
               </form>
             </div>
@@ -184,3 +255,4 @@ export default function ICUPage() {
     </div>
   );
 }
+

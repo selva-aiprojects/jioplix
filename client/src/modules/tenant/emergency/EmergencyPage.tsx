@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
-import { Siren, UserPlus, Activity, ShieldAlert } from "lucide-react";
+import { Siren, UserPlus, Activity, ShieldAlert, Search, Filter, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 
 export default function EmergencyPage() {
   const [cases, setCases] = useState<any[]>([]);
@@ -9,6 +9,8 @@ export default function EmergencyPage() {
   const [loading, setLoading] = useState(true);
   const [showTriageModal, setShowTriageModal] = useState(false);
   const [showCodeModal, setShowCodeModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [esiFilter, setEsiFilter] = useState("ALL");
 
   // Form states
   const [patientName, setPatientName] = useState("");
@@ -65,6 +67,7 @@ export default function EmergencyPage() {
         })
       });
       setShowTriageModal(false);
+      setPatientName(""); setMrn(""); setChiefComplaint("");
       fetchEmergencyData();
     } catch (err) {
       alert("Error logging triage case");
@@ -93,49 +96,69 @@ export default function EmergencyPage() {
     }
   };
 
+  const filteredCases = cases.filter(c => {
+    if (esiFilter !== "ALL" && String(c.esi_level) !== esiFilter) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return c.patient_name?.toLowerCase().includes(q) || c.mrn?.toLowerCase().includes(q) || c.chief_complaint?.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  const esi1Count = cases.filter(c => c.esi_level === 1).length;
+  const esi2Count = cases.filter(c => c.esi_level === 2).length;
+
   return (
     <div className="dashboard-layout" style={{ minHeight: "100vh", background: "var(--app-bg, #f8fafc)" }}>
       <Sidebar />
       <main className="main-content" style={{ paddingBottom: "60px" }}>
-        <Header title="Emergency & Casualty Management" subtitle="Rapid Triage, Code Activation & Trauma Bay Tracker" />
+        <Header title="Emergency & Casualty Command Workstation" subtitle="ESI Triage Desk, Code Activation Console, Resuscitation Bay & Trauma Tracker" />
 
         <div style={{ padding: "24px" }}>
-          {/* Action Bar */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
-            <div style={{ display: "flex", gap: "16px" }}>
-              <div style={{ background: "#fef2f2", border: "1px solid #fecaca", padding: "12px 20px", borderRadius: "14px", display: "flex", alignItems: "center", gap: "12px" }}>
-                <Siren color="#ef4444" size={24} className="animate-pulse" />
-                <div>
-                  <div style={{ color: "#991b1b", fontWeight: 800, fontSize: "12px", textTransform: "uppercase" }}>Active Code Alerts</div>
-                  <div style={{ color: "#ef4444", fontWeight: 900, fontSize: "20px" }}>{alerts.length} Active</div>
-                </div>
+          {/* Top KPI Metrics Bar */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fef2f2", color: "#ef4444", display: "grid", placeItems: "center" }}>
+                <Siren size={24} className="animate-pulse" />
               </div>
-              <div style={{ background: "#f0f9ff", border: "1px solid #bae6fd", padding: "12px 20px", borderRadius: "14px", display: "flex", alignItems: "center", gap: "12px" }}>
-                <Activity color="#0284c7" size={24} />
-                <div>
-                  <div style={{ color: "#0369a1", fontWeight: 800, fontSize: "12px", textTransform: "uppercase" }}>Triage Queue</div>
-                  <div style={{ color: "#0284c7", fontWeight: 900, fontSize: "20px" }}>{cases.length} Recorded</div>
-                </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Active Code Alerts</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#be123c" }}>{alerts.length} Active</div>
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "12px" }}>
-              <button 
-                onClick={() => setShowCodeModal(true)}
-                style={{ background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)", color: "#ffffff", padding: "12px 22px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 14px rgba(239, 68, 68, 0.35)" }}
-              >
-                <Siren size={18} /> Trigger Code Alert
-              </button>
-              <button 
-                onClick={() => setShowTriageModal(true)}
-                style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", color: "#ffffff", padding: "12px 22px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 14px rgba(14, 165, 233, 0.35)" }}
-              >
-                <UserPlus size={18} /> New Triage Intake
-              </button>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff1f2", color: "#e11d48", display: "grid", placeItems: "center" }}>
+                <AlertTriangle size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ESI-1 Resus Cases</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#e11d48" }}>{esi1Count} Critical</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#c2410c", display: "grid", placeItems: "center" }}>
+                <Clock size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ESI-2 Emergent</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{esi2Count} High Risk</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
+                <Activity size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Total Triage Queue</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>{cases.length} Registered</div>
+              </div>
             </div>
           </div>
 
-          {/* Active Code Alerts Panel */}
+          {/* Active Code Notifications Banner */}
           {alerts.length > 0 && (
             <div style={{ background: "#fff1f2", border: "1px solid #fda4af", padding: "20px", borderRadius: "16px", marginBottom: "24px" }}>
               <h4 style={{ margin: "0 0 12px 0", color: "#be123c", display: "flex", alignItems: "center", gap: "8px", fontWeight: 900 }}>
@@ -152,14 +175,60 @@ export default function EmergencyPage() {
             </div>
           )}
 
+          {/* Search, Filter & Actions Bar */}
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+            <div style={{ display: "flex", gap: "12px", flex: 1, minWidth: "300px", flexWrap: "wrap" }}>
+              <div style={{ position: "relative", flex: 1, minWidth: "200px" }}>
+                <Search size={18} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+                <input 
+                  type="text" 
+                  placeholder="Search patient, MRN, complaint..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{ width: "100%", padding: "10px 14px 10px 42px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "12px", color: "#0f172a", fontSize: "14px" }}
+                />
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Filter size={16} color="#64748b" />
+                <select 
+                  value={esiFilter} 
+                  onChange={e => setEsiFilter(e.target.value)}
+                  style={{ padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "12px", color: "#0f172a", fontSize: "14px", fontWeight: 700 }}
+                >
+                  <option value="ALL">All ESI Levels</option>
+                  <option value="1">ESI 1 - Resuscitation</option>
+                  <option value="2">ESI 2 - Emergent</option>
+                  <option value="3">ESI 3 - Urgent</option>
+                  <option value="4">ESI 4 - Less Urgent</option>
+                  <option value="5">ESI 5 - Non-Urgent</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button 
+                onClick={() => setShowCodeModal(true)}
+                style={{ background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)", color: "#ffffff", padding: "12px 20px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 14px rgba(239, 68, 68, 0.35)", fontSize: "14px" }}
+              >
+                <Siren size={18} /> Trigger Code Alert
+              </button>
+              <button 
+                onClick={() => setShowTriageModal(true)}
+                style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", color: "#ffffff", padding: "12px 20px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 14px rgba(14, 165, 233, 0.35)", fontSize: "14px" }}
+              >
+                <UserPlus size={18} /> New Triage Intake
+              </button>
+            </div>
+          </div>
+
           {/* Triage Cases Table Card */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 4px 20px -4px rgba(0,0,0,0.05)" }}>
-            <h3 style={{ color: "#0f172a", margin: "0 0 20px 0", fontWeight: 800, fontSize: "18px" }}>Triage & Emergency Patients</h3>
+            <h3 style={{ color: "#0f172a", margin: "0 0 20px 0", fontWeight: 800, fontSize: "18px" }}>Emergency Worklist & Patient Disposition</h3>
             
             {loading ? (
               <div style={{ color: "#64748b", padding: "30px", textAlign: "center", fontWeight: 600 }}>Loading triage queue...</div>
-            ) : cases.length === 0 ? (
-              <div style={{ color: "#64748b", padding: "40px", textAlign: "center", fontWeight: 600 }}>No active emergency patients in triage. Click "New Triage Intake" to register.</div>
+            ) : filteredCases.length === 0 ? (
+              <div style={{ color: "#64748b", padding: "40px", textAlign: "center", fontWeight: 600 }}>No active emergency patients match your filter. Click "New Triage Intake" to register.</div>
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
@@ -175,7 +244,7 @@ export default function EmergencyPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {cases.map((c) => {
+                    {filteredCases.map((c) => {
                       const esiColor = c.esi_level === 1 ? "#ef4444" : c.esi_level === 2 ? "#f97316" : c.esi_level === 3 ? "#d97706" : "#10b981";
                       return (
                         <tr key={c.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
@@ -249,39 +318,39 @@ export default function EmergencyPage() {
                   <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>Chief Complaint</label>
                   <textarea required value={chiefComplaint} onChange={e=>setChiefComplaint(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "6px", fontSize: "14px", height: "70px" }} />
                 </div>
-                <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end", marginTop: "16px" }}>
-                  <button type="button" onClick={()=>setShowTriageModal(false)} style={{ padding: "10px 18px", background: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", borderRadius: "10px", fontWeight: 700, cursor: "pointer" }}>Cancel</button>
-                  <button type="submit" style={{ padding: "10px 22px", background: "#0ea5e9", color: "#ffffff", border: "none", borderRadius: "10px", fontWeight: 800, cursor: "pointer" }}>Submit Triage Intake</button>
+                <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
+                  <button type="button" onClick={() => setShowTriageModal(false)} style={{ flex: 1, padding: "12px", background: "#f1f5f9", color: "#475569", border: "none", borderRadius: "10px", fontWeight: 800, cursor: "pointer" }}>Cancel</button>
+                  <button type="submit" style={{ flex: 1, padding: "12px", background: "#0ea5e9", color: "#ffffff", border: "none", borderRadius: "10px", fontWeight: 800, cursor: "pointer" }}>Save Triage Case</button>
                 </div>
               </form>
             </div>
           </div>
         )}
 
-        {/* Code Trigger Modal */}
+        {/* Code Alert Modal */}
         {showCodeModal && (
           <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-            <div style={{ background: "#ffffff", padding: "32px", borderRadius: "24px", width: "100%", maxWidth: "480px", border: "1px solid #fecaca", boxShadow: "0 25px 50px -12px rgba(239, 68, 68, 0.2)" }}>
-              <h3 style={{ color: "#ef4444", marginTop: 0, fontWeight: 900, fontSize: "20px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <Siren className="animate-pulse" /> Dispatch Emergency Code Alert
+            <div style={{ background: "#ffffff", padding: "32px", borderRadius: "24px", width: "100%", maxWidth: "500px", border: "1px solid #e2e8f0", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)" }}>
+              <h3 style={{ color: "#be123c", marginTop: 0, fontWeight: 900, fontSize: "20px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <Siren size={24} /> Trigger Emergency Code Alert
               </h3>
               <form onSubmit={handleCodeTrigger} style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "20px" }}>
                 <div>
                   <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>Code Category</label>
-                  <select value={codeType} onChange={e=>setCodeType(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "6px", fontSize: "14px" }}>
+                  <select value={codeType} onChange={e=>setCodeType(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "6px", fontSize: "14px", fontWeight: 700 }}>
                     <option value="CODE_BLUE">Code Blue (Cardiac Arrest)</option>
-                    <option value="CODE_RED">Code Red (Fire / Hazard)</option>
-                    <option value="TRAUMA_TEAM">Trauma Team Activation</option>
-                    <option value="CODE_STROKE">Code Stroke Fast-Track</option>
+                    <option value="TRAUMA_TEAM">Trauma Team Dispatch</option>
+                    <option value="CODE_STROKE">Code Stroke</option>
+                    <option value="CODE_RED">Code Red (Fire Hazard)</option>
                   </select>
                 </div>
                 <div>
-                  <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>Location / Bay</label>
+                  <label style={{ color: "#334155", fontSize: "13px", fontWeight: 700 }}>Location</label>
                   <input type="text" required value={codeLocation} onChange={e=>setCodeLocation(e.target.value)} style={{ width: "100%", padding: "10px 14px", background: "#ffffff", border: "1px solid #cbd5e1", color: "#0f172a", borderRadius: "10px", marginTop: "6px", fontSize: "14px" }} />
                 </div>
-                <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end", marginTop: "16px" }}>
-                  <button type="button" onClick={()=>setShowCodeModal(false)} style={{ padding: "10px 18px", background: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", borderRadius: "10px", fontWeight: 700, cursor: "pointer" }}>Cancel</button>
-                  <button type="submit" style={{ padding: "10px 22px", background: "#ef4444", color: "#ffffff", border: "none", borderRadius: "10px", fontWeight: 900, cursor: "pointer" }}>Broadcast STAT Alert</button>
+                <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
+                  <button type="button" onClick={() => setShowCodeModal(false)} style={{ flex: 1, padding: "12px", background: "#f1f5f9", color: "#475569", border: "none", borderRadius: "10px", fontWeight: 800, cursor: "pointer" }}>Cancel</button>
+                  <button type="submit" style={{ flex: 1, padding: "12px", background: "#ef4444", color: "#ffffff", border: "none", borderRadius: "10px", fontWeight: 800, cursor: "pointer" }}>Dispatch Code Alert</button>
                 </div>
               </form>
             </div>
@@ -291,3 +360,4 @@ export default function EmergencyPage() {
     </div>
   );
 }
+

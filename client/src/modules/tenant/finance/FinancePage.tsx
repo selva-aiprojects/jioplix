@@ -4,6 +4,7 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { CircleDollarSign, Stethoscope, RefreshCcw, TrendingDown, Search, Filter, PlusCircle, Download } from "lucide-react";
 
 function getHeaders() {
   const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
@@ -204,13 +205,84 @@ export default function FinancePage() {
     { id: "insurance" as const, label: "Insurance" },
   ];
 
+  const totalPackageRevenue = packages.reduce((s: number, p: any) => s + Number(p.base_price || 0), 0);
+  const pendingRefundsCount = refunds.filter((r: any) => r.status === "PENDING").length;
+  const totalAdvances = advances.reduce((s: number, a: any) => s + Number(a.amount || 0), 0);
+
   return (
     <PlanGateGuard moduleName="Finance & Compliance">
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Finance & Compliance" />
-        <div style={{ padding: "20px 24px" }}>
+        <Header title="Finance & Revenue Management" subtitle="Health packages, surgery billing, advances, refunds, write-offs, GST e-Invoice & insurance eligibility" />
+        <div style={{ padding: "24px" }}>
+
+          {/* KPI Cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#eff6ff", color: "#2563eb", display: "grid", placeItems: "center" }}>
+                <CircleDollarSign size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Health Packages</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e40af" }}>{packages.length} Active</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
+                <Stethoscope size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Surgery Cases</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#15803d" }}>{cases.length} Cases</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#ea580c", display: "grid", placeItems: "center" }}>
+                <RefreshCcw size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Pending Refunds</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{pendingRefundsCount} Pending</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fdf4ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
+                <TrendingDown size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Patient Advances</div>
+                <div style={{ fontSize: "22px", fontWeight: 900, color: "#7c3aed" }}>₹{(totalAdvances / 1000).toFixed(0)}K</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions & Filter Bar */}
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "16px 20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+            <div style={{ display: "flex", gap: "10px", flex: 1, minWidth: "300px", flexWrap: "wrap" }}>
+              <div style={{ position: "relative", flex: 1, minWidth: "180px" }}>
+                <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+                <input type="text" placeholder="Search packages, cases, patients..." style={{ width: "100%", padding: "9px 14px 9px 38px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "13px", background: "#f8fafc" }} />
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Filter size={14} color="#64748b" />
+                <select style={{ padding: "9px 14px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "13px", background: "#f8fafc", fontWeight: 700 }}>
+                  <option>All Categories</option>
+                  <option>HEALTH_CHECKUP</option>
+                  <option>SURGICAL</option>
+                  <option>MATERNITY</option>
+                </select>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button className="button-primary" style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px" }}>
+                <PlusCircle size={15} /> New Package
+              </button>
+              <button style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", padding: "9px 14px", border: "1px solid #cbd5e1", borderRadius: "12px", background: "white", cursor: "pointer", fontWeight: 600, color: "#334155" }}>
+                <Download size={14} /> Export
+              </button>
+            </div>
+          </div>
           {error && (
             <div style={{ background: "#fef2f2", color: "#b91c1c", padding: "12px 16px", borderRadius: "12px", marginBottom: "16px", fontSize: "13px", fontWeight: 600 }}>
               {error}

@@ -4,6 +4,7 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { Users, CalendarCheck, ArrowLeftRight, BadgeCheck, Search, Filter, PlusCircle, Download } from "lucide-react";
 
 function getHeaders() {
   const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
@@ -267,8 +268,76 @@ export default function HrmsPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <main className="main-content">
-        <Header title="Human Resource Management System" />
-        <div style={{ padding: "20px 24px" }}>
+        <Header title="Human Resource Management System" subtitle="Duty roster, shift management, attendance, on-call scheduling, staff credentials & clinical privileges" />
+        <div style={{ padding: "24px" }}>
+
+          {/* KPI Cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#eff6ff", color: "#2563eb", display: "grid", placeItems: "center" }}>
+                <Users size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Total Staff</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e40af" }}>{staff.length} Members</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
+                <CalendarCheck size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>On Duty Today</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#15803d" }}>{analytics?.dutyToday ?? roster.length} Staff</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#ea580c", display: "grid", placeItems: "center" }}>
+                <ArrowLeftRight size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Pending Swaps</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{swaps.filter((s: any) => s.status === "PENDING").length} Pending</div>
+              </div>
+            </div>
+            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fdf4ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
+                <BadgeCheck size={24} />
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Active Credentials</div>
+                <div style={{ fontSize: "24px", fontWeight: 900, color: "#7c3aed" }}>{credentials.length} Certs</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions & Filter Bar */}
+          <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "16px 20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+            <div style={{ display: "flex", gap: "10px", flex: 1, minWidth: "300px", flexWrap: "wrap" }}>
+              <div style={{ position: "relative", flex: 1, minWidth: "180px" }}>
+                <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+                <input type="text" placeholder="Search staff, department, shift..." style={{ width: "100%", padding: "9px 14px 9px 38px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "13px", background: "#f8fafc" }} />
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Filter size={14} color="#64748b" />
+                <select style={{ padding: "9px 14px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "13px", background: "#f8fafc", fontWeight: 700 }}>
+                  <option>All Departments</option>
+                  <option>ICU</option>
+                  <option>Emergency</option>
+                  <option>OPD</option>
+                  <option>OT</option>
+                </select>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button className="button-primary" style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px" }}>
+                <PlusCircle size={15} /> Add Staff
+              </button>
+              <button style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", padding: "9px 14px", border: "1px solid #cbd5e1", borderRadius: "12px", background: "white", cursor: "pointer", fontWeight: 600, color: "#334155" }}>
+                <Download size={14} /> Export
+              </button>
+            </div>
+          </div>
           {error && (
             <div style={{ background: "#fef2f2", color: "#b91c1c", padding: "12px 16px", borderRadius: "12px", marginBottom: "16px", fontSize: "13px", fontWeight: 600 }}>
               {error}
