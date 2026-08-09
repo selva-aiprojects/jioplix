@@ -163,10 +163,10 @@ export default function LandingPage() {
         backdropFilter: 'blur(16px)',
         borderBottom: scrolled ? '1px solid #e2e8f0' : '1px solid transparent',
         transition: 'all 0.3s ease',
-        padding: '0 24px'
+        padding: isMobile ? '0 12px' : '0 24px'
       }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '80px' }}>
-          <BrandLogo size="lg" />
+          <BrandLogo size={isMobile ? 'md' : 'lg'} />
 
           {!isMobile && (
             <nav style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
@@ -179,19 +179,20 @@ export default function LandingPage() {
             </nav>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '14px' }}>
             <button
               onClick={() => navigate('/login')}
               style={{ 
-                padding: '10px 22px', 
+                padding: isMobile ? '6px 12px' : '10px 22px', 
                 borderRadius: '12px', 
                 background: '#ffffff', 
                 color: '#0056A8', 
                 fontWeight: 700, 
-                fontSize: '14px', 
+                fontSize: isMobile ? '12px' : '14px', 
                 border: '1.5px solid #0056A8', 
                 cursor: 'pointer', 
-                transition: 'all 0.2s ease' 
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap'
               }}
               onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = '#e6f0ff'; }}
               onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = '#ffffff'; }}
@@ -203,9 +204,18 @@ export default function LandingPage() {
               target="_blank"
               rel="noreferrer"
               className="btn-sales-whatsapp"
-              style={{ padding: '10px 20px', borderRadius: '12px', fontSize: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+              style={{ 
+                padding: isMobile ? '6px 12px' : '10px 20px', 
+                borderRadius: '12px', 
+                fontSize: isMobile ? '12px' : '14px', 
+                textDecoration: 'none', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                whiteSpace: 'nowrap'
+              }}
             >
-              <MessageSquare size={16} /> Book Live Demo
+              <MessageSquare size={isMobile ? 14 : 16} /> {isMobile ? 'Demo' : 'Book Live Demo'}
             </a>
           </div>
         </div>
