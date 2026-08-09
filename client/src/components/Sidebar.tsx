@@ -708,6 +708,41 @@ export default function Sidebar() {
   // Plan badge color
   const planColor = isEnterprise ? '#f59e0b' : atLeastProfessional ? '#a78bfa' : atLeastStandard ? '#38bdf8' : '#64748b';
 
+  const renderSectionedItems = (items: any[]) => {
+    const sections: Record<string, any[]> = {};
+    items.forEach(item => {
+      const sec = getSection(item.label) || "Other";
+      if (!sections[sec]) sections[sec] = [];
+      sections[sec].push(item);
+    });
+
+    return Object.entries(sections).map(([sectionName, sectionItems]) => (
+      <div key={sectionName} style={{ marginBottom: '8px' }}>
+        {sectionName !== "Other" && (
+          <div style={{
+            padding: '6px 14px 4px', fontSize: '9px', fontWeight: 900,
+            color: 'rgba(255, 255, 255, 0.28)', textTransform: 'uppercase',
+            letterSpacing: '0.8px', display: 'flex', alignItems: 'center', gap: '8px'
+          }}>
+            <span>{sectionName}</span>
+            <span style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.04)' }} />
+          </div>
+        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px' }}>
+          {sectionItems.map((menu, mIdx) => (
+            <SidebarLink
+              key={mIdx}
+              to={menu.path}
+              icon={Icons[menu.label] || Icons[menu.icon] || Box}
+              label={menu.label}
+              isSubItem
+            />
+          ))}
+        </div>
+      </div>
+    ));
+  };
+
   return (
     <>
       <div className="mobile-overlay" onClick={() => {
@@ -815,15 +850,7 @@ export default function Sidebar() {
                           borderLeft: openGroup === subGroup.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
                           marginLeft: '18px',
                         }}>
-                          {subGroup.items.map((menu: any, mIdx: number) => (
-                            <SidebarLink
-                              key={mIdx}
-                              to={menu.path}
-                              icon={Icons[menu.label] || Icons[menu.icon] || Box}
-                              label={menu.label}
-                              isSubItem
-                            />
-                          ))}
+                          {renderSectionedItems(subGroup.items)}
                         </div>
                       </div>
                     );
@@ -866,15 +893,7 @@ export default function Sidebar() {
                   borderLeft: openGroup === group.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
                   marginLeft: '18px',
                 }}>
-                  {group.items.map((menu: any, mIdx: number) => (
-                    <SidebarLink
-                      key={mIdx}
-                      to={menu.path}
-                      icon={Icons[menu.label] || Icons[menu.icon] || Box}
-                      label={menu.label}
-                      isSubItem
-                    />
-                  ))}
+                  {renderSectionedItems(group.items)}
                 </div>
               </div>
             );
@@ -1004,4 +1023,72 @@ function SidebarLink({ to, icon: Icon, label, isSubItem }: { to: string; icon: a
       <span style={{ flex: 1, lineHeight: '1.4' }}>{label}</span>
     </NavLink>
   );
+}
+
+function getSection(label: string): string {
+  const l = label.toLowerCase();
+  // Outpatient (OPD)
+  if (["opd registration", "outpatient registration (opd)", "patient scheduling", "advanced scheduling console", "patient register"].includes(l)) {
+    return "Registration & Scheduling";
+  }
+  if (["doctor's queue", "opd queue", "opd consultation queue", "consultation desk", "doctor's schedule"].includes(l)) {
+    return "Clinical Queues";
+  }
+  if (["clinical archives"].includes(l)) {
+    return "Medical Records";
+  }
+
+  // Inpatient (IPD)
+  if (["admission desk", "inpatient admission (ipd)", "ipd census & daycare"].includes(l)) {
+    return "Admissions";
+  }
+  if (["ipd bed map", "bed management"].includes(l)) {
+    return "Ward Logistics";
+  }
+  if (["discharge summaries", "discharge & summary", "clinical & financial archives"].includes(l)) {
+    return "Discharges & Archives";
+  }
+
+  // Clinical Services
+  if (["laboratory", "laboratory & diagnostics", "ai diagnostic assistant"].includes(l)) {
+    return "Diagnostics & Lab";
+  }
+  if (["pharmacy dashboard", "pharmacy management", "stock inventory", "pharmacy stock", "prescription queue", "medication dispensing"].includes(l)) {
+    return "Pharmacy Operations";
+  }
+
+  // Billing & Finance
+  if (["invoicing & billing", "central billing"].includes(l)) {
+    return "Billing Cycle";
+  }
+  if (["insurance & tpa claims management", "finance & compliance"].includes(l)) {
+    return "Claims & Compliance";
+  }
+
+  // Hospital Operations
+  if (["human resource management system", "hrms", "payroll & compensation processing", "payroll"].includes(l)) {
+    return "Workforce & Payroll";
+  }
+  if (["procurement & supply chain management", "procurement", "pharmacy inventory & stock control", "pharmacy inventory"].includes(l)) {
+    return "Supply Chain";
+  }
+  if (["patient relationship management (crm)", "patient crm"].includes(l)) {
+    return "CRM Relations";
+  }
+
+  // Administration
+  if (["hospital settings (masters)", "hospital settings"].includes(l)) {
+    return "System Settings";
+  }
+  if (["branding & ui settings", "branding settings", "hospital branding & user interface"].includes(l)) {
+    return "Branding & UI";
+  }
+  if (["staff & rbac", "staff & access control (rbac)", "secure configurations", "tenant sensitive configs"].includes(l)) {
+    return "Access & Security";
+  }
+  if (["ticketing management system", "support tickets", "help desk"].includes(l)) {
+    return "Support Desk";
+  }
+
+  return "";
 }
