@@ -833,68 +833,85 @@ export default function Sidebar() {
             if (group.isParent) {
               const hasVisibleItems = group.subGroups?.some((sg: any) => sg.items.length > 0);
               if (!hasVisibleItems) return null;
+              const isParentOpen = openParent === group.id;
               return (
-                <div key={group.id} style={{ marginBottom: '14px', marginTop: '10px' }}>
-                  {/* Visual separator/title for multi-level category */}
-                  <div style={{
-                    padding: '8px 14px 8px', fontSize: '10px', fontWeight: 900,
-                    color: 'rgba(255, 255, 255, 0.35)', textTransform: 'uppercase',
-                    letterSpacing: '1px', borderBottom: '1px solid rgba(255,255,255,0.06)',
-                    marginBottom: '8px'
-                  }}>
-                    {group.title}
-                  </div>
-                  {/* Render subgroups */}
-                  {group.subGroups?.map((subGroup: any) => {
-                    if (subGroup.items.length === 0) return null;
-                    return (
-                      <div key={subGroup.id} style={{ marginBottom: '4px' }}>
-                        <button
-                          onClick={() => toggleGroup(subGroup.id)}
-                          style={{
-                            width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-                            padding: '10px 14px', background: 'none', border: 'none',
-                            color: openGroup === subGroup.id ? 'white' : 'var(--sidebar-text, #94a3b8)',
-                            cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
-                            textTransform: 'uppercase', letterSpacing: '0.6px',
-                          }}
-                        >
-                          <subGroup.icon size={15} style={{ opacity: openGroup === subGroup.id ? 1 : 0.5, flexShrink: 0 }} />
-                          <span style={{ flex: 1, textAlign: 'left' }}>{subGroup.title}</span>
-                          {subGroup.badge && (
-                            <span style={{
-                              fontSize: '8px', fontWeight: 800, color: '#64748b',
-                              background: 'rgba(255,255,255,0.05)', padding: '2px 6px',
-                              borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.3px'
-                            }}>{subGroup.badge}</span>
-                          )}
-                          <ChevronDown size={13} style={{ transform: openGroup === subGroup.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
-                        </button>
+                <div key={group.id} style={{ marginBottom: '4px' }}>
+                  {/* Collapsible Parent Group Button */}
+                  <button
+                    onClick={() => toggleParent(group.id)}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                      padding: '10px 14px', background: 'none', border: 'none',
+                      color: isParentOpen ? 'white' : 'var(--sidebar-text, #94a3b8)',
+                      cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
+                      textTransform: 'uppercase', letterSpacing: '0.6px',
+                    }}
+                  >
+                    <group.icon size={15} style={{ opacity: isParentOpen ? 1 : 0.5, flexShrink: 0 }} />
+                    <span style={{ flex: 1, textAlign: 'left' }}>{group.title}</span>
+                    <ChevronDown size={13} style={{ transform: isParentOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
+                  </button>
 
-                        <div style={{
-                          maxHeight: openGroup === subGroup.id ? '1000px' : '0',
-                          overflow: 'hidden',
-                          transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                          paddingLeft: '8px',
-                          borderLeft: openGroup === subGroup.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
-                          marginLeft: '18px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '2px',
-                        }}>
-                          {subGroup.items.map((menu: any, mIdx: number) => (
-                            <SidebarLink
-                              key={mIdx}
-                              to={menu.path}
-                              icon={Icons[menu.originalLabel] || Icons[menu.label] || Icons[menu.icon] || Box}
-                              label={menu.label}
-                              isSubItem
-                            />
-                          ))}
+                  {/* Render subgroups inside container */}
+                  <div style={{
+                    maxHeight: isParentOpen ? '1000px' : '0',
+                    overflow: 'hidden',
+                    transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    paddingLeft: '8px',
+                    borderLeft: isParentOpen ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
+                    marginLeft: '18px',
+                  }}>
+                    {group.subGroups?.map((subGroup: any) => {
+                      if (subGroup.items.length === 0) return null;
+                      return (
+                        <div key={subGroup.id} style={{ marginBottom: '4px' }}>
+                          <button
+                            onClick={() => toggleGroup(subGroup.id)}
+                            style={{
+                              width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                              padding: '10px 14px', background: 'none', border: 'none',
+                              color: openGroup === subGroup.id ? 'white' : 'var(--sidebar-text, #94a3b8)',
+                              cursor: 'pointer', fontSize: '11px', fontWeight: 800, borderRadius: '10px',
+                              textTransform: 'uppercase', letterSpacing: '0.6px',
+                            }}
+                          >
+                            <subGroup.icon size={15} style={{ opacity: openGroup === subGroup.id ? 1 : 0.5, flexShrink: 0 }} />
+                            <span style={{ flex: 1, textAlign: 'left' }}>{subGroup.title}</span>
+                            {subGroup.badge && (
+                              <span style={{
+                                fontSize: '8px', fontWeight: 800, color: '#64748b',
+                                background: 'rgba(255,255,255,0.05)', padding: '2px 6px',
+                                borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.3px'
+                              }}>{subGroup.badge}</span>
+                            )}
+                            <ChevronDown size={13} style={{ transform: openGroup === subGroup.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', opacity: 0.6, flexShrink: 0 }} />
+                          </button>
+
+                          <div style={{
+                            maxHeight: openGroup === subGroup.id ? '1000px' : '0',
+                            overflow: 'hidden',
+                            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            paddingLeft: '8px',
+                            borderLeft: openGroup === subGroup.id ? '1px solid rgba(0,120,255,0.15)' : '1px solid transparent',
+                            marginLeft: '18px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px',
+                          }}>
+                            {subGroup.items.map((menu: any, mIdx: number) => (
+                              <SidebarLink
+                                key={mIdx}
+                                to={menu.path}
+                                icon={Icons[menu.originalLabel] || Icons[menu.label] || Icons[menu.icon] || Box}
+                                label={menu.label}
+                                isSubItem
+                              />
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               );
             }
