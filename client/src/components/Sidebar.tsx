@@ -619,12 +619,15 @@ export default function Sidebar() {
       {
         id: 'hospital_operations',
         title: "Hospital Operations",
-        items: getItems(nonClinicalFlow).filter(() => {
-          if (!atLeastProfessional) return false;
-          return true;
+        items: getItems(nonClinicalFlow).filter(i => {
+          const name = i.originalLabel?.toLowerCase();
+          if (["pharmacy inventory", "pharmacy inventory & stock control", "stock inventory", "prescription queue"].includes(name)) {
+            return atLeastStandard;
+          }
+          return atLeastProfessional;
         }),
         icon: Building2,
-        badge: !atLeastProfessional ? "Professional+" : null,
+        badge: !atLeastStandard ? "Standard+" : (!atLeastProfessional ? "Professional+" : null),
       },
       {
         id: 'reports_analytics',
@@ -639,12 +642,15 @@ export default function Sidebar() {
       {
         id: 'patient_engagement',
         title: "Patient Engagement",
-        items: getItems(commFlow).filter(() => {
-          if (!atLeastProfessional) return false;
+        items: getItems(commFlow).filter(i => {
+          const name = i.originalLabel?.toLowerCase();
+          if (["patient relationship management (crm)", "patient crm"].includes(name)) {
+            return atLeastProfessional;
+          }
           return true;
         }),
         icon: MessageSquare,
-        badge: !atLeastProfessional ? "Professional+" : null,
+        badge: null,
       },
       {
         id: 'admin',
