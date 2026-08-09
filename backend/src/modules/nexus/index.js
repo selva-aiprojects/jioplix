@@ -123,6 +123,13 @@ async function ensureNexusColumns(prisma) {
     await prisma.$executeRawUnsafe(`ALTER TABLE nexus.tenants ADD COLUMN IF NOT EXISTS hero_background_color VARCHAR(50) DEFAULT '#f8fafc'`);
     await prisma.$executeRawUnsafe(`ALTER TABLE nexus.tenants ADD COLUMN IF NOT EXISTS overall_text_color VARCHAR(50) DEFAULT '#475569'`);
     
+    // Self-healing: Clean existing domain values in nexus.tenants
+    await prisma.$executeRawUnsafe(`
+      UPDATE nexus.tenants
+      SET domain = LOWER(REGEXP_REPLACE(COALESCE(domain, code, name), '[^a-zA-Z0-9]', '', 'g'))
+      WHERE domain IS NULL OR domain ~ '[^a-zA-Z0-9]';
+    `).catch(() => {});
+    
     // Support Ticketing Infrastructure
     await prisma.$executeRawUnsafe(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
     await prisma.$executeRawUnsafe(`CREATE EXTENSION IF NOT EXISTS "pgcrypto"`);
