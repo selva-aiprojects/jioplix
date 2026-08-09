@@ -467,7 +467,7 @@ export default function Sidebar() {
     const gs = [
       {
         id: 'opd',
-        title: "Outpatient Department (OPD)",
+        title: "Outpatient (OPD)",
         items: getItems(opdFlow).filter(i => {
           // Doctor's Schedule visible to doctor + admin
           if (i.label === "Doctor's Schedule" && !isDoctor) return false;
@@ -478,7 +478,7 @@ export default function Sidebar() {
       },
       {
         id: 'ipd',
-        title: "Inpatient Department (IPD)",
+        title: "Inpatient (IPD)",
         items: getItems(ipdFlow).filter(() => {
           if (!atLeastProfessional) return false;
           if (!isClinical) return false;
@@ -504,7 +504,7 @@ export default function Sidebar() {
       },
       {
         id: 'billing',
-        title: "Billing & Revenue",
+        title: "Billing & Finance",
         items: getItems(billingFlow).filter(i => {
           if (i.label === "Finance & Compliance" && !isEnterprise) return false;
           if (!isBilling && !isAdmin) return false;
@@ -515,7 +515,7 @@ export default function Sidebar() {
       },
       {
         id: 'analytics',
-        title: "Analytics & Intelligence",
+        title: "Reports & Analytics",
         items: getItems(["Clinical Analytics", "Operations Analytics"]).filter(() => {
           if (!atLeastProfessional || !isAdmin) return false;
           return true;
@@ -525,7 +525,7 @@ export default function Sidebar() {
       },
       {
         id: 'nonclinical',
-        title: "Non-Clinical Operations",
+        title: "Hospital Operations",
         items: getItems(nonClinicalFlow).filter(() => {
           if (!atLeastProfessional) return false;
           return true;
@@ -535,7 +535,7 @@ export default function Sidebar() {
       },
       {
         id: 'communication',
-        title: "Communication",
+        title: "Communication & Engagement",
         items: getItems(commFlow).filter(() => {
           if (!atLeastProfessional) return false;
           return true;
@@ -545,7 +545,7 @@ export default function Sidebar() {
       },
       {
         id: 'admin',
-        title: "System Administration",
+        title: "Administration",
         items: getItems(adminFlow).filter(i => {
           if (!isAdmin) return false;
           if ((i.label === "Help Desk" || i.label === "Support Tickets") && !atLeastStandard) return false;
