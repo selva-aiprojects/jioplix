@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import ReactECharts from "echarts-for-react";
+import { Inbox, AlertTriangle, CheckCircle2, Timer } from "lucide-react";
 import { hd } from "./api";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 const STATUS_COLORS: Record<string, string> = {
   OPEN: "#3b82f6",
@@ -79,28 +81,44 @@ export default function HelpdeskDashboard() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px" }}>
-        <div style={{ ...card, borderLeft: "4px solid #3b82f6" }}>
-          <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, color: "#94a3b8" }}>OPEN TICKETS</p>
-          <p style={{ margin: "6px 0 0", fontSize: "32px", fontWeight: 900, color: "#0f172a" }}>{kpi.open_tickets ?? 0}</p>
-          <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#64748b" }}>of {kpi.total_tickets ?? 0} total</p>
-        </div>
-        <div style={{ ...card, borderLeft: "4px solid #ef4444" }}>
-          <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, color: "#94a3b8" }}>SLA BREACHED</p>
-          <p style={{ margin: "6px 0 0", fontSize: "32px", fontWeight: 900, color: "#dc2626" }}>{kpi.breached ?? 0}</p>
-          <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#64748b" }}>overdue right now</p>
-        </div>
-        <div style={{ ...card, borderLeft: "4px solid #10b981" }}>
-          <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, color: "#94a3b8" }}>RESOLVED</p>
-          <p style={{ margin: "6px 0 0", fontSize: "32px", fontWeight: 900, color: "#059669" }}>{kpi.resolved ?? 0}</p>
-          <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#64748b" }}>{kpi.avg_resolution_hours ?? "-"}h avg resolution</p>
-        </div>
-        <div style={{ ...card, borderLeft: "4px solid #8b5cf6" }}>
-          <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, color: "#94a3b8" }}>AVG FIRST RESPONSE</p>
-          <p style={{ margin: "6px 0 0", fontSize: "32px", fontWeight: 900, color: "#7c3aed" }}>{kpi.avg_first_response_min ?? "-"}</p>
-          <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#64748b" }}>minutes</p>
-        </div>
-      </div>
+      <MetricsGrid minWidth="180px">
+        <MetricCard
+          icon={Inbox}
+          label="Open Tickets"
+          value={kpi.open_tickets ?? 0}
+          sub={`of ${kpi.total_tickets ?? 0} total`}
+          iconBg="#eff6ff"
+          iconColor="#3b82f6"
+          accent="#3b82f6"
+        />
+        <MetricCard
+          icon={AlertTriangle}
+          label="SLA Breached"
+          value={kpi.breached ?? 0}
+          sub="overdue right now"
+          iconBg="#fef2f2"
+          iconColor="#ef4444"
+          accent="#dc2626"
+        />
+        <MetricCard
+          icon={CheckCircle2}
+          label="Resolved"
+          value={kpi.resolved ?? 0}
+          sub={`${kpi.avg_resolution_hours ?? "-"}h avg resolution`}
+          iconBg="#f0fdf4"
+          iconColor="#10b981"
+          accent="#059669"
+        />
+        <MetricCard
+          icon={Timer}
+          label="Avg First Response"
+          value={kpi.avg_first_response_min ?? "-"}
+          sub="minutes"
+          iconBg="#faf5ff"
+          iconColor="#8b5cf6"
+          accent="#7c3aed"
+        />
+      </MetricsGrid>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
         <div style={card}>

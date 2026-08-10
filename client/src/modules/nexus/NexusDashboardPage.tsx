@@ -8,6 +8,7 @@ import {
   Building2, Activity, Database, Users, Plus, ShieldCheck, 
   ExternalLink, Layers, ArrowUpRight, CheckCircle2, AlertCircle, RefreshCw
 } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../components/MetricCard";
 
 export default function NexusDashboardPage() {
   const navigate = useNavigate();
@@ -81,60 +82,44 @@ export default function NexusDashboardPage() {
         />
 
         {/* Executive KPI Stats Bar */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', marginBottom: '32px' }}>
-          
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 24px -6px rgba(0, 56, 112, 0.05)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(0, 120, 255, 0.1)', color: '#0078FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Building2 size={24} />
-              </div>
-              <span style={{ background: '#dcfce7', color: '#15803d', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>
-                +100% Provisioned
-              </span>
-            </div>
-            <div style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>{tenants.length}</div>
-            <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 700 }}>Active Hospital Shards</div>
-          </div>
-
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 24px -6px rgba(0, 56, 112, 0.05)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Activity size={24} />
-              </div>
-              <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', fontSize: '11px', fontWeight: 900, padding: '4px 10px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} /> LIVE SLA
-              </span>
-            </div>
-            <div style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>99.99%</div>
-            <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 700 }}>Service Uptime &amp; Gateway Health</div>
-          </div>
-
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 24px -6px rgba(0, 56, 112, 0.05)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(157, 78, 221, 0.1)', color: '#9D4EDD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Database size={24} />
-              </div>
-              <span style={{ background: '#f3e8ff', color: '#7e22ce', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>
-                PostgreSQL SSL
-              </span>
-            </div>
-            <div style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>24.8 GB</div>
-            <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 700 }}>Isolated Tenant Database Load</div>
-          </div>
-
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 24px -6px rgba(0, 56, 112, 0.05)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ShieldCheck size={24} />
-              </div>
-              <span style={{ background: '#fef3c7', color: '#b45309', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>
-                HIPAA Tier 7
-              </span>
-            </div>
-            <div style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>100%</div>
-            <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 700 }}>Security &amp; ABDM Compliance Score</div>
-          </div>
-        </div>
+        <MetricsGrid minWidth="260px" style={{ gap: '20px', marginBottom: '32px' }}>
+          <MetricCard
+            icon={Building2}
+            label="Active Hospital Shards"
+            value={tenants.length}
+            badge={<span style={{ background: '#dcfce7', color: '#15803d', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>+100% Provisioned</span>}
+            iconBg="rgba(0, 120, 255, 0.1)"
+            iconColor="#0078FF"
+            accent="#0078FF"
+          />
+          <MetricCard
+            icon={Activity}
+            label="Service Uptime & Gateway Health"
+            value="99.99%"
+            badge={<span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', fontSize: '11px', fontWeight: 900, padding: '4px 10px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} /> LIVE SLA</span>}
+            iconBg="rgba(16, 185, 129, 0.1)"
+            iconColor="#10b981"
+            accent="#10b981"
+          />
+          <MetricCard
+            icon={Database}
+            label="Isolated Tenant Database Load"
+            value="24.8 GB"
+            badge={<span style={{ background: '#f3e8ff', color: '#7e22ce', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>PostgreSQL SSL</span>}
+            iconBg="rgba(157, 78, 221, 0.1)"
+            iconColor="#9D4EDD"
+            accent="#9D4EDD"
+          />
+          <MetricCard
+            icon={ShieldCheck}
+            label="Security & ABDM Compliance Score"
+            value="100%"
+            badge={<span style={{ background: '#fef3c7', color: '#b45309', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>HIPAA Tier 7</span>}
+            iconBg="rgba(245, 158, 11, 0.1)"
+            iconColor="#f59e0b"
+            accent="#f59e0b"
+          />
+        </MetricsGrid>
 
         {/* Shard Directory Table Section */}
         <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '28px', boxShadow: '0 10px 30px -10px rgba(0, 56, 112, 0.06)' }}>

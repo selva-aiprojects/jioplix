@@ -898,7 +898,14 @@ export default function Sidebar() {
     return { groups: gs, ungroupped: mainDashboard };
   }, []);
 
-  const [closedGroups, setClosedGroups] = useState<Set<string>>(new Set());
+  const [closedGroups, setClosedGroups] = useState<Set<string>>(() => {
+    const ids = new Set<string>();
+    groups.forEach((g: any) => {
+      ids.add(g.id);
+      if (g.subGroups) g.subGroups.forEach((sg: any) => ids.add(sg.id));
+    });
+    return ids;
+  });
   const sidebarRef = useRef<HTMLDivElement>(null);
   const lastScrolledRoute = useRef<string>('');
 
@@ -939,6 +946,26 @@ export default function Sidebar() {
       nav.scrollTop = Math.max(0, nav.scrollTop + relativeTop - navRect.height / 2 + linkRect.height / 2);
     }
     lastScrolledRoute.current = currentRoute;
+  }, [location.pathname, location.search, groups]);
+
+  useLayoutEffect(() => {
+    const openIds: string[] = [];
+    groups.forEach((g: any) => {
+      const items = g.subGroups ? g.subGroups.flatMap((sg: any) => sg.items) : g.items || [];
+      if (items.some((i: any) => i.path && matchesLocation(i.path))) openIds.push(g.id);
+      if (g.subGroups) {
+        g.subGroups.forEach((sg: any) => {
+          if (sg.items.some((i: any) => i.path && matchesLocation(i.path))) openIds.push(sg.id);
+        });
+      }
+    });
+    if (openIds.length === 0) return;
+    setClosedGroups(prev => {
+      const next = new Set(prev);
+      let changed = false;
+      openIds.forEach(id => { if (next.has(id)) { next.delete(id); changed = true; } });
+      return changed ? next : prev;
+    });
   }, [location.pathname, location.search, groups]);
 
   const refreshMenus = () => {

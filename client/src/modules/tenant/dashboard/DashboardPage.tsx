@@ -12,6 +12,7 @@ import {
 
 import DoctorDashboardPage from "./DoctorDashboardPage";
 import { formatCurrency } from "../../../utils/currency";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -652,27 +653,26 @@ export default function DashboardPage() {
         {/* ========================================================================= */}
         {plan === 'basic' && (
           <div>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: '16px', marginBottom: '24px' }}>
+            <MetricsGrid minWidth={isMobile ? "150px" : "200px"}>
               {statsLoading ? renderKpiSkeletons(6) : [
-                { label: "Today's Appointments", val: stats.metrics.appointmentsToday || 0, trend: "vs yesterday", isUp: true, icon: Calendar, color: "#3b82f6", bg: "#eff6ff" },
-                { label: "Patients Checked-In", val: stats.metrics.checkedInToday || queue.length || 0, trend: "vs yesterday", isUp: true, icon: Users, color: "#f59e0b", bg: "#fffbeb" },
-                { label: "Pending Bills", val: stats.metrics.pendingBills || 0, trend: "vs yesterday", isUp: true, icon: FileText, color: "#ef4444", bg: "#fef2f2" },
-                { label: "Revenue Today", val: `₹${stats.metrics.dailyRevenue?.toLocaleString?.() || 0}`, trend: "vs yesterday", isUp: true, icon: TrendingUp, color: "#10b981", bg: "#f0fdf4" },
-                { label: "Invoices Today", val: stats.metrics.todayInvoices || 0, trend: "vs yesterday", isUp: true, icon: Stethoscope, color: "#7c3aed", bg: "#f5f3ff" },
-                { label: "Avg. Waiting Time", val: queueLoading ? '...' : (queue.filter((enc) => !enc.is_in_consultation && !enc.is_finished).length === 0 ? '0m' : `${stats.predictive.predictedAvgTime || 0}m`), trend: "vs yesterday", isUp: true, icon: Clock, color: "#0d9488", bg: "#f0fdf4" }
+                { label: "Today's Appointments", val: stats.metrics.appointmentsToday || 0, trend: "vs yesterday", isUp: true, icon: Calendar, color: "#3b82f6" },
+                { label: "Patients Checked-In", val: stats.metrics.checkedInToday || queue.length || 0, trend: "vs yesterday", isUp: true, icon: Users, color: "#f59e0b" },
+                { label: "Pending Bills", val: stats.metrics.pendingBills || 0, trend: "vs yesterday", isUp: true, icon: FileText, color: "#ef4444" },
+                { label: "Revenue Today", val: `₹${stats.metrics.dailyRevenue?.toLocaleString?.() || 0}`, trend: "vs yesterday", isUp: true, icon: TrendingUp, color: "#10b981" },
+                { label: "Invoices Today", val: stats.metrics.todayInvoices || 0, trend: "vs yesterday", isUp: true, icon: Stethoscope, color: "#7c3aed" },
+                { label: "Avg. Waiting Time", val: queueLoading ? '...' : (queue.filter((enc) => !enc.is_in_consultation && !enc.is_finished).length === 0 ? '0m' : `${stats.predictive.predictedAvgTime || 0}m`), trend: "vs yesterday", isUp: true, icon: Clock, color: "#0d9488" }
               ].map((card, idx) => (
-                <div key={idx} className="stat-card" style={{ padding: '16px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: card.bg, color: card.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                    <card.icon size={18} />
-                  </div>
-                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{card.label}</div>
-                  <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', marginTop: '4px' }}>{card.val}</div>
-                  <div style={{ marginTop: '8px', fontSize: '11px', color: '#10b981', fontWeight: 700 }}>
-                    {card.label.includes("Time") || card.label.includes("Bills") ? "↓" : "↑"} {card.trend}
-                  </div>
-                </div>
+                <MetricCard
+                  key={idx}
+                  icon={card.icon}
+                  label={card.label}
+                  value={card.val}
+                  sub={<span>{card.label.includes("Time") || card.label.includes("Bills") ? "↓" : "↑"} {card.trend}</span>}
+                  iconColor={card.color}
+                  accent={card.color}
+                />
               ))}
-            </div>
+            </MetricsGrid>
 
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px', marginBottom: '24px' }}>
               <div className="page-card" style={{ padding: '24px' }}>
@@ -996,31 +996,30 @@ export default function DashboardPage() {
         {/* ========================================================================= */}
         {plan === 'standard' && (
           <div>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: '16px', marginBottom: '24px' }}>
+            <MetricsGrid minWidth={isMobile ? "150px" : "200px"}>
               {statsLoading ? renderKpiSkeletons(6) : [
-                { label: "Today's Appointments", val: stats.metrics.appointmentsToday || 0, trend: "12% vs yesterday", isUp: true, icon: Calendar, color: "#3b82f6", bg: "#eff6ff" },
-                { label: "Patients Checked-In", val: stats.metrics.checkedInToday || queue.length || 0, trend: "10% vs yesterday", isUp: true, icon: Users, color: "#f59e0b", bg: "#fffbeb" },
-                { label: "Pending Bills", val: stats.metrics.pendingBills || 0, trend: "25% vs yesterday", isUp: true, icon: FileText, color: "#ef4444", bg: "#fef2f2" },
-                { label: "Revenue Today", val: `₹${stats.metrics.dailyRevenue?.toLocaleString?.() || 0}`, trend: "18% vs yesterday", isUp: true, icon: TrendingUp, color: "#10b981", bg: "#f0fdf4" },
-                { label: "Prescriptions Issued", val: stats.metrics.prescriptionsToday || 0, trend: "9% vs yesterday", isUp: true, icon: Stethoscope, color: "#7c3aed", bg: "#f5f3ff" },
+                { label: "Today's Appointments", val: stats.metrics.appointmentsToday || 0, trend: "12% vs yesterday", isUp: true, icon: Calendar, color: "#3b82f6" },
+                { label: "Patients Checked-In", val: stats.metrics.checkedInToday || queue.length || 0, trend: "10% vs yesterday", isUp: true, icon: Users, color: "#f59e0b" },
+                { label: "Pending Bills", val: stats.metrics.pendingBills || 0, trend: "25% vs yesterday", isUp: true, icon: FileText, color: "#ef4444" },
+                { label: "Revenue Today", val: `₹${stats.metrics.dailyRevenue?.toLocaleString?.() || 0}`, trend: "18% vs yesterday", isUp: true, icon: TrendingUp, color: "#10b981" },
+                { label: "Prescriptions Issued", val: stats.metrics.prescriptionsToday || 0, trend: "9% vs yesterday", isUp: true, icon: Stethoscope, color: "#7c3aed" },
                 { label: "Avg. Waiting Time", val: queueLoading ? '...' : (queue.filter((enc) => !enc.is_in_consultation && !enc.is_finished).length === 0 ? '0m' : `${queue.length ? Math.round(queue.reduce((sum, enc) => {
                   const start = new Date(enc.created_at).getTime();
                   const diff = Math.floor((Date.now() - start) / 60000);
                   return sum + diff;
-                }, 0) / queue.length) : stats.predictive.predictedAvgTime || 0}m`), trend: "5m vs yesterday", isUp: true, icon: Clock, color: "#0d9488", bg: "#f0fdf4" }
+                }, 0) / queue.length) : stats.predictive.predictedAvgTime || 0}m`), trend: "5m vs yesterday", isUp: true, icon: Clock, color: "#0d9488" }
               ].map((card, idx) => (
-                <div key={idx} className="stat-card" style={{ padding: '16px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: card.bg, color: card.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                    <card.icon size={18} />
-                  </div>
-                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{card.label}</div>
-                  <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', marginTop: '4px' }}>{card.val}</div>
-                  <div style={{ marginTop: '8px', fontSize: '11px', color: '#10b981', fontWeight: 700 }}>
-                    {card.label.includes("Time") || card.label.includes("Bills") ? "↓" : "↑"} {card.trend}
-                  </div>
-                </div>
+                <MetricCard
+                  key={idx}
+                  icon={card.icon}
+                  label={card.label}
+                  value={card.val}
+                  sub={<span>{card.label.includes("Time") || card.label.includes("Bills") ? "↓" : "↑"} {card.trend}</span>}
+                  iconColor={card.color}
+                  accent={card.color}
+                />
               ))}
-            </div>
+            </MetricsGrid>
 
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px', marginBottom: '24px' }}>
               <div className="page-card" style={{ padding: '24px' }}>
@@ -1399,28 +1398,27 @@ export default function DashboardPage() {
         {/* ========================================================================= */}
         {(plan === 'professional' || plan === 'enterprise') && (
           <div>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(7, 1fr)', gap: '16px', marginBottom: '24px' }}>
+            <MetricsGrid minWidth={isMobile ? "150px" : "185px"}>
               {statsLoading ? renderKpiSkeletons(7) : [
-                { label: "Today's Appointments", val: stats.metrics.appointmentsToday || 0, trend: "12% vs yesterday", isUp: true, icon: Calendar, color: "#3b82f6", bg: "#eff6ff" },
-                { label: "Patients Checked-In", val: stats.metrics.checkedInToday || queue.length || 0, trend: "10% vs yesterday", isUp: true, icon: Users, color: "#f59e0b", bg: "#fffbeb" },
-                { label: "Admissions Today", val: stats.metrics.admissionsToday || 0, trend: "33% vs yesterday", isUp: true, icon: Bed, color: "#10b981", bg: "#f0fdf4" },
-                { label: "Discharges Today", val: stats.metrics.dischargesToday || 0, trend: "25% vs yesterday", isUp: true, icon: Bed, color: "#0d9488", bg: "#f0fdf4" },
-                { label: "Bed Occupancy", val: `${stats.metrics.bedOccupancy || 0}%`, trend: "4% vs yesterday", isUp: true, icon: FileCheck, color: "#7c3aed", bg: "#f5f3ff" },
-                { label: "Today's Revenue", val: formatCurrency(stats.metrics.dailyRevenue), trend: "18% vs yesterday", isUp: true, icon: TrendingUp, color: "#10b981", bg: "#f0fdf4" },
-                { label: "Pending Bills", val: stats.metrics.pendingBills || 0, trend: "12% vs yesterday", isUp: true, icon: FileText, color: "#ef4444", bg: "#fef2f2" }
+                { label: "Today's Appointments", val: stats.metrics.appointmentsToday || 0, trend: "12% vs yesterday", isUp: true, icon: Calendar, color: "#3b82f6" },
+                { label: "Patients Checked-In", val: stats.metrics.checkedInToday || queue.length || 0, trend: "10% vs yesterday", isUp: true, icon: Users, color: "#f59e0b" },
+                { label: "Admissions Today", val: stats.metrics.admissionsToday || 0, trend: "33% vs yesterday", isUp: true, icon: Bed, color: "#10b981" },
+                { label: "Discharges Today", val: stats.metrics.dischargesToday || 0, trend: "25% vs yesterday", isUp: true, icon: Bed, color: "#0d9488" },
+                { label: "Bed Occupancy", val: `${stats.metrics.bedOccupancy || 0}%`, trend: "4% vs yesterday", isUp: true, icon: FileCheck, color: "#7c3aed" },
+                { label: "Today's Revenue", val: formatCurrency(stats.metrics.dailyRevenue), trend: "18% vs yesterday", isUp: true, icon: TrendingUp, color: "#10b981" },
+                { label: "Pending Bills", val: stats.metrics.pendingBills || 0, trend: "12% vs yesterday", isUp: true, icon: FileText, color: "#ef4444" }
               ].map((card, idx) => (
-                <div key={idx} className="stat-card" style={{ padding: '16px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: card.bg, color: card.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                    <card.icon size={18} />
-                  </div>
-                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{card.label}</div>
-                  <div style={{ fontSize: '20px', fontWeight: 900, color: '#0f172a', marginTop: '4px' }}>{card.val}</div>
-                  <div style={{ marginTop: '8px', fontSize: '11px', color: '#10b981', fontWeight: 700 }}>
-                    {card.label.includes("Time") || card.label.includes("Bills") ? "↓" : "↑"} {card.trend}
-                  </div>
-                </div>
+                <MetricCard
+                  key={idx}
+                  icon={card.icon}
+                  label={card.label}
+                  value={card.val}
+                  sub={<span>{card.label.includes("Time") || card.label.includes("Bills") ? "↓" : "↑"} {card.trend}</span>}
+                  iconColor={card.color}
+                  accent={card.color}
+                />
               ))}
-            </div>
+            </MetricsGrid>
 
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px', marginBottom: '24px' }}>
               <div className="page-card" style={{ padding: '24px' }}>

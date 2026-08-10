@@ -4,7 +4,8 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
-import { Package, AlertTriangle, ClipboardList, FlaskConical, Search, Filter, PlusCircle, RefreshCw } from "lucide-react";
+import { Package, AlertTriangle, ClipboardList, FlaskConical, Search, Filter, PlusCircle, RefreshCw, Lock, Timer } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 function getHeaders() {
   const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
@@ -176,44 +177,40 @@ export default function InventoryPage() {
         <div style={{ padding: "24px" }}>
 
           {/* KPI Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#eff6ff", color: "#2563eb", display: "grid", placeItems: "center" }}>
-                <Package size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Total SKUs</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e40af" }}>{Number(dash?.total_items || 0)} Items</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: lowStockCount > 0 ? "#fef2f2" : "#f0fdf4", color: lowStockCount > 0 ? "#dc2626" : "#16a34a", display: "grid", placeItems: "center" }}>
-                <AlertTriangle size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Low Stock Alerts</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: lowStockCount > 0 ? "#dc2626" : "#15803d" }}>{lowStockCount} Items</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#ea580c", display: "grid", placeItems: "center" }}>
-                <ClipboardList size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Pending Indents</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{indents.filter((i: any) => i.status === "PENDING").length} Pending</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fdf4ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
-                <FlaskConical size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Narcotics Logs</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#7c3aed" }}>{narcotics.length} Entries</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={Package}
+              label="Total SKUs"
+              value={`${Number(dash?.total_items || 0)} Items`}
+              iconBg="#eff6ff"
+              iconColor="#2563eb"
+              accent="#1e40af"
+            />
+            <MetricCard
+              icon={AlertTriangle}
+              label="Low Stock Alerts"
+              value={`${lowStockCount} Items`}
+              iconBg={lowStockCount > 0 ? "#fef2f2" : "#f0fdf4"}
+              iconColor={lowStockCount > 0 ? "#dc2626" : "#16a34a"}
+              accent={lowStockCount > 0 ? "#dc2626" : "#15803d"}
+            />
+            <MetricCard
+              icon={ClipboardList}
+              label="Pending Indents"
+              value={`${indents.filter((i: any) => i.status === "PENDING").length} Pending`}
+              iconBg="#fff7ed"
+              iconColor="#ea580c"
+              accent="#c2410c"
+            />
+            <MetricCard
+              icon={FlaskConical}
+              label="Narcotics Logs"
+              value={`${narcotics.length} Entries`}
+              iconBg="#fdf4ff"
+              iconColor="#9333ea"
+              accent="#7c3aed"
+            />
+          </MetricsGrid>
 
           {/* Actions & Filter Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "16px 20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
@@ -275,32 +272,13 @@ export default function InventoryPage() {
           ) : (
             <>
               {tab === "dashboard" && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-                  {[
-                    { label: "Pending Indents", value: dash.pendingIndents ?? 0, color: "#0056A8", bg: "rgba(0, 86, 168, 0.08)", icon: "📋" },
-                    { label: "Stock Issues", value: dash.issues ?? 0, color: "#00C897", bg: "rgba(0, 200, 151, 0.08)", icon: "🔄" },
-                    { label: "Narcotic Entries", value: dash.narcotics ?? 0, color: "#0078FF", bg: "rgba(0, 120, 255, 0.08)", icon: "🔒" },
-                    { label: "Low Stock Items", value: dash.lowStock ?? 0, color: "#ef4444", bg: "rgba(239, 68, 68, 0.08)", icon: "⚠️" },
-                    { label: "Expiring Soon", value: dash.expiringSoon ?? 0, color: "#f59e0b", bg: "rgba(245, 158, 11, 0.08)", icon: "⌛" }
-                  ].map((s, i) => (
-                    <div key={i} style={{
-                      background: "white",
-                      padding: "20px 24px",
-                      borderRadius: "20px",
-                      border: "1px solid #e2e8f0",
-                      boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)",
-                      position: "relative",
-                      overflow: "hidden"
-                    }}>
-                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: s.color }} />
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-                        <span style={{ fontSize: "12px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.04em" }}>{s.label}</span>
-                        <span style={{ width: "36px", height: "36px", borderRadius: "10px", background: s.bg, display: "grid", placeItems: "center", fontSize: "18px" }}>{s.icon}</span>
-                      </div>
-                      <p style={{ margin: 0, fontSize: "28px", fontWeight: 800, color: "#0f172a" }}>{s.value}</p>
-                    </div>
-                  ))}
-                </div>
+                <MetricsGrid minWidth="200px">
+                  <MetricCard icon={ClipboardList} label="Pending Indents" value={dash.pendingIndents ?? 0} iconBg="rgba(0, 86, 168, 0.08)" iconColor="#0056A8" accent="#0056A8" />
+                  <MetricCard icon={RefreshCw} label="Stock Issues" value={dash.issues ?? 0} iconBg="rgba(0, 200, 151, 0.08)" iconColor="#00C897" accent="#00C897" />
+                  <MetricCard icon={Lock} label="Narcotic Entries" value={dash.narcotics ?? 0} iconBg="rgba(0, 120, 255, 0.08)" iconColor="#0078FF" accent="#0078FF" />
+                  <MetricCard icon={AlertTriangle} label="Low Stock Items" value={dash.lowStock ?? 0} iconBg="rgba(239, 68, 68, 0.08)" iconColor="#ef4444" accent="#ef4444" />
+                  <MetricCard icon={Timer} label="Expiring Soon" value={dash.expiringSoon ?? 0} iconBg="rgba(245, 158, 11, 0.08)" iconColor="#f59e0b" accent="#f59e0b" />
+                </MetricsGrid>
               )}
 
               {tab === "indents" && (

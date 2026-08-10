@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 import { ShoppingCart, AlertTriangle, Package, CheckCircle, XCircle, Clock, RefreshCw } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 interface Medicine {
   id: string;
@@ -149,21 +150,32 @@ export default function OrderManagementList({ embedded: _embedded = false }: { e
       </div>
 
       {/* ── Summary chips ── */}
-      <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-        {[
-          { label: 'Low-Stock Items', value: medicines.length, color: '#ef4444', icon: <AlertTriangle size={18} /> },
-          { label: 'Active Orders', value: pendingOrders, color: '#f59e0b', icon: <Clock size={18} /> },
-          { label: 'Total Orders', value: orders.length, color: '#3b82f6', icon: <Package size={18} /> },
-        ].map(s => (
-          <div key={s.label} style={{ flex: 1, minWidth: '160px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ color: s.color }}>{s.icon}</div>
-            <div>
-              <div style={{ fontSize: '22px', fontWeight: 900, color: s.color }}>{loading ? '…' : s.value}</div>
-              <div style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>{s.label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <MetricsGrid minWidth="200px">
+        <MetricCard
+          icon={AlertTriangle}
+          label="Low-Stock Items"
+          value={loading ? "…" : medicines.length}
+          iconBg="#fef2f2"
+          iconColor="#ef4444"
+          accent="#ef4444"
+        />
+        <MetricCard
+          icon={Clock}
+          label="Active Orders"
+          value={loading ? "…" : pendingOrders}
+          iconBg="#fffbeb"
+          iconColor="#f59e0b"
+          accent="#f59e0b"
+        />
+        <MetricCard
+          icon={Package}
+          label="Total Orders"
+          value={loading ? "…" : orders.length}
+          iconBg="#eff6ff"
+          iconColor="#3b82f6"
+          accent="#3b82f6"
+        />
+      </MetricsGrid>
 
       {/* ── Tab toggle ── */}
       <div style={{ display: 'flex', gap: '8px', background: '#f1f5f9', padding: '4px', borderRadius: '12px', width: 'fit-content' }}>

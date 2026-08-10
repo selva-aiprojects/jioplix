@@ -3,6 +3,7 @@ import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 import {
   Mail,
@@ -188,29 +189,12 @@ export default function MailManagementPage() {
             </div>
 
             {/* Quick Metrics */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginTop: "28px" }}>
-              <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <div style={{ fontSize: "12px", color: "#94a3b8", fontWeight: 700, marginBottom: "4px" }}>Emails Delivered</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#38bdf8" }}>1,842 Sent</div>
-              </div>
-
-              <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <div style={{ fontSize: "12px", color: "#94a3b8", fontWeight: 700, marginBottom: "4px" }}>SMS Reminders</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#34d399" }}>4,210 Sent</div>
-              </div>
-
-              <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <div style={{ fontSize: "12px", color: "#94a3b8", fontWeight: 700, marginBottom: "4px" }}>Delivery Success Rate</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#4ade80", display: "flex", alignItems: "center", gap: "6px" }}>
-                  99.1% <ShieldCheck size={18} />
-                </div>
-              </div>
-
-              <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <div style={{ fontSize: "12px", color: "#94a3b8", fontWeight: 700, marginBottom: "4px" }}>Failed Queue</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#a7f3d0" }}>0 Failed</div>
-              </div>
-            </div>
+            <MetricsGrid minWidth="180px" style={{ marginTop: "28px" }}>
+              <MetricCard variant="translucent" icon={Mail} label="Emails Delivered" value="1,842 Sent" accent="#38bdf8" />
+              <MetricCard variant="translucent" icon={MessageSquare} label="SMS Reminders" value="4,210 Sent" accent="#34d399" />
+              <MetricCard variant="translucent" icon={ShieldCheck} label="Delivery Success Rate" value="99.1%" accent="#4ade80" />
+              <MetricCard variant="translucent" icon={AlertCircle} label="Failed Queue" value="0 Failed" accent="#a7f3d0" />
+            </MetricsGrid>
           </div>
 
           {/* TABS */}

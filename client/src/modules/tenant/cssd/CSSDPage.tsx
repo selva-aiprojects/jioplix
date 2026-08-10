@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { Package, Plus, Search, Filter, CheckCircle2, AlertTriangle, ShieldCheck, Flame } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function CSSDPage() {
   const [batches, setBatches] = useState<any[]>([]);
@@ -80,47 +81,40 @@ export default function CSSDPage() {
 
         <div style={{ padding: "24px" }}>
           {/* Top KPI Metrics Bar */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
-                <Flame size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Batches Sterilized Today</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#16a34a" }}>{batches.length} Batches</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
-                <CheckCircle2 size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>BI / CI Test Pass Rate</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>{biPassRate}% Passed</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#faf5ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
-                <Package size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Ready Surgical Trays</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#9333ea" }}>48 Trays Ready</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#c2410c", display: "grid", placeItems: "center" }}>
-                <ShieldCheck size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Autoclave Equipment</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>4 Active Units</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={Flame}
+              label="Batches Sterilized Today"
+              value={`${batches.length} Batches`}
+              iconBg="#f0fdf4"
+              iconColor="#16a34a"
+              accent="#16a34a"
+            />
+            <MetricCard
+              icon={CheckCircle2}
+              label="BI / CI Test Pass Rate"
+              value={`${biPassRate}% Passed`}
+              iconBg="#f0f9ff"
+              iconColor="#0284c7"
+              accent="#0284c7"
+            />
+            <MetricCard
+              icon={Package}
+              label="Ready Surgical Trays"
+              value="48 Trays Ready"
+              iconBg="#faf5ff"
+              iconColor="#9333ea"
+              accent="#9333ea"
+            />
+            <MetricCard
+              icon={ShieldCheck}
+              label="Autoclave Equipment"
+              value="4 Active Units"
+              iconBg="#fff7ed"
+              iconColor="#c2410c"
+              accent="#c2410c"
+            />
+          </MetricsGrid>
 
           {/* Search & Actions Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>

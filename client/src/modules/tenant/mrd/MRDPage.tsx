@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { Archive, Plus, Search, Filter, FileText, CheckCircle2, ShieldAlert, Folder } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function MRDPage() {
   const [records, setRecords] = useState<any[]>([]);
@@ -83,47 +84,40 @@ export default function MRDPage() {
 
         <div style={{ padding: "24px" }}>
           {/* Top KPI Metrics Bar */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
-                <Archive size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Indexed Physical Files</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>{records.length} Archived</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#c2410c", display: "grid", placeItems: "center" }}>
-                <ShieldAlert size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Medico-Legal (MLC) Files</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{mlcCount} Flagged</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#faf5ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
-                <FileText size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ICD-10 Coded</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#9333ea" }}>100% Coded</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
-                <CheckCircle2 size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Audit Compliance</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#16a34a" }}>NABH Ready</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={Archive}
+              label="Indexed Physical Files"
+              value={`${records.length} Archived`}
+              iconBg="#f0f9ff"
+              iconColor="#0284c7"
+              accent="#0284c7"
+            />
+            <MetricCard
+              icon={ShieldAlert}
+              label="Medico-Legal (MLC) Files"
+              value={`${mlcCount} Flagged`}
+              iconBg="#fff7ed"
+              iconColor="#c2410c"
+              accent="#c2410c"
+            />
+            <MetricCard
+              icon={FileText}
+              label="ICD-10 Coded"
+              value="100% Coded"
+              iconBg="#faf5ff"
+              iconColor="#9333ea"
+              accent="#9333ea"
+            />
+            <MetricCard
+              icon={CheckCircle2}
+              label="Audit Compliance"
+              value="NABH Ready"
+              iconBg="#f0fdf4"
+              iconColor="#16a34a"
+              accent="#16a34a"
+            />
+          </MetricsGrid>
 
           {/* Search & Action Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>

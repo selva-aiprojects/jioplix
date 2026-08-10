@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { HeartPulse, Plus, Activity, AlertTriangle, ShieldCheck, Zap, Search, Filter } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function ICUPage() {
   const [beds, setBeds] = useState<any[]>([]);
@@ -85,47 +86,40 @@ export default function ICUPage() {
 
         <div style={{ padding: "24px" }}>
           {/* Top KPI Metrics Bar */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
-                <HeartPulse size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ICU Beds Occupied</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>{beds.length} Active</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#faf5ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
-                <Activity size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Mechanical Ventilation</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#9333ea" }}>{ventilatedCount} Patients</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff1f2", color: "#e11d48", display: "grid", placeItems: "center" }}>
-                <AlertTriangle size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>High SOFA Risk</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#e11d48" }}>{criticalSOFACount} Critical</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
-                <ShieldCheck size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Telemetry Monitors</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#16a34a" }}>100% Online</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={HeartPulse}
+              label="ICU Beds Occupied"
+              value={`${beds.length} Active`}
+              iconBg="#f0f9ff"
+              iconColor="#0284c7"
+              accent="#0284c7"
+            />
+            <MetricCard
+              icon={Activity}
+              label="Mechanical Ventilation"
+              value={`${ventilatedCount} Patients`}
+              iconBg="#faf5ff"
+              iconColor="#9333ea"
+              accent="#9333ea"
+            />
+            <MetricCard
+              icon={AlertTriangle}
+              label="High SOFA Risk"
+              value={`${criticalSOFACount} Critical`}
+              iconBg="#fff1f2"
+              iconColor="#e11d48"
+              accent="#e11d48"
+            />
+            <MetricCard
+              icon={ShieldCheck}
+              label="Telemetry Monitors"
+              value="100% Online"
+              iconBg="#f0fdf4"
+              iconColor="#16a34a"
+              accent="#16a34a"
+            />
+          </MetricsGrid>
 
           {/* Search & Actions Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>

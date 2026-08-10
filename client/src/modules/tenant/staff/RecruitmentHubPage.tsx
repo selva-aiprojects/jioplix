@@ -3,6 +3,8 @@ import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { ClipboardList, Hourglass, User, Star } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Requisition {
@@ -248,22 +250,12 @@ export default function RecruitmentHubPage() {
         <Header title="Recruitment Hub" />
 
         {/* ── Stats Row ── */}
-        <div className="grid-responsive" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', marginBottom: '32px' }}>
-          {[
-            { label: 'Open Positions', value: openReqs, color: '#16a34a', icon: '📋' },
-            { label: 'Pending Approval', value: pendingApproval, color: '#d97706', icon: '⏳' },
-            { label: 'Total Candidates', value: totalCandidates, color: '#3b82f6', icon: '👤' },
-            { label: 'Shortlisted / Hired', value: shortlisted, color: '#7c3aed', icon: '⭐' },
-          ].map((s, i) => (
-            <div key={i} className="stat-card" style={{ borderLeft: `4px solid ${s.color}` }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <p style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', margin: 0 }}>{s.label}</p>
-                <span style={{ fontSize: '20px' }}>{s.icon}</span>
-              </div>
-              <h3 style={{ fontSize: '28px', fontWeight: 900, margin: 0, color: s.color }}>{s.value}</h3>
-            </div>
-          ))}
-        </div>
+        <MetricsGrid minWidth="240px">
+          <MetricCard icon={ClipboardList} label="Open Positions" value={openReqs} iconBg="#f0fdf4" iconColor="#16a34a" accent="#16a34a" />
+          <MetricCard icon={Hourglass} label="Pending Approval" value={pendingApproval} iconBg="#fffbeb" iconColor="#d97706" accent="#d97706" />
+          <MetricCard icon={User} label="Total Candidates" value={totalCandidates} iconBg="#eff6ff" iconColor="#3b82f6" accent="#3b82f6" />
+          <MetricCard icon={Star} label="Shortlisted / Hired" value={shortlisted} iconBg="#faf5ff" iconColor="#7c3aed" accent="#7c3aed" />
+        </MetricsGrid>
 
         {/* ── Tab Navigation ── */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', background: '#f1f5f9', padding: '4px', borderRadius: '12px', width: 'fit-content' }}>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { ShieldCheck, Plus, Search, Filter, AlertTriangle, Activity, CheckCircle2, ShieldAlert } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function InfectionControlPage() {
   const [cases, setCases] = useState<any[]>([]);
@@ -78,47 +79,40 @@ export default function InfectionControlPage() {
 
         <div style={{ padding: "24px" }}>
           {/* Top KPI Metrics Bar */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
-                <ShieldCheck size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Active Surveillance Cases</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#16a34a" }}>{cases.length} Tracked</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff1f2", color: "#e11d48", display: "grid", placeItems: "center" }}>
-                <ShieldAlert size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Isolation Beds Active</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#e11d48" }}>{isolationCount} Isolated</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
-                <Activity size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ASP Reviews Approved</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>100% Compliant</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#c2410c", display: "grid", placeItems: "center" }}>
-                <AlertTriangle size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Hospital Infection Rate</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>0.4% Low</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={ShieldCheck}
+              label="Active Surveillance Cases"
+              value={`${cases.length} Tracked`}
+              iconBg="#f0fdf4"
+              iconColor="#16a34a"
+              accent="#16a34a"
+            />
+            <MetricCard
+              icon={ShieldAlert}
+              label="Isolation Beds Active"
+              value={`${isolationCount} Isolated`}
+              iconBg="#fff1f2"
+              iconColor="#e11d48"
+              accent="#e11d48"
+            />
+            <MetricCard
+              icon={Activity}
+              label="ASP Reviews Approved"
+              value="100% Compliant"
+              iconBg="#f0f9ff"
+              iconColor="#0284c7"
+              accent="#0284c7"
+            />
+            <MetricCard
+              icon={AlertTriangle}
+              label="Hospital Infection Rate"
+              value="0.4% Low"
+              iconBg="#fff7ed"
+              iconColor="#c2410c"
+              accent="#c2410c"
+            />
+          </MetricsGrid>
 
           {/* Search & Actions Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>

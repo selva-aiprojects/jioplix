@@ -23,6 +23,7 @@ import Header from "../../components/Header";
 import { getNamespacedItem } from "../../config/theme";
 import { API_BASE_URL as API_BASE } from "../../config/api";
 import { formatCurrency, formatNumber } from "../../utils/currency";
+import { MetricCard, MetricsGrid } from "../../components/MetricCard";
 
 type BillType = 'OPD' | 'LAB' | 'PHARMACY' | 'IPD' | 'DISCHARGE';
 
@@ -334,24 +335,11 @@ export default function BillingPage() {
                 </div>
                 
                 {/* TOP STATS */}
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? '16px' : '24px', marginBottom: '32px' }}>
-                  {[
-                    { label: 'Today\'s Collection', value: formatNumber(stats.dailyCollection), icon: TrendingUp, color: '#10b981', sub: `${stats.invoiceCount} Invoices` },
-                    { label: 'Insurance Pending', value: formatNumber(stats.pendingInsurance), icon: ShieldCheck, color: '#3b82f6', sub: 'Awaiting Settlement' },
-                    { label: 'Outstanding Dues', value: formatNumber(stats.outstandingDues), icon: History, color: '#f59e0b', sub: 'Past 30 Days' }
-                  ].map((s, i) => (
-                    <div key={i} style={{ background: 'white', padding: isMobile ? '16px' : '24px', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '20px' }}>
-                      <div style={{ width: isMobile ? '40px' : '56px', height: isMobile ? '40px' : '56px', borderRadius: '16px', background: `${s.color}10`, color: s.color, display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
-                        <s.icon size={isMobile ? 20 : 28} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '11px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{s.label}</div>
-                        <div style={{ fontSize: isMobile ? '18px' : '24px', fontWeight: 900, color: '#0f172a' }}>₹ {s.value}</div>
-                        {!isMobile && <div style={{ fontSize: '11px', color: '#94a3b8' }}>{s.sub}</div>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <MetricsGrid minWidth={isMobile ? "100%" : "240px"} style={{ gap: isMobile ? "16px" : "24px", marginBottom: "32px" }}>
+                  <MetricCard icon={TrendingUp} label="Today's Collection" value={`₹ ${formatNumber(stats.dailyCollection)}`} sub={`${stats.invoiceCount} Invoices`} iconBg="#f0fdf4" iconColor="#10b981" accent="#10b981" />
+                  <MetricCard icon={ShieldCheck} label="Insurance Pending" value={`₹ ${formatNumber(stats.pendingInsurance)}`} sub="Awaiting Settlement" iconBg="#eff6ff" iconColor="#3b82f6" accent="#3b82f6" />
+                  <MetricCard icon={History} label="Outstanding Dues" value={`₹ ${formatNumber(stats.outstandingDues)}`} sub="Past 30 Days" iconBg="#fffbeb" iconColor="#f59e0b" accent="#f59e0b" />
+                </MetricsGrid>
 
                 {/* CONTEXT TABS */}
                 <div style={{ 

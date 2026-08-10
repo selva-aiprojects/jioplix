@@ -5,6 +5,8 @@ import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { useToast } from "../../../components/ToastProvider";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { Bell, Send, CalendarClock, AlertTriangle } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 interface ReminderLog {
   timestamp: string;
@@ -180,31 +182,12 @@ export default function ReminderTrackerPage() {
         <Header title="Executive Follow-up & WhatsApp Automation Center" />
 
         {/* Top Summary Metrics */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-          <div style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-            <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Total Reminders</div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', marginTop: '6px' }}>{total}</div>
-            <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>All patient touchpoints</div>
-          </div>
-
-          <div style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-            <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Delivery Rate</div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#10b981', marginTop: '6px' }}>{deliveryRate}%</div>
-            <div style={{ fontSize: '12px', color: '#10b981', marginTop: '4px' }}>WhatsApp Cloud API Active</div>
-          </div>
-
-          <div style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-            <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Scheduled Auto-Sends</div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#f59e0b', marginTop: '6px' }}>{scheduledCount}</div>
-            <div style={{ fontSize: '12px', color: '#f59e0b', marginTop: '4px' }}>Queue processed hourly</div>
-          </div>
-
-          <div style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-            <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Undelivered / Failed</div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#ef4444', marginTop: '6px' }}>{failedCount}</div>
-            <div style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px' }}>Action required</div>
-          </div>
-        </div>
+        <MetricsGrid minWidth="220px">
+          <MetricCard icon={Bell} label="Total Reminders" value={total} sub="All patient touchpoints" iconBg="#eff6ff" iconColor="#3b82f6" accent="#0f172a" />
+          <MetricCard icon={Send} label="Delivery Rate" value={`${deliveryRate}%`} sub="WhatsApp Cloud API Active" iconBg="#f0fdf4" iconColor="#10b981" accent="#10b981" />
+          <MetricCard icon={CalendarClock} label="Scheduled Auto-Sends" value={scheduledCount} sub="Queue processed hourly" iconBg="#fffbeb" iconColor="#f59e0b" accent="#f59e0b" />
+          <MetricCard icon={AlertTriangle} label="Undelivered / Failed" value={failedCount} sub="Action required" iconBg="#fef2f2" iconColor="#ef4444" accent="#ef4444" />
+        </MetricsGrid>
 
         {/* Filter & Action Header */}
         <div style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0', marginBottom: '24px', display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', justifyContent: 'space-between' }}>

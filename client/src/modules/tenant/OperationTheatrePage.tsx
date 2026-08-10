@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { MetricCard, MetricsGrid } from "../../components/MetricCard";
 import {
   Activity,
   Calendar,
@@ -113,33 +114,12 @@ export default function OperationTheatrePage() {
           </div>
 
           {/* Quick Metrics */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginTop: "28px" }}>
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#a7f3d0", fontWeight: 700, marginBottom: "4px" }}>Today's Surgeries</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff" }}>{surgeries.length} Cases</div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#a7f3d0", fontWeight: 700, marginBottom: "4px" }}>Currently In-Progress</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#fde047" }}>
-                {surgeries.filter(s => s.status === "In-Progress").length} OT Table Active
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#a7f3d0", fontWeight: 700, marginBottom: "4px" }}>PAC Clearances</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff" }}>
-                100% Cleared <ShieldCheck size={18} color="#6ee7b7" />
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#a7f3d0", fontWeight: 700, marginBottom: "4px" }}>Sponge Count Safety</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#6ee7b7" }}>
-                Verified <CheckCircle2 size={18} />
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="180px" style={{ marginTop: "28px" }}>
+            <MetricCard variant="translucent" icon={Scissors} label="Today's Surgeries" value={`${surgeries.length} Cases`} />
+            <MetricCard variant="translucent" icon={Activity} label="Currently In-Progress" value={`${surgeries.filter(s => s.status === "In-Progress").length} OT Table Active`} accent="#fde047" />
+            <MetricCard variant="translucent" icon={ShieldCheck} label="PAC Clearances" value="100% Cleared" />
+            <MetricCard variant="translucent" icon={CheckCircle2} label="Sponge Count Safety" value="Verified" accent="#6ee7b7" />
+          </MetricsGrid>
         </div>
 
         {/* TABS */}

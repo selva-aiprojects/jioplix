@@ -4,6 +4,8 @@ import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { Bed, BedDouble, CircleDot, Gauge } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function BedManagementPage() {
   const navigate = useNavigate();
@@ -62,20 +64,12 @@ export default function BedManagementPage() {
         <Header title="Bed Management" />
 
         {/* KPI strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '28px' }}>
-          {[
-            { label: 'Total Beds', value: loading ? '—' : totalBeds, color: '#3b82f6', icon: '🛏️' },
-            { label: 'Occupied', value: loading ? '—' : totalOccupied, color: '#ef4444', icon: '🔴' },
-            { label: 'Vacant', value: loading ? '—' : (totalBeds - totalOccupied), color: '#10b981', icon: '🟢' },
-            { label: 'Occupancy Rate', value: loading ? '—' : `${occupancyRate}%`, color: occupancyRate > 80 ? '#ef4444' : '#f59e0b', icon: '📊' },
-          ].map((s, i) => (
-            <div key={i} style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-              <div style={{ fontSize: '22px', marginBottom: '8px' }}>{s.icon}</div>
-              <p style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>{s.label}</p>
-              <p style={{ margin: '4px 0 0', fontSize: '26px', fontWeight: 900, color: s.color }}>{s.value}</p>
-            </div>
-          ))}
-        </div>
+        <MetricsGrid minWidth="240px">
+          <MetricCard icon={Bed} label="Total Beds" value={loading ? "—" : totalBeds} iconBg="#eff6ff" iconColor="#3b82f6" accent="#3b82f6" />
+          <MetricCard icon={BedDouble} label="Occupied" value={loading ? "—" : totalOccupied} iconBg="#fef2f2" iconColor="#ef4444" accent="#ef4444" />
+          <MetricCard icon={CircleDot} label="Vacant" value={loading ? "—" : (totalBeds - totalOccupied)} iconBg="#f0fdf4" iconColor="#10b981" accent="#10b981" />
+          <MetricCard icon={Gauge} label="Occupancy Rate" value={loading ? "—" : `${occupancyRate}%`} iconBg={occupancyRate > 80 ? "#fef2f2" : "#fffbeb"} iconColor={occupancyRate > 80 ? "#ef4444" : "#f59e0b"} accent={occupancyRate > 80 ? "#ef4444" : "#f59e0b"} />
+        </MetricsGrid>
 
         <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '28px' }}>
           {/* Ward list */}

@@ -3,6 +3,8 @@ import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { Users, BadgeCheck, HardHat, Building2 } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 const SPECIALIZATIONS = [
   'General Medicine',
@@ -318,24 +320,12 @@ export default function StaffManagementPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid-responsive" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', marginBottom: '32px' }}>
-          <div className="stat-card">
-            <p style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Total Staff</p>
-            <h3 style={{ fontSize: '24px', fontWeight: 900, margin: 0 }}>{staff.length}</h3>
-          </div>
-          <div className="stat-card">
-            <p style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Permanent</p>
-            <h3 style={{ fontSize: '24px', fontWeight: 900, margin: 0, color: '#16a34a' }}>{staff.filter(s => (s.employment_type || 'Permanent') === 'Permanent').length}</h3>
-          </div>
-          <div className="stat-card">
-            <p style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Contractors</p>
-            <h3 style={{ fontSize: '24px', fontWeight: 900, margin: 0, color: '#d97706' }}>{staff.filter(s => s.employment_type === 'Contract').length}</h3>
-          </div>
-          <div className="stat-card hide-mobile">
-            <p style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Vendors Registered</p>
-            <h3 style={{ fontSize: '24px', fontWeight: 900, margin: 0, color: '#7c3aed' }}>{vendors.length}</h3>
-          </div>
-        </div>
+        <MetricsGrid minWidth="240px">
+          <MetricCard icon={Users} label="Total Staff" value={staff.length} iconBg="#eff6ff" iconColor="#2563eb" accent="#0f172a" />
+          <MetricCard icon={BadgeCheck} label="Permanent" value={staff.filter(s => (s.employment_type || 'Permanent') === 'Permanent').length} iconBg="#f0fdf4" iconColor="#16a34a" accent="#16a34a" />
+          <MetricCard icon={HardHat} label="Contractors" value={staff.filter(s => s.employment_type === 'Contract').length} iconBg="#fffbeb" iconColor="#d97706" accent="#d97706" />
+          <MetricCard icon={Building2} label="Vendors Registered" value={vendors.length} iconBg="#faf5ff" iconColor="#7c3aed" accent="#7c3aed" className="hide-mobile" />
+        </MetricsGrid>
 
         {/* Tab Navigation */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', background: '#f1f5f9', padding: '4px', borderRadius: '12px', width: 'fit-content' }}>

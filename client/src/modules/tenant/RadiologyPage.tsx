@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { MetricCard, MetricsGrid } from "../../components/MetricCard";
 import {
   Activity,
   FileText,
@@ -128,33 +129,12 @@ export default function RadiologyPage() {
           </div>
 
           {/* Quick Metrics */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginTop: "28px" }}>
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#bae6fd", fontWeight: 700, marginBottom: "4px" }}>Today's Orders</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff" }}>{orders.length} Scans</div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#bae6fd", fontWeight: 700, marginBottom: "4px" }}>Pending Reporting</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#fde047" }}>
-                {orders.filter(o => o.status !== "Reported").length} Pending
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#bae6fd", fontWeight: 700, marginBottom: "4px" }}>STAT Urgent Queue</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#f87171", display: "flex", alignItems: "center", gap: "6px" }}>
-                {orders.filter(o => o.priority === "STAT").length} STAT <Zap size={18} />
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#bae6fd", fontWeight: 700, marginBottom: "4px" }}>PACS Connection</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#4ade80", display: "flex", alignItems: "center", gap: "6px" }}>
-                Active <CheckCircle2 size={18} />
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="180px" style={{ marginTop: "28px" }}>
+            <MetricCard variant="translucent" icon={Activity} label="Today's Orders" value={`${orders.length} Scans`} />
+            <MetricCard variant="translucent" icon={Clock} label="Pending Reporting" value={`${orders.filter(o => o.status !== "Reported").length} Pending`} accent="#fde047" />
+            <MetricCard variant="translucent" icon={Zap} label="STAT Urgent Queue" value={`${orders.filter(o => o.priority === "STAT").length} STAT`} accent="#f87171" />
+            <MetricCard variant="translucent" icon={CheckCircle2} label="PACS Connection" value="Active" accent="#4ade80" />
+          </MetricsGrid>
         </div>
 
         {/* MODALITY FILTER BAR */}

@@ -5,7 +5,7 @@ import {
   Shield, ArrowLeftRight, Lock, Bed, Pill, CreditCard,
   Mic, CheckCircle, Star, HeartPulse, MessageSquare, Phone, Mail, ArrowRight,
   Zap, Users, BarChart3,
-  Stethoscope, Calendar, FlaskConical, Headset, Bot, Sparkles, Check
+  Stethoscope, Calendar, FlaskConical, Headset, Bot, Sparkles, Check, Download
 } from 'lucide-react';
 
 const GLOBAL_CSS = `
@@ -104,6 +104,8 @@ const MODULES = [
   { icon: Users, title: 'Staff Roster & HRMS', desc: 'Manage credentials, shifts, attendance, on-call rosters, statutory payroll and permissions.', color: '#ea580c', bg: '#ffedd5', tag: '👨‍⚕️ Automated Shifts' },
   { icon: Shield, title: 'HIPAA RBAC & Security', desc: 'HIPAA-compliant roles, PII masking tiers, granular permissions and audit trails.', color: '#059669', bg: '#d1fae5', tag: '🔒 ABDM M2/M3' },
 ];
+
+const ANDROID_APP = { flutter: '3.44.9', appVersion: '1.0.1' };
 
 const SALES_STATS = [
   { val: '99.99%', label: 'Cloud Uptime SLA', desc: 'High-availability multi-tenant isolation' },
@@ -231,18 +233,23 @@ export default function LandingPage() {
 
           {/* Left Hero Sales Pitch */}
           <div style={{ flex: 1.1, display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeInUp 0.6s ease both' }}>
-            <div style={{ 
-              display: 'inline-flex', 
-              alignSelf: 'flex-start', 
-              alignItems: 'center', 
-              gap: '10px', 
-              background: '#e6f0ff', 
-              border: '1px solid #b8d4f0', 
-              padding: '6px 16px', 
-              borderRadius: '999px' 
-            }}>
-              <span style={{ background: '#0056A8', color: '#ffffff', fontSize: '11px', fontWeight: 900, padding: '2px 8px', borderRadius: '999px' }}>NEW 2026 EDITION</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#003870' }}>✨ 12+ Clinical Modules · AI Co-Pilot · Help Desk SLA</span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignSelf: 'flex-start', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: '#e6f0ff',
+                border: '1px solid #b8d4f0',
+                padding: '6px 16px',
+                borderRadius: '999px'
+              }}>
+                <span style={{ background: '#0056A8', color: '#ffffff', fontSize: '11px', fontWeight: 900, padding: '2px 8px', borderRadius: '999px' }}>NEW 2026 EDITION</span>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: '#003870' }}>✨ 12+ Clinical Modules · AI Co-Pilot · Help Desk SLA</span>
+              </div>
+              <a href="/Jioplix-Lite.apk" download title="Download Android Lite APK" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#dcfce7', border: '1px solid #86efac', padding: '6px 16px', borderRadius: '999px', textDecoration: 'none' }}>
+                <span style={{ fontSize: '13px', fontWeight: 800, color: '#15803d' }}>📱 Android App</span>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#065f46', background: 'rgba(5,150,105,0.12)', padding: '2px 8px', borderRadius: '999px' }}>Flutter {ANDROID_APP.flutter} · v{ANDROID_APP.appVersion}</span>
+              </a>
             </div>
 
             <h1 className="magic-sales-title" style={{ fontSize: isMobile ? '36px' : '56px', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-1.5px', margin: 0 }}>
@@ -281,6 +288,17 @@ export default function LandingPage() {
               >
                 Access Hospital Portal <ArrowRight size={18} />
               </button>
+
+              <a
+                href="/Jioplix.apk"
+                download
+                title="Download Android App (arm64)"
+                style={{ padding: '16px 30px', borderRadius: '14px', fontSize: '16px', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: '#ffffff', color: '#0056A8', fontWeight: 800, border: '1.5px solid #0056A8', transition: 'all 0.25s ease' }}
+                onMouseEnter={e => { (e.target as HTMLAnchorElement).style.background = '#e6f0ff'; }}
+                onMouseLeave={e => { (e.target as HTMLAnchorElement).style.background = '#ffffff'; }}
+              >
+                <Download size={18} /> Download Android App
+              </a>
             </div>
 
             {/* Social Proof */}
@@ -731,6 +749,9 @@ export default function LandingPage() {
             <BrandLogo size="md" />
             <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>
               Copyright © 2026 <strong>Cybelinx Solutions LLP</strong>. All Rights Reserved.
+            </p>
+            <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>
+              Native Android App v{ANDROID_APP.appVersion} · Built on Flutter {ANDROID_APP.flutter} (latest stable)
             </p>
           </footer>
         </div>

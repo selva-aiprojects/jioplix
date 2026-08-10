@@ -5,6 +5,8 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 import { formatCurrency } from "../../../utils/currency";
+import { Package, AlertTriangle, ClipboardList, Wallet } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 
 export default function PharmacyDashboard({ embedded = false }: { embedded?: boolean }) {
@@ -66,31 +68,40 @@ export default function PharmacyDashboard({ embedded = false }: { embedded?: boo
       <main className="main-content" style={{ flex: 1, padding: embedded ? '0' : '24px' }}>
         {!embedded && <Header title="Pharmacy Inventory & Stock Control" />}
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '18px', marginBottom: '24px' }}>
-          {[
-            { label: 'Total Stock Items', value: stats.totalItems, color: '#0056A8', bg: 'rgba(0, 86, 168, 0.08)', icon: '📦' },
-            { label: 'Low Stock Alerts', value: stats.lowStock, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)', icon: '⚠️' },
-            { label: 'Pending Dispenses', value: stats.pendingPrescriptions, color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.08)', icon: '📋' },
-            { label: 'Revenue (Today)', value: formatCurrency(stats.todaysSales), color: '#00C897', bg: 'rgba(0, 200, 151, 0.08)', icon: '💰' }
-          ].map((s, i) => (
-            <div key={i} style={{ 
-              background: 'white', 
-              padding: '20px 24px', 
-              borderRadius: '20px', 
-              border: '1px solid #e2e8f0', 
-              boxShadow: '0 4px 16px -4px rgba(0,0,0,0.04)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: s.color }} />
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</span>
-                <span style={{ width: '36px', height: '36px', borderRadius: '10px', background: s.bg, display: 'grid', placeItems: 'center', fontSize: '18px' }}>{s.icon}</span>
-              </div>
-              <p style={{ margin: 0, fontSize: '28px', fontWeight: 800, color: '#0f172a' }}>{loading ? '...' : s.value}</p>
-            </div>
-          ))}
-        </div>
+        <MetricsGrid minWidth="220px">
+          <MetricCard
+            icon={Package}
+            label="Total Stock Items"
+            value={loading ? "..." : stats.totalItems}
+            iconBg="rgba(0, 86, 168, 0.1)"
+            iconColor="#0056A8"
+            accent="#0056A8"
+          />
+          <MetricCard
+            icon={AlertTriangle}
+            label="Low Stock Alerts"
+            value={loading ? "..." : stats.lowStock}
+            iconBg="rgba(239, 68, 68, 0.1)"
+            iconColor="#ef4444"
+            accent="#ef4444"
+          />
+          <MetricCard
+            icon={ClipboardList}
+            label="Pending Dispenses"
+            value={loading ? "..." : stats.pendingPrescriptions}
+            iconBg="rgba(245, 158, 11, 0.1)"
+            iconColor="#f59e0b"
+            accent="#f59e0b"
+          />
+          <MetricCard
+            icon={Wallet}
+            label="Revenue (Today)"
+            value={loading ? "..." : formatCurrency(stats.todaysSales)}
+            iconBg="rgba(0, 200, 151, 0.1)"
+            iconColor="#00C897"
+            accent="#00C897"
+          />
+        </MetricsGrid>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '32px' }}>
             <div style={{ background: 'white', padding: '32px', borderRadius: '32px', border: '1px solid #e2e8f0' }}>

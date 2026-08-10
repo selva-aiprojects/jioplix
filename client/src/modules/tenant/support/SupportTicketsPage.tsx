@@ -3,6 +3,7 @@ import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 import {
   Ticket,
   Plus,
@@ -173,33 +174,12 @@ export default function SupportTicketsPage() {
           </div>
 
           {/* Quick Metrics */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginTop: "28px" }}>
-            <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontSize: "12px", color: "#a1a1aa", fontWeight: 700, marginBottom: "4px" }}>Total Tickets Logged</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff" }}>{tickets.length} Tickets</div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontSize: "12px", color: "#a1a1aa", fontWeight: 700, marginBottom: "4px" }}>Open / In-Progress</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#fde047" }}>
-                {tickets.filter(t => t.status === "Open" || t.status === "In-Progress").length} Active
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontSize: "12px", color: "#a1a1aa", fontWeight: 700, marginBottom: "4px" }}>Avg SLA Response Time</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#38bdf8", display: "flex", alignItems: "center", gap: "6px" }}>
-                45 mins <Zap size={18} />
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontSize: "12px", color: "#a1a1aa", fontWeight: 700, marginBottom: "4px" }}>Resolved Success Rate</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#4ade80", display: "flex", alignItems: "center", gap: "6px" }}>
-                98.5% <ShieldCheck size={18} />
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="180px" style={{ marginTop: "28px" }}>
+            <MetricCard variant="translucent" icon={Ticket} label="Total Tickets Logged" value={`${tickets.length} Tickets`} />
+            <MetricCard variant="translucent" icon={Clock} label="Open / In-Progress" value={`${tickets.filter(t => t.status === "Open" || t.status === "In-Progress").length} Active`} accent="#fde047" />
+            <MetricCard variant="translucent" icon={Zap} label="Avg SLA Response Time" value="45 mins" accent="#38bdf8" />
+            <MetricCard variant="translucent" icon={ShieldCheck} label="Resolved Success Rate" value="98.5%" accent="#4ade80" />
+          </MetricsGrid>
         </div>
 
         {/* RAISE TICKET FORM MODAL / DRAWER */}

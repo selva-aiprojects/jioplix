@@ -5,6 +5,7 @@ import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 import { Wallet, Users, TrendingUp, FileCheck2, Search, Filter, PlusCircle, Download } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 function getHeaders() {
   const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
@@ -159,44 +160,40 @@ export default function PayrollPage() {
         <div style={{ padding: "24px" }}>
 
           {/* KPI Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#eff6ff", color: "#2563eb", display: "grid", placeItems: "center" }}>
-                <Wallet size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Total Payroll Runs</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e40af" }}>{runs.length} Runs</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
-                <FileCheck2 size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Finalized Runs</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#15803d" }}>{finalizedCount} Done</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#ea580c", display: "grid", placeItems: "center" }}>
-                <TrendingUp size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Net Payable (All Runs)</div>
-                <div style={{ fontSize: "22px", fontWeight: 900, color: "#c2410c" }}>₹{(totalNetPayable / 100000).toFixed(1)}L</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fdf4ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
-                <Users size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Pending Finalization</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#7c3aed" }}>{pendingRuns} Pending</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={Wallet}
+              label="Total Payroll Runs"
+              value={`${runs.length} Runs`}
+              iconBg="#eff6ff"
+              iconColor="#2563eb"
+              accent="#1e40af"
+            />
+            <MetricCard
+              icon={FileCheck2}
+              label="Finalized Runs"
+              value={`${finalizedCount} Done`}
+              iconBg="#f0fdf4"
+              iconColor="#16a34a"
+              accent="#15803d"
+            />
+            <MetricCard
+              icon={TrendingUp}
+              label="Net Payable (All Runs)"
+              value={`₹${(totalNetPayable / 100000).toFixed(1)}L`}
+              iconBg="#fff7ed"
+              iconColor="#ea580c"
+              accent="#c2410c"
+            />
+            <MetricCard
+              icon={Users}
+              label="Pending Finalization"
+              value={`${pendingRuns} Pending`}
+              iconBg="#fdf4ff"
+              iconColor="#9333ea"
+              accent="#7c3aed"
+            />
+          </MetricsGrid>
 
           {/* Actions & Filter Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "16px 20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
@@ -318,11 +315,11 @@ export default function PayrollPage() {
                     </h3>
                     <button onClick={() => { setSelectedRun(null); setPayslip(null); }} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "13px" }}>Close ✕</button>
                   </div>
-                  <div className="grid-responsive" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px", marginBottom: "16px" }}>
-                    <div className="stat-card"><div style={{ fontSize: "11px", color: "#64748b" }}>Gross Total</div><div style={{ fontSize: "16px", fontWeight: 900 }}>{fmt(selectedRun.gross_total)}</div></div>
-                    <div className="stat-card"><div style={{ fontSize: "11px", color: "#64748b" }}>Deductions</div><div style={{ fontSize: "16px", fontWeight: 900 }}>{fmt(selectedRun.deduction_total)}</div></div>
-                    <div className="stat-card"><div style={{ fontSize: "11px", color: "#64748b" }}>Net Payable</div><div style={{ fontSize: "16px", fontWeight: 900, color: "#059669" }}>{fmt(selectedRun.net_total)}</div></div>
-                  </div>
+                  <MetricsGrid minWidth="160px" style={{ marginBottom: "16px" }}>
+                    <MetricCard icon={Wallet} label="Gross Total" value={fmt(selectedRun.gross_total)} accent="#1e3a8a" />
+                    <MetricCard icon={TrendingUp} label="Deductions" value={fmt(selectedRun.deduction_total)} accent="#b45309" />
+                    <MetricCard icon={FileCheck2} label="Net Payable" value={fmt(selectedRun.net_total)} accent="#059669" />
+                  </MetricsGrid>
 
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
                     <thead>

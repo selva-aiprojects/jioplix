@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { MetricCard, MetricsGrid } from "../../components/MetricCard";
 import {
   Droplet,
   UserPlus,
@@ -186,31 +187,12 @@ export default function BloodBankPage() {
           </div>
 
           {/* Quick Metrics */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginTop: "28px" }}>
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#fecaca", fontWeight: 700, marginBottom: "4px" }}>Total Blood Units</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff" }}>{bags.length} Units</div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#fecaca", fontWeight: 700, marginBottom: "4px" }}>Registered Donors</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff" }}>{donors.length} Donors</div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#fecaca", fontWeight: 700, marginBottom: "4px" }}>Expiring &lt; 7 Days</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#fef08a", display: "flex", alignItems: "center", gap: "6px" }}>
-                {bags.filter(b => b.status === "expiring_soon").length} Units <AlertTriangle size={18} />
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#fecaca", fontWeight: 700, marginBottom: "4px" }}>Safety Screened</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#86efac", display: "flex", alignItems: "center", gap: "6px" }}>
-                100% Negative <ShieldCheck size={18} />
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="180px" style={{ marginTop: "28px" }}>
+            <MetricCard variant="translucent" icon={Droplet} label="Total Blood Units" value={`${bags.length} Units`} />
+            <MetricCard variant="translucent" icon={Heart} label="Registered Donors" value={`${donors.length} Donors`} />
+            <MetricCard variant="translucent" icon={AlertTriangle} label="Expiring < 7 Days" value={`${bags.filter(b => b.status === "expiring_soon").length} Units`} accent="#fef08a" />
+            <MetricCard variant="translucent" icon={ShieldCheck} label="Safety Screened" value="100% Negative" accent="#86efac" />
+          </MetricsGrid>
         </div>
 
         {/* BLOOD GROUP QUICK FILTER CARDS */}

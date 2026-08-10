@@ -6,6 +6,7 @@ import Header from "../../../components/Header";
 import { useToast } from "../../../components/ToastProvider";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 import { Bed, ShieldAlert, BadgeCheck, CheckCircle2, User, HeartPulse, Stethoscope, Search, UserPlus, SlidersHorizontal, Activity, ArrowRight, ShieldCheck, Info } from 'lucide-react';
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 
 const WARD_COLORS: Record<string, { bg: string; badge: string; text: string }> = {
@@ -114,29 +115,12 @@ export default function IPDBedMap() {
         </div>
 
         {/* KPI Strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
-          {[
-            { label: 'Total Capacity', value: totalBeds, color: '#0056A8', icon: <Bed size={22} />, bg: '#eff6ff' },
-            { label: 'Occupied Beds', value: totalOccupied, color: '#ef4444', icon: <Activity size={22} />, bg: '#fef2f2' },
-            { label: 'Available Beds', value: totalBeds - totalOccupied, color: '#10b981', icon: <ShieldCheck size={22} />, bg: '#ecfdf5' },
-            { label: 'Bed Occupancy', value: `${occupancyRate}%`, color: '#a855f7', icon: <HeartPulse size={22} />, bg: '#fdf4ff' },
-          ].map((s, i) => (
-            <div key={i} style={{ 
-              background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', 
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'transform 0.2s',
-              cursor: 'default'
-            }} className="hover-scale">
-              <div>
-                <p style={{ margin: 0, fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</p>
-                <p style={{ margin: '6px 0 0', fontSize: '28px', fontWeight: 900, color: s.color }}>{loading ? '—' : s.value}</p>
-              </div>
-              <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: s.bg, color: s.color, display: 'grid', placeItems: 'center' }}>
-                {s.icon}
-              </div>
-            </div>
-          ))}
-        </div>
+        <MetricsGrid minWidth="240px">
+          <MetricCard icon={Bed} label="Total Capacity" value={loading ? "—" : totalBeds} iconBg="#eff6ff" iconColor="#0056A8" accent="#0056A8" />
+          <MetricCard icon={Activity} label="Occupied Beds" value={loading ? "—" : totalOccupied} iconBg="#fef2f2" iconColor="#ef4444" accent="#ef4444" />
+          <MetricCard icon={ShieldCheck} label="Available Beds" value={loading ? "—" : (totalBeds - totalOccupied)} iconBg="#ecfdf5" iconColor="#10b981" accent="#10b981" />
+          <MetricCard icon={HeartPulse} label="Bed Occupancy" value={loading ? "—" : `${occupancyRate}%`} iconBg="#fdf4ff" iconColor="#a855f7" accent="#a855f7" />
+        </MetricsGrid>
 
         <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '28px' }}>
           {/* Ward List */}

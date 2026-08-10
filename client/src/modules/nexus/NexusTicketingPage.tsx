@@ -3,6 +3,8 @@ import axios from "axios";
 import NexusSidebar from "../../components/NexusSidebar";
 import NexusHeader from "../../components/NexusHeader";
 import { API_BASE_URL as API_BASE } from "../../config/api";
+import { Inbox, CheckCircle2 } from "lucide-react";
+import { MetricCard } from "../../components/MetricCard";
 
 export default function NexusTicketingPage() {
   const [tickets, setTickets] = useState<any[]>([]);
@@ -54,13 +56,11 @@ export default function NexusTicketingPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 450px', gap: '32px' }}>
           <div>
              <div style={{ display: 'flex', gap: '12px', marginBottom: '32px' }}>
-                <div style={{ flex: 1, background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                   <p style={{ margin: 0, fontSize: '11px', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase' }}>Active Tickets</p>
-                   <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 900 }}>{tickets.filter(t => t.status === 'Open').length}</p>
+                <div style={{ flex: 1 }}>
+                  <MetricCard icon={Inbox} label="Active Tickets" value={tickets.filter(t => t.status === 'Open').length} iconBg="#eff6ff" iconColor="#3b82f6" accent="#0f172a" />
                 </div>
-                <div style={{ flex: 1, background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                   <p style={{ margin: 0, fontSize: '11px', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase' }}>Resolved (7d)</p>
-                   <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 900 }}>{tickets.filter(t => t.status === 'Resolved').length}</p>
+                <div style={{ flex: 1 }}>
+                  <MetricCard icon={CheckCircle2} label="Resolved (7d)" value={tickets.filter(t => t.status === 'Resolved').length} iconBg="#f0fdf4" iconColor="#10b981" accent="#0f172a" />
                 </div>
              </div>
 

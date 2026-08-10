@@ -4,7 +4,8 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
-import { ShoppingCart, FileText, Truck, CheckSquare, Search, Filter, PlusCircle, Download } from "lucide-react";
+import { ShoppingCart, FileText, Truck, CheckSquare, Search, Filter, PlusCircle, Download, ScrollText, PackageCheck, Zap } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 function getHeaders() {
   const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
@@ -195,44 +196,40 @@ export default function ProcurementPage() {
         <div style={{ padding: "24px" }}>
 
           {/* KPI Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#eff6ff", color: "#2563eb", display: "grid", placeItems: "center" }}>
-                <FileText size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Rate Contracts</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e40af" }}>{contracts.length} Active</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#ea580c", display: "grid", placeItems: "center" }}>
-                <ShoppingCart size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Requisitions</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{requisitions.length} Open</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
-                <Truck size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Purchase Orders</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#15803d" }}>{orders.length} Orders</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fdf4ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
-                <CheckSquare size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>GRN Receipts</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#7c3aed" }}>{grns.length} Received</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={FileText}
+              label="Rate Contracts"
+              value={`${contracts.length} Active`}
+              iconBg="#eff6ff"
+              iconColor="#2563eb"
+              accent="#1e40af"
+            />
+            <MetricCard
+              icon={ShoppingCart}
+              label="Requisitions"
+              value={`${requisitions.length} Open`}
+              iconBg="#fff7ed"
+              iconColor="#ea580c"
+              accent="#c2410c"
+            />
+            <MetricCard
+              icon={Truck}
+              label="Purchase Orders"
+              value={`${orders.length} Orders`}
+              iconBg="#f0fdf4"
+              iconColor="#16a34a"
+              accent="#15803d"
+            />
+            <MetricCard
+              icon={CheckSquare}
+              label="GRN Receipts"
+              value={`${grns.length} Received`}
+              iconBg="#fdf4ff"
+              iconColor="#9333ea"
+              accent="#7c3aed"
+            />
+          </MetricsGrid>
 
           {/* Actions & Filter Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "16px 20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
@@ -295,32 +292,13 @@ export default function ProcurementPage() {
           ) : (
             <>
               {tab === "dashboard" && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-                  {[
-                    { label: "Rate Contracts", value: contracts.length, color: "#0056A8", bg: "rgba(0, 86, 168, 0.08)", icon: "📜" },
-                    { label: "Requisitions", value: requisitions.length, color: "#00C897", bg: "rgba(0, 200, 151, 0.08)", icon: "📑" },
-                    { label: "Purchase Orders", value: orders.length, color: "#0078FF", bg: "rgba(0, 120, 255, 0.08)", icon: "🛒" },
-                    { label: "GRN Receipts", value: grns.length, color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.08)", icon: "📦" },
-                    { label: "Match Exceptions", value: matches.filter((m: any) => m.match_status !== "MATCHED").length, color: "#ef4444", bg: "rgba(239, 68, 68, 0.08)", icon: "⚡" }
-                  ].map((s, i) => (
-                    <div key={i} style={{
-                      background: "white",
-                      padding: "20px 24px",
-                      borderRadius: "20px",
-                      border: "1px solid #e2e8f0",
-                      boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)",
-                      position: "relative",
-                      overflow: "hidden"
-                    }}>
-                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: s.color }} />
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-                        <span style={{ fontSize: "12px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.04em" }}>{s.label}</span>
-                        <span style={{ width: "36px", height: "36px", borderRadius: "10px", background: s.bg, display: "grid", placeItems: "center", fontSize: "18px" }}>{s.icon}</span>
-                      </div>
-                      <p style={{ margin: 0, fontSize: "28px", fontWeight: 800, color: "#0f172a" }}>{s.value}</p>
-                    </div>
-                  ))}
-                </div>
+                <MetricsGrid minWidth="200px">
+                  <MetricCard icon={ScrollText} label="Rate Contracts" value={contracts.length} iconBg="rgba(0, 86, 168, 0.08)" iconColor="#0056A8" accent="#0056A8" />
+                  <MetricCard icon={FileText} label="Requisitions" value={requisitions.length} iconBg="rgba(0, 200, 151, 0.08)" iconColor="#00C897" accent="#00C897" />
+                  <MetricCard icon={ShoppingCart} label="Purchase Orders" value={orders.length} iconBg="rgba(0, 120, 255, 0.08)" iconColor="#0078FF" accent="#0078FF" />
+                  <MetricCard icon={PackageCheck} label="GRN Receipts" value={grns.length} iconBg="rgba(139, 92, 246, 0.08)" iconColor="#8b5cf6" accent="#8b5cf6" />
+                  <MetricCard icon={Zap} label="Match Exceptions" value={matches.filter((m: any) => m.match_status !== "MATCHED").length} iconBg="rgba(239, 68, 68, 0.08)" iconColor="#ef4444" accent="#ef4444" />
+                </MetricsGrid>
               )}
 
               {tab === "contracts" && (

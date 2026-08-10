@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { Siren, Plus, Search, Filter, Clock, CheckCircle2, Navigation, Activity } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function AmbulancePage() {
   const [trips, setTrips] = useState<any[]>([]);
@@ -78,47 +79,40 @@ export default function AmbulancePage() {
 
         <div style={{ padding: "24px" }}>
           {/* Top KPI Metrics Bar */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fef2f2", color: "#ef4444", display: "grid", placeItems: "center" }}>
-                <Siren size={24} className="animate-pulse" />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Active Emergency Dispatches</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#dc2626" }}>{trips.length} Trips</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
-                <Navigation size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ALS Ambulance Fleet</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>{alsFleetCount} Units</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#c2410c", display: "grid", placeItems: "center" }}>
-                <Clock size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Avg Dispatch Response</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>8.5 Mins</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
-                <CheckCircle2 size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>GPS Telemetry</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#16a34a" }}>Online</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={Siren}
+              label="Active Emergency Dispatches"
+              value={`${trips.length} Trips`}
+              iconBg="#fef2f2"
+              iconColor="#ef4444"
+              accent="#dc2626"
+            />
+            <MetricCard
+              icon={Navigation}
+              label="ALS Ambulance Fleet"
+              value={`${alsFleetCount} Units`}
+              iconBg="#f0f9ff"
+              iconColor="#0284c7"
+              accent="#0284c7"
+            />
+            <MetricCard
+              icon={Clock}
+              label="Avg Dispatch Response"
+              value="8.5 Mins"
+              iconBg="#fff7ed"
+              iconColor="#c2410c"
+              accent="#c2410c"
+            />
+            <MetricCard
+              icon={CheckCircle2}
+              label="GPS Telemetry"
+              value="Online"
+              iconBg="#f0fdf4"
+              iconColor="#16a34a"
+              accent="#16a34a"
+            />
+          </MetricsGrid>
 
           {/* Search & Actions Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>

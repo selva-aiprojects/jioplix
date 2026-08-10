@@ -3,6 +3,7 @@ import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 import {
   Sparkles,
   UploadCloud,
@@ -259,35 +260,12 @@ export default function AILabAssistant() {
           </div>
 
           {/* Quick Metrics Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginTop: "32px", position: "relative", zIndex: 2 }}>
-            <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontSize: "12px", color: "#a5b4fc", fontWeight: 700, marginBottom: "4px" }}>AI OCR Accuracy</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#38d399", display: "flex", alignItems: "center", gap: "8px" }}>
-                99.4% <ShieldCheck size={20} color="#38d399" />
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontSize: "12px", color: "#a5b4fc", fontWeight: 700, marginBottom: "4px" }}>Avg Extraction Time</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#38bdf8", display: "flex", alignItems: "center", gap: "8px" }}>
-                1.2 sec <Zap size={20} color="#38bdf8" />
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontSize: "12px", color: "#a5b4fc", fontWeight: 700, marginBottom: "4px" }}>Processed Reports</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#f472b6", display: "flex", alignItems: "center", gap: "8px" }}>
-                1,248 <FileText size={20} color="#f472b6" />
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.06)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontSize: "12px", color: "#a5b4fc", fontWeight: 700, marginBottom: "4px" }}>EMR Auto-Sync</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#c084fc", display: "flex", alignItems: "center", gap: "8px" }}>
-                Active <Database size={20} color="#c084fc" />
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="180px" style={{ marginTop: "32px", position: "relative", zIndex: 2 }}>
+            <MetricCard variant="translucent" icon={ShieldCheck} label="AI OCR Accuracy" value="99.4%" accent="#38d399" />
+            <MetricCard variant="translucent" icon={Zap} label="Avg Extraction Time" value="1.2 sec" accent="#38bdf8" />
+            <MetricCard variant="translucent" icon={FileText} label="Processed Reports" value="1,248" accent="#f472b6" />
+            <MetricCard variant="translucent" icon={Database} label="EMR Auto-Sync" value="Active" accent="#c084fc" />
+          </MetricsGrid>
         </div>
 
         {/* NAVIGATION TABS */}

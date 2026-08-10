@@ -14,6 +14,7 @@ import {
 import Header from '../../../components/Header';
 import Sidebar from '../../../components/Sidebar';
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function ClinicalAnalyticsDashboard() {
   const [data, setData] = useState<any>(null);
@@ -149,12 +150,12 @@ export default function ClinicalAnalyticsDashboard() {
         </div>
 
         {/* METRIC CARDS */}
-          <div className="stats-grid">
-            <MetricCard icon={<Users size={24} />} label="Total Consultations" value={metrics.consultations} trend="+12%" color="#4f46e5" />
-            <MetricCard icon={<Clock size={24} />} label="Avg Wait Time" value={`${metrics.waitTime}m`} trend="-4m" color="#0ea5e9" />
-            <MetricCard icon={<AlertTriangle size={24} />} label="Emergency Triggers" value={metrics.emergencies} trend="+2" color="#ef4444" />
-            <MetricCard icon={<Target size={24} />} label="Revenue Realization" value={`₹${(metrics.revenue / 1000).toFixed(1)}k`} trend="+18%" color="#10b981" />
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard icon={Users} label="Total Consultations" value={metrics.consultations} badge={<TrendBadge trend="+12%" />} iconBg="#eef2ff" iconColor="#4f46e5" accent="#4f46e5" />
+            <MetricCard icon={Clock} label="Avg Wait Time" value={`${metrics.waitTime}m`} badge={<TrendBadge trend="-4m" />} iconBg="#f0f9ff" iconColor="#0ea5e9" accent="#0ea5e9" />
+            <MetricCard icon={AlertTriangle} label="Emergency Triggers" value={metrics.emergencies} badge={<TrendBadge trend="+2" />} iconBg="#fef2f2" iconColor="#ef4444" accent="#ef4444" />
+            <MetricCard icon={Target} label="Revenue Realization" value={`₹${(metrics.revenue / 1000).toFixed(1)}k`} badge={<TrendBadge trend="+18%" />} iconBg="#f0fdf4" iconColor="#10b981" accent="#10b981" />
+          </MetricsGrid>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '24px' }}>
            {/* PATIENT VOLUME */}
@@ -217,17 +218,8 @@ export default function ClinicalAnalyticsDashboard() {
 
 // --- SUBCOMPONENTS ---
 
-const MetricCard = ({ icon, label, value, trend, color }: any) => (
-  <div className="stat-card" style={{ borderLeft: `6px solid ${color}` }}>
-    <div className="stat-header">
-      <div className="stat-icon" style={{ background: 'var(--app-bg)' }}>{icon}</div>
-      <span style={{ fontSize: '11px', fontWeight: 900, color: trend.startsWith('+') ? '#10b981' : '#ef4444', background: trend.startsWith('+') ? '#f0fdf4' : '#fef2f2', padding: '4px 8px', borderRadius: '6px' }}>{trend}</span>
-    </div>
-    <div>
-      <div className="stat-label">{label}</div>
-      <div className="stat-value">{value}</div>
-    </div>
-  </div>
+const TrendBadge = ({ trend }: { trend: string }) => (
+  <span style={{ fontSize: '11px', fontWeight: 900, color: trend.startsWith('+') ? '#10b981' : '#ef4444', background: trend.startsWith('+') ? '#f0fdf4' : '#fef2f2', padding: '3px 8px', borderRadius: '6px' }}>{trend}</span>
 );
 
 const AlertItem = ({ type, title, desc, time }: any) => {

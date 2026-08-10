@@ -5,6 +5,7 @@ import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 import { Shield, Plus, Search, FileText, CheckCircle, Clock, AlertCircle, Building2, UserPlus } from "lucide-react";
 import { formatCurrency } from "../../../utils/currency";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function InsurancePage() {
   const [activeTab, setActiveTab] = useState('claims');
@@ -135,24 +136,12 @@ export default function InsurancePage() {
 
         {activeTab === 'claims' && (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
-              {[
-                { label: 'Active Claims', val: claims.length, icon: FileText, color: '#3b82f6' },
-                { label: 'Pre-Auth Pending', val: claims.filter(c => c.status?.includes('PENDING')).length, icon: Clock, color: '#f59e0b' },
-                { label: 'Settled Today', val: '₹ 0', icon: CheckCircle, color: '#10b981' },
-                { label: 'Rejected/Query', val: claims.filter(c => c.status?.includes('REJECTED')).length, icon: AlertCircle, color: '#ef4444' },
-              ].map((s, i) => (
-                <div key={i} style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                      <div style={{ padding: '8px', borderRadius: '12px', background: `${s.color}10` }}>
-                        <s.icon size={20} color={s.color} />
-                      </div>
-                   </div>
-                   <p style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', margin: 0 }}>{s.label}</p>
-                   <p style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', margin: '4px 0 0' }}>{s.val}</p>
-                </div>
-              ))}
-            </div>
+            <MetricsGrid minWidth="240px">
+              <MetricCard icon={FileText} label="Active Claims" value={claims.length} iconBg="#eff6ff" iconColor="#3b82f6" accent="#3b82f6" />
+              <MetricCard icon={Clock} label="Pre-Auth Pending" value={claims.filter(c => c.status?.includes('PENDING')).length} iconBg="#fffbeb" iconColor="#f59e0b" accent="#f59e0b" />
+              <MetricCard icon={CheckCircle} label="Settled Today" value="₹ 0" iconBg="#f0fdf4" iconColor="#10b981" accent="#10b981" />
+              <MetricCard icon={AlertCircle} label="Rejected/Query" value={claims.filter(c => c.status?.includes('REJECTED')).length} iconBg="#fef2f2" iconColor="#ef4444" accent="#ef4444" />
+            </MetricsGrid>
 
             <div style={{ background: 'white', borderRadius: '28px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
               <div style={{ padding: '24px', borderBottom: '1px solid #f1f5f9', display: 'flex', gap: '16px' }}>

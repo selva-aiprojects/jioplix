@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
 import { Users, FileText, Pill, FlaskConical, TrendingUp, UserCheck, RefreshCcw, Activity, Clock, ChevronRight } from "lucide-react";
 import { formatNumber } from "../../../utils/currency";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function DoctorDashboardPage() {
   const navigate = useNavigate();
@@ -108,67 +109,69 @@ export default function DoctorDashboardPage() {
 
         {/* TOP ROW: Patient Metrics */}
         <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a', marginBottom: '20px' }}>Patient Overview</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '40px' }}>
-          <div className="stat-card" style={{ padding: '24px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '20px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <Users size={20} />
-            </div>
-            <div style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a' }}>{loading ? '...' : stats.patientsSeen}</div>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Appointed Patients</div>
-          </div>
-          
-          <div className="stat-card" style={{ padding: '24px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '20px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#f0fdf4', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <UserCheck size={20} />
-            </div>
-            <div style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a' }}>{loading ? '...' : stats.newPatients}</div>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>New Patients</div>
-          </div>
-
-          <div className="stat-card" style={{ padding: '24px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '20px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#fff7ed', color: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <RefreshCcw size={20} />
-            </div>
-            <div style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a' }}>{loading ? '...' : stats.repeatPatients}</div>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Returning Patients</div>
-          </div>
-        </div>
+        <MetricsGrid>
+          <MetricCard
+            icon={Users}
+            label="Total Appointed Patients"
+            value={loading ? "..." : stats.patientsSeen}
+            iconBg="#eff6ff"
+            iconColor="#3b82f6"
+            accent="#3b82f6"
+          />
+          <MetricCard
+            icon={UserCheck}
+            label="New Patients"
+            value={loading ? "..." : stats.newPatients}
+            iconBg="#f0fdf4"
+            iconColor="#10b981"
+            accent="#10b981"
+          />
+          <MetricCard
+            icon={RefreshCcw}
+            label="Returning Patients"
+            value={loading ? "..." : stats.repeatPatients}
+            iconBg="#fff7ed"
+            iconColor="#f97316"
+            accent="#f97316"
+          />
+        </MetricsGrid>
 
         {/* BOTTOM ROW: Business Breakdown */}
         <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a', marginBottom: '20px' }}>Clinical Activities & Business</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
-          <div className="stat-card" style={{ padding: '24px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '20px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#f5f3ff', color: '#8b5cf6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <FileText size={20} />
-            </div>
-            <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a' }}>{loading ? '...' : stats.business?.consultations || 0}</div>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Consultations Finished</div>
-          </div>
-
-          <div className="stat-card" style={{ padding: '24px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '20px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#ecfdf5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <Pill size={20} />
-            </div>
-            <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a' }}>{loading ? '...' : stats.business?.prescriptions || 0}</div>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Prescriptions Written</div>
-          </div>
-
-          <div className="stat-card" style={{ padding: '24px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '20px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#fef2f2', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <FlaskConical size={20} />
-            </div>
-            <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a' }}>{loading ? '...' : stats.business?.labs || 0}</div>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Lab Tests Ordered</div>
-          </div>
-          
-          <div className="stat-card" style={{ padding: '24px', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '20px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#fefce8', color: '#ca8a04', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <TrendingUp size={20} />
-            </div>
-            <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a' }}>{loading ? '...' : formatNumber(stats.business?.revenue)}</div>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Value Generated</div>
-          </div>
-        </div>
+        <MetricsGrid>
+          <MetricCard
+            icon={FileText}
+            label="Consultations Finished"
+            value={loading ? "..." : stats.business?.consultations || 0}
+            iconBg="#f5f3ff"
+            iconColor="#8b5cf6"
+            accent="#8b5cf6"
+          />
+          <MetricCard
+            icon={Pill}
+            label="Prescriptions Written"
+            value={loading ? "..." : stats.business?.prescriptions || 0}
+            iconBg="#ecfdf5"
+            iconColor="#059669"
+            accent="#059669"
+          />
+          <MetricCard
+            icon={FlaskConical}
+            label="Lab Tests Ordered"
+            value={loading ? "..." : stats.business?.labs || 0}
+            iconBg="#fef2f2"
+            iconColor="#ef4444"
+            accent="#ef4444"
+          />
+          <MetricCard
+            icon={TrendingUp}
+            label="Total Value Generated"
+            value={loading ? "..." : formatNumber(stats.business?.revenue)}
+            iconBg="#fefce8"
+            iconColor="#ca8a04"
+            accent="#ca8a04"
+          />
+        </MetricsGrid>
 
         {/* RECENT PATIENTS RECORD TABLE */}
         <div style={{ marginTop: '40px' }}>

@@ -4,6 +4,8 @@ import NexusSidebar from "../../components/NexusSidebar";
 import { API_BASE_URL } from "../../config/api";
 import NexusHeader from "../../components/NexusHeader";
 import ReactECharts from "echarts-for-react";
+import { Database, AlertOctagon, Gauge } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../components/MetricCard";
 
 interface UtilizationData {
   id: string;
@@ -134,26 +136,32 @@ export default function NexusUtilizationPage() {
           <div style={{ padding: '100px', textAlign: 'center', color: '#64748b' }}>Calculating resource metrics...</div>
         ) : (
           <>
-            <div className="stats-grid" style={{ marginBottom: '32px' }}>
-              <div className="stat-card">
-                <div className="stat-label">Total Cloud Storage</div>
-                <div className="stat-value">
-                  {(data.reduce((acc, d) => acc + parseFloat(d.storageUsedMb), 0) / 1024).toFixed(2)} GB
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-label">Critical Shards</div>
-                <div className="stat-value" style={{ color: data.filter(d => d.status === 'CRITICAL').length > 0 ? '#ef4444' : 'inherit' }}>
-                  {data.filter(d => d.status === 'CRITICAL').length}
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-label">Avg. Utilization</div>
-                <div className="stat-value">
-                  {(data.reduce((acc, d) => acc + parseFloat(d.usagePercentage), 0) / data.length).toFixed(1)}%
-                </div>
-              </div>
-            </div>
+            <MetricsGrid minWidth="220px" style={{ marginBottom: '32px' }}>
+              <MetricCard
+                icon={Database}
+                label="Total Cloud Storage"
+                value={`${(data.reduce((acc, d) => acc + parseFloat(d.storageUsedMb), 0) / 1024).toFixed(2)} GB`}
+                iconBg="#eff6ff"
+                iconColor="#3b82f6"
+                accent="#0f172a"
+              />
+              <MetricCard
+                icon={AlertOctagon}
+                label="Critical Shards"
+                value={data.filter(d => d.status === 'CRITICAL').length}
+                iconBg="#fef2f2"
+                iconColor="#ef4444"
+                accent="#ef4444"
+              />
+              <MetricCard
+                icon={Gauge}
+                label="Avg. Utilization"
+                value={`${(data.reduce((acc, d) => acc + parseFloat(d.usagePercentage), 0) / data.length).toFixed(1)}%`}
+                iconBg="#f0fdf4"
+                iconColor="#10b981"
+                accent="#10b981"
+              />
+            </MetricsGrid>
 
             <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', marginBottom: '32px' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px' }}>Storage Consumption Top 10</h3>

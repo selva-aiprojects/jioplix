@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { MetricCard, MetricsGrid } from "../../components/MetricCard";
 import {
   Building2,
   Wrench,
@@ -96,31 +97,12 @@ export default function FacilityManagementPage() {
           </div>
 
           {/* Quick Metrics */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginTop: "28px" }}>
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#cbd5e1", fontWeight: 700, marginBottom: "4px" }}>Total Devices</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff" }}>{assets.length} Assets</div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#cbd5e1", fontWeight: 700, marginBottom: "4px" }}>Operational Uptime</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#4ade80" }}>98.2% Uptime</div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#cbd5e1", fontWeight: 700, marginBottom: "4px" }}>PPM Due Soon</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#fde047" }}>
-                {assets.filter(a => a.status === "Maintenance_Due").length} Due
-              </div>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.1)", padding: "16px 20px", borderRadius: "18px", border: "1px solid rgba(255,255,255,0.15)" }}>
-              <div style={{ fontSize: "12px", color: "#cbd5e1", fontWeight: 700, marginBottom: "4px" }}>Open Breakdown Tickets</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: "#f87171" }}>
-                {assets.filter(a => a.status === "Under_Breakdown").length} Active
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="180px" style={{ marginTop: "28px" }}>
+            <MetricCard variant="translucent" icon={Cpu} label="Total Devices" value={`${assets.length} Assets`} />
+            <MetricCard variant="translucent" icon={Activity} label="Operational Uptime" value="98.2% Uptime" accent="#4ade80" />
+            <MetricCard variant="translucent" icon={Calendar} label="PPM Due Soon" value={`${assets.filter(a => a.status === "Maintenance_Due").length} Due`} accent="#fde047" />
+            <MetricCard variant="translucent" icon={Wrench} label="Open Breakdown Tickets" value={`${assets.filter(a => a.status === "Under_Breakdown").length} Active`} accent="#f87171" />
+          </MetricsGrid>
         </div>
 
         {/* TABS */}

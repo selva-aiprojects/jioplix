@@ -4,7 +4,8 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
-import { Users, CalendarCheck, ArrowLeftRight, BadgeCheck, Search, Filter, PlusCircle, Download } from "lucide-react";
+import { Users, CalendarCheck, ArrowLeftRight, BadgeCheck, Search, Filter, PlusCircle, Download, Stethoscope, Phone, Clock } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 function getHeaders() {
   const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
@@ -272,44 +273,40 @@ export default function HrmsPage() {
         <div style={{ padding: "24px" }}>
 
           {/* KPI Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#eff6ff", color: "#2563eb", display: "grid", placeItems: "center" }}>
-                <Users size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Total Staff</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e40af" }}>{staff.length} Members</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0fdf4", color: "#16a34a", display: "grid", placeItems: "center" }}>
-                <CalendarCheck size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>On Duty Today</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#15803d" }}>{analytics?.dutyToday ?? roster.length} Staff</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#ea580c", display: "grid", placeItems: "center" }}>
-                <ArrowLeftRight size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Pending Swaps</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{swaps.filter((s: any) => s.status === "PENDING").length} Pending</div>
-              </div>
-            </div>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fdf4ff", color: "#9333ea", display: "grid", placeItems: "center" }}>
-                <BadgeCheck size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Active Credentials</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#7c3aed" }}>{credentials.length} Certs</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={Users}
+              label="Total Staff"
+              value={`${staff.length} Members`}
+              iconBg="#eff6ff"
+              iconColor="#2563eb"
+              accent="#1e40af"
+            />
+            <MetricCard
+              icon={CalendarCheck}
+              label="On Duty Today"
+              value={`${analytics?.dutyToday ?? roster.length} Staff`}
+              iconBg="#f0fdf4"
+              iconColor="#16a34a"
+              accent="#15803d"
+            />
+            <MetricCard
+              icon={ArrowLeftRight}
+              label="Pending Swaps"
+              value={`${swaps.filter((s: any) => s.status === "PENDING").length} Pending`}
+              iconBg="#fff7ed"
+              iconColor="#ea580c"
+              accent="#c2410c"
+            />
+            <MetricCard
+              icon={BadgeCheck}
+              label="Active Credentials"
+              value={`${credentials.length} Certs`}
+              iconBg="#fdf4ff"
+              iconColor="#9333ea"
+              accent="#7c3aed"
+            />
+          </MetricsGrid>
 
           {/* Actions & Filter Bar */}
           <div style={{ background: "#ffffff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "16px 20px", marginBottom: "24px", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
@@ -374,31 +371,12 @@ export default function HrmsPage() {
               {/* ── DASHBOARD ── */}
               {tab === "dashboard" && (
                 <>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-                    {[
-                      { label: "On Duty Today", value: analytics?.dutyToday ?? "-", color: "#0056A8", bg: "rgba(0, 86, 168, 0.08)", icon: "👨‍⚕️" },
-                      { label: "On-Call Today", value: analytics?.onCallToday ?? "-", color: "#00C897", bg: "rgba(0, 200, 151, 0.08)", icon: "📞" },
-                      { label: "Active Staff", value: staff.length, color: "#0078FF", bg: "rgba(0, 120, 255, 0.08)", icon: "👥" },
-                      { label: "Active Shifts", value: shifts.filter((s) => s.is_active).length, color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.08)", icon: "⏰" }
-                    ].map((s, i) => (
-                      <div key={i} style={{
-                        background: "white",
-                        padding: "20px 24px",
-                        borderRadius: "20px",
-                        border: "1px solid #e2e8f0",
-                        boxShadow: "0 4px 16px -4px rgba(0,0,0,0.04)",
-                        position: "relative",
-                        overflow: "hidden"
-                      }}>
-                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: s.color }} />
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-                          <span style={{ fontSize: "12px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.04em" }}>{s.label}</span>
-                          <span style={{ width: "36px", height: "36px", borderRadius: "10px", background: s.bg, display: "grid", placeItems: "center", fontSize: "18px" }}>{s.icon}</span>
-                        </div>
-                        <p style={{ margin: 0, fontSize: "28px", fontWeight: 800, color: "#0f172a" }}>{s.value}</p>
-                      </div>
-                    ))}
-                  </div>
+                  <MetricsGrid minWidth="200px">
+                    <MetricCard icon={Stethoscope} label="On Duty Today" value={analytics?.dutyToday ?? "-"} iconBg="rgba(0, 86, 168, 0.08)" iconColor="#0056A8" accent="#0056A8" />
+                    <MetricCard icon={Phone} label="On-Call Today" value={analytics?.onCallToday ?? "-"} iconBg="rgba(0, 200, 151, 0.08)" iconColor="#00C897" accent="#00C897" />
+                    <MetricCard icon={Users} label="Active Staff" value={staff.length} iconBg="rgba(0, 120, 255, 0.08)" iconColor="#0078FF" accent="#0078FF" />
+                    <MetricCard icon={Clock} label="Active Shifts" value={shifts.filter((s) => s.is_active).length} iconBg="rgba(139, 92, 246, 0.08)" iconColor="#8b5cf6" accent="#8b5cf6" />
+                  </MetricsGrid>
 
                   <div className="grid-responsive" style={{ gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                     <div className="manage-card" style={{ background: "white", borderRadius: "16px", padding: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>

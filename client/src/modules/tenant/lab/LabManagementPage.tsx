@@ -20,6 +20,7 @@ import {
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 const STATUS_FLOW = [
   { id: 'Pending', label: 'Order Received', color: '#64748b', bg: '#f1f5f9', icon: Clock },
@@ -675,25 +676,44 @@ export default function LabManagementPage() {
             <p style={{ margin: 0, color: '#64748b', fontSize: '15px', fontWeight: 500, maxWidth: '600px' }}>Live monitoring of clinical investigation orders, accessioning milestones, and result authorization.</p>
           </div>
           {/* Real-time Stats Dashboard */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '40px' }}>
-              <div className="stat-card" style={{ background: stats.urgent > 0 ? 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)' : 'white', padding: '24px', borderRadius: '24px', border: `1px solid ${stats.urgent > 0 ? '#ef4444' : '#e2e8f0'}`, position: 'relative', overflow: 'hidden' }}>
-                <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 800, color: stats.urgent > 0 ? '#b91c1c' : '#64748b', textTransform: 'uppercase' }}>Critical / Urgent</p>
-                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 900, color: stats.urgent > 0 ? '#ef4444' : '#0f172a' }}>{stats.urgent}</h3>
-                {stats.urgent > 0 && <div className="pulse" style={{ position: 'absolute', top: '16px', right: '16px', width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%' }}></div>}
-              </div>
-              <div className="stat-card" style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Awaiting Collection</p>
-                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 900, color: '#3b82f6' }}>{stats.pending}</h3>
-              </div>
-              <div className="stat-card" style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Active In Lab</p>
-                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 900, color: '#f59e0b' }}>{stats.active}</h3>
-              </div>
-              <div className="stat-card" style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Awaiting Auth</p>
-                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 900, color: '#10b981' }}>{stats.completed}</h3>
-              </div>
-          </div>
+          <MetricsGrid minWidth="230px">
+            <MetricCard
+              icon={AlertCircle}
+              label="Critical / Urgent"
+              value={stats.urgent}
+              sub={stats.urgent > 0 ? "Requires immediate attention" : "No critical orders"}
+              iconBg={stats.urgent > 0 ? "#fef2f2" : "#f1f5f9"}
+              iconColor="#ef4444"
+              accent={stats.urgent > 0 ? "#ef4444" : "#64748b"}
+            />
+            <MetricCard
+              icon={Clock}
+              label="Awaiting Collection"
+              value={stats.pending}
+              sub="Samples not yet collected"
+              iconBg="#eff6ff"
+              iconColor="#3b82f6"
+              accent="#3b82f6"
+            />
+            <MetricCard
+              icon={FlaskConical}
+              label="Active In Lab"
+              value={stats.active}
+              sub="Processing & analysis in progress"
+              iconBg="#fffbeb"
+              iconColor="#f59e0b"
+              accent="#f59e0b"
+            />
+            <MetricCard
+              icon={CheckCircle2}
+              label="Awaiting Auth"
+              value={stats.completed}
+              sub="Completed, pending authorization"
+              iconBg="#f0fdf4"
+              iconColor="#10b981"
+              accent="#10b981"
+            />
+          </MetricsGrid>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
              <div style={{ display: 'flex', gap: '8px', background: '#f1f5f9', padding: '6px', borderRadius: '16px' }}>

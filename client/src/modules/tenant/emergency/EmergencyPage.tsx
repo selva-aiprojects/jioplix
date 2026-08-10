@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { Siren, UserPlus, Activity, ShieldAlert, Search, Filter, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
+import { MetricCard, MetricsGrid } from "../../../components/MetricCard";
 
 export default function EmergencyPage() {
   const [cases, setCases] = useState<any[]>([]);
@@ -116,47 +117,40 @@ export default function EmergencyPage() {
 
         <div style={{ padding: "24px" }}>
           {/* Top KPI Metrics Bar */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fef2f2", color: "#ef4444", display: "grid", placeItems: "center" }}>
-                <Siren size={24} className="animate-pulse" />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Active Code Alerts</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#be123c" }}>{alerts.length} Active</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff1f2", color: "#e11d48", display: "grid", placeItems: "center" }}>
-                <AlertTriangle size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ESI-1 Resus Cases</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#e11d48" }}>{esi1Count} Critical</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#fff7ed", color: "#c2410c", display: "grid", placeItems: "center" }}>
-                <Clock size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>ESI-2 Emergent</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c" }}>{esi2Count} High Risk</div>
-              </div>
-            </div>
-
-            <div style={{ background: "#ffffff", padding: "20px", borderRadius: "18px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px -4px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "#f0f9ff", color: "#0284c7", display: "grid", placeItems: "center" }}>
-                <Activity size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>Total Triage Queue</div>
-                <div style={{ fontSize: "24px", fontWeight: 900, color: "#0284c7" }}>{cases.length} Registered</div>
-              </div>
-            </div>
-          </div>
+          <MetricsGrid minWidth="220px">
+            <MetricCard
+              icon={Siren}
+              label="Active Code Alerts"
+              value={`${alerts.length} Active`}
+              iconBg="#fef2f2"
+              iconColor="#ef4444"
+              accent="#be123c"
+            />
+            <MetricCard
+              icon={AlertTriangle}
+              label="ESI-1 Resus Cases"
+              value={`${esi1Count} Critical`}
+              iconBg="#fff1f2"
+              iconColor="#e11d48"
+              accent="#e11d48"
+            />
+            <MetricCard
+              icon={Clock}
+              label="ESI-2 Emergent"
+              value={`${esi2Count} High Risk`}
+              iconBg="#fff7ed"
+              iconColor="#c2410c"
+              accent="#c2410c"
+            />
+            <MetricCard
+              icon={Activity}
+              label="Total Triage Queue"
+              value={`${cases.length} Registered`}
+              iconBg="#f0f9ff"
+              iconColor="#0284c7"
+              accent="#0284c7"
+            />
+          </MetricsGrid>
 
           {/* Active Code Notifications Banner */}
           {alerts.length > 0 && (

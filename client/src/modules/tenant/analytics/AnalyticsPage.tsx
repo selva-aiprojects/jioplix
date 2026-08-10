@@ -4,6 +4,8 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import PlanGateGuard from "../../../components/PlanGateGuard";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { Activity, TrendingUp, AlertTriangle, Timer, Wallet } from "lucide-react";
+import { MetricCard } from "../../../components/MetricCard";
 
 function getHeaders() {
   const tenantId = localStorage.getItem("tenantId") || localStorage.getItem("facility") || localStorage.getItem("tenant") || "";
@@ -141,11 +143,15 @@ export default function AnalyticsPage() {
     { id: "targets" as const, label: "Targets" },
   ];
 
-  const stat = (label: string, value: any) => (
-    <div className="stat-card">
-      <div style={{ fontSize: "12px", color: "#64748b" }}>{label}</div>
-      <div style={{ fontSize: "24px", fontWeight: 900 }}>{value ?? "-"}</div>
-    </div>
+  const stat = (label: string, value: any, icon?: any) => (
+    <MetricCard
+      icon={icon}
+      label={label}
+      value={value ?? "-"}
+      iconBg="#eff6ff"
+      iconColor="#0284c7"
+      accent="#0f172a"
+    />
   );
 
   return (
@@ -183,11 +189,11 @@ export default function AnalyticsPage() {
               {tab === "ops" && (
                 <>
                   <div className="grid-responsive" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "20px" }}>
-                    {stat("Active Encounters", opd.totalActive ?? 0)}
-                    {stat("Occupancy %", beds.length ? Math.round(beds.reduce((s: number, b: any) => s + (b.occupancy_pct || 0), 0) / beds.length) + "%" : "-")}
-                    {stat("Low Stock Items", pharmRisk.lowStock?.length ?? 0)}
-                    {stat("Expiring Soon", pharmRisk.expiringSoon?.length ?? 0)}
-                    {stat("Billed (MTD)", revenue.total_billed ?? 0)}
+                    {stat("Active Encounters", opd.totalActive ?? 0, Activity)}
+                    {stat("Occupancy %", beds.length ? Math.round(beds.reduce((s: number, b: any) => s + (b.occupancy_pct || 0), 0) / beds.length) + "%" : "-", TrendingUp)}
+                    {stat("Low Stock Items", pharmRisk.lowStock?.length ?? 0, AlertTriangle)}
+                    {stat("Expiring Soon", pharmRisk.expiringSoon?.length ?? 0, Timer)}
+                    {stat("Billed (MTD)", revenue.total_billed ?? 0, Wallet)}
                   </div>
 
                   <div className="grid-responsive" style={{ gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
