@@ -5,6 +5,7 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { useToast } from "../../../components/ToastProvider";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { offlineRequest } from "../../../lib/offline/offline";
 import {
   User, Activity, Pill, FlaskConical,
   CheckCircle2, FileText,
@@ -127,11 +128,11 @@ export default function OPDConsultationPage() {
 
   const fetchPatientDetails = async (id: string) => {
     try {
-      const res = await axios.get(`${API_BASE}/api/patients/${id}`, { headers: getHeaders() });
+      const res = await offlineRequest({ method: 'GET', url: `${API_BASE}/api/patients/${id}`, headers: getHeaders() });
       setPatient(res.data);
       const [labRes, medRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/hospital/lab/orders?patientId=${id}`, { headers: getHeaders() }),
-        axios.get(`${API_BASE}/api/hospital/encounters?patientId=${id}&status=Completed`, { headers: getHeaders() })
+        offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/lab/orders?patientId=${id}`, headers: getHeaders() }),
+        offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/encounters?patientId=${id}&status=Completed`, headers: getHeaders() })
       ]);
       setPastLabs(labRes.data || []);
       const medList = Array.isArray(medRes.data) ? medRes.data : (Array.isArray(medRes.data?.data) ? medRes.data.data : []);
@@ -143,9 +144,9 @@ export default function OPDConsultationPage() {
     try {
       const h = getHeaders();
       const [medRes, disRes, diagRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/hospital/masters/medicines`, { headers: h }),
-        axios.get(`${API_BASE}/api/hospital/masters/diseases`, { headers: h }),
-        axios.get(`${API_BASE}/api/hospital/masters/diagnostics`, { headers: h })
+        offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/masters/medicines`, headers: h }),
+        offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/masters/diseases`, headers: h }),
+        offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/masters/diagnostics`, headers: h })
       ]);
       setMedicines(medRes.data || []);
       setDiseases(disRes.data || []);
@@ -229,25 +230,28 @@ export default function OPDConsultationPage() {
     if (!diagnosis) { showToast("Clinical Diagnosis is mandatory to finish.", "error"); return; }
     setIsFinishing(true);
     const h = getHeaders();
+    let wentOffline = false;
     try {
-      await axios.put(`${API_BASE}/api/hospital/encounters/${encounter.id}`, {
-        diagnosis, status: 'Completed', notes
-      }, { headers: h });
+      const putRes = await offlineRequest({ method: 'PUT', url: `${API_BASE}/api/hospital/encounters/${encounter.id}`, data: { diagnosis, status: 'Completed', notes }, headers: h });
+      wentOffline = wentOffline || !!putRes.queued;
       if (prescriptions.length > 0) {
-        await axios.post(`${API_BASE}/api/hospital/encounters/${encounter.id}/prescriptions`, { items: prescriptions }, { headers: h });
+        const presRes = await offlineRequest({ method: 'POST', url: `${API_BASE}/api/hospital/encounters/${encounter.id}/prescriptions`, data: { items: prescriptions }, headers: h });
+        wentOffline = wentOffline || !!presRes.queued;
       }
       if (selectedLabTests.length > 0) {
-        await axios.post(`${API_BASE}/api/hospital/encounters/${encounter.id}/lab-orders`, { diagnosticIds: selectedLabTests }, { headers: h });
+        const labRes = await offlineRequest({ method: 'POST', url: `${API_BASE}/api/hospital/encounters/${encounter.id}/lab-orders`, data: { diagnosticIds: selectedLabTests }, headers: h });
+        wentOffline = wentOffline || !!labRes.queued;
       }
       if (isAdmissionPrescribed) {
-        try {
-          await axios.post(`${API_BASE}/api/hospital/encounters/${encounter.id}/admission-recommendation`, {
-            reason: admissionReason || notes
-          }, { headers: h });
-        } catch (e) { console.warn("Admission rec failed", e); }
+        const admRes = await offlineRequest({ method: 'POST', url: `${API_BASE}/api/hospital/encounters/${encounter.id}/admission-recommendation`, data: { reason: admissionReason || notes }, headers: h }).catch(() => ({ data: null }));
+        wentOffline = wentOffline || !!(admRes as any).queued;
       }
       localStorage.removeItem("currentEncounter");
-      await recordEvent('CONSULT_END', { totalDuration: elapsedSeconds });
+      if (wentOffline) {
+        showToast("Saved offline — will auto-sync when connection returns.", "success");
+      } else {
+        await recordEvent('CONSULT_END', { totalDuration: elapsedSeconds });
+      }
       setShowPostConsultModal(true);
     } catch (err: any) {
       const msg = err.response?.data?.message || err.message || "Failed to save consultation.";
