@@ -5,6 +5,7 @@ export type HttpMethod = "POST" | "PUT" | "PATCH" | "DELETE";
 
 export interface QueuedWrite {
   id: string;
+  kind: "write";
   method: HttpMethod;
   url: string;
   body: any;
@@ -12,6 +13,8 @@ export interface QueuedWrite {
   createdAt: number;
   attempts: number;
 }
+
+export type OutboxItem = QueuedWrite | import("./jobs").OfflineJob;
 
 const listeners = new Set<() => void>();
 
@@ -47,10 +50,24 @@ export function isOffline(): boolean {
 }
 
 // ─── Outbox ───────────────────────────────────────────────────────────────────
-export async function enqueueWrite(write: Omit<QueuedWrite, "id" | "createdAt" | "attempts">): Promise<void> {
+export async function enqueueWrite(write: Omit<QueuedWrite, "id" | "kind" | "createdAt" | "attempts">): Promise<void> {
   const item: QueuedWrite = {
     ...write,
     id: genId(),
+    kind: "write",
+    createdAt: Date.now(),
+    attempts: 0,
+  };
+  await idb.put("outbox", item);
+  notify();
+}
+
+export async function enqueueJob(type: string, params: any): Promise<void> {
+  const item: OutboxItem = {
+    id: genId(),
+    kind: "job",
+    type,
+    params,
     createdAt: Date.now(),
     attempts: 0,
   };
@@ -72,14 +89,16 @@ export async function clearOutbox(): Promise<void> {
 }
 
 /**
- * Replays queued writes in FIFO order. Stops on the first item that still
- * fails (network / 5xx) so an earlier batch can retry cleanly later. Items
- * that fail with 4xx are dropped (permanent client errors).
+ * Replays queued items (standalone writes + multi-step jobs) in FIFO order.
+ * Stops on the first item that still fails (network / 5xx) so earlier items
+ * can retry cleanly later. Standalone writes that fail with 4xx are dropped
+ * (permanent client errors). Jobs run through their registered handler in
+ * ./jobs.ts and are removed only when the whole sequence succeeds.
  */
 export async function flushOutbox(): Promise<number> {
-  let items: QueuedWrite[] = [];
+  let items: OutboxItem[] = [];
   try {
-    items = await idb.getAll<QueuedWrite>("outbox");
+    items = await idb.getAll<OutboxItem>("outbox");
   } catch {
     return 0;
   }
@@ -88,6 +107,14 @@ export async function flushOutbox(): Promise<number> {
   let synced = 0;
   for (const item of items) {
     try {
+      if (item.kind === "job") {
+        const { runJob } = await import("./jobs");
+        await runJob(item);
+        await idb.del("outbox", item.id);
+        synced++;
+        continue;
+      }
+
       const res = await axios({
         method: item.method,
         url: item.url,

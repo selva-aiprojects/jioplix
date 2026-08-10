@@ -4,6 +4,7 @@ import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { useToast } from "../../../components/ToastProvider";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { offlineRequest, enqueueJob, isNetworkError } from "../../../lib/offline/offline";
 import { 
   Search, UserPlus, Shield, CheckCircle2, Trash2, User,
   Activity, Scale, HeartPulse, MapPin, Users, Zap
@@ -83,7 +84,7 @@ export default function OPDRegistrationPage() {
     const h = getHeaders();
     // Fetch doctors independently
     try {
-      const docRes = await axios.get(`${API_BASE}/api/hospital/doctors`, { headers: h });
+      const docRes = await offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/doctors`, headers: h });
       if (docRes.data && docRes.data.length > 0) {
         setDoctors(docRes.data);
       }
@@ -91,14 +92,14 @@ export default function OPDRegistrationPage() {
 
     // Fetch queue independently
     try {
-      const queueRes = await axios.get(`${API_BASE}/api/hospital/encounters`, { headers: h });
+      const queueRes = await offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/encounters`, headers: h });
       const list = Array.isArray(queueRes.data) ? queueRes.data : (Array.isArray(queueRes.data?.data) ? queueRes.data.data : []);
       setRecentQueue(list.slice(0, 5));
     } catch (err) { console.error("Queue fetch failed", err); }
 
     // Fetch ABHA Config
     try {
-      const configRes = await axios.get(`${API_BASE}/api/abha/config`, { headers: h });
+      const configRes = await offlineRequest({ method: 'GET', url: `${API_BASE}/api/abha/config`, headers: h });
       setIsAbhaMandatory(configRes.data.isAbhaMandatory);
     } catch (err) { console.warn("ABHA config fetch failed"); }
     finally { setDataLoading(false); }
@@ -111,7 +112,7 @@ export default function OPDRegistrationPage() {
       return;
     }
     try {
-      const res = await axios.get(`${API_BASE}/api/patients?search=${val}`, { headers: getHeaders() });
+      const res = await offlineRequest({ method: 'GET', url: `${API_BASE}/api/patients?search=${val}`, headers: getHeaders() });
       setSearchResults(res.data);
       
       // AUTO-FILL LOGIC
@@ -163,7 +164,7 @@ export default function OPDRegistrationPage() {
 
     // Fetch previous vitals
     try {
-      const res = await axios.get(`${API_BASE}/api/hospital/encounters?patientId=${p.id}&status=All`, { headers: getHeaders() });
+      const res = await offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/encounters?patientId=${p.id}&status=All`, headers: getHeaders() });
       const list = Array.isArray(res.data) ? res.data : (Array.isArray(res.data?.data) ? res.data.data : []);
       if (list.length > 0) {
         const sorted = [...list].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -296,11 +297,10 @@ export default function OPDRegistrationPage() {
       return;
     }
     setIsProcessing(true);
+    // Ensure age is present (derive from DOB if missing)
+    const payload: any = { ...regData };
+    if ((!payload.age || payload.age === '') && payload.dob) payload.age = computeAgeFromDob(payload.dob);
     try {
-      // Ensure age is present (derive from DOB if missing)
-      const payload: any = { ...regData };
-      if ((!payload.age || payload.age === '') && payload.dob) payload.age = computeAgeFromDob(payload.dob);
-
       const pRes = await axios.post(`${API_BASE}/api/patients`, payload, { headers: getHeaders() });
       const patientId = pRes.data?.id || pRes.data?.[0]?.id;
       if (!patientId) {
@@ -316,9 +316,23 @@ export default function OPDRegistrationPage() {
       }, { headers: getHeaders() });
 
       resetFlow("Registration Successful! Patient is now in queue.");
-    } catch (err: any) { 
-      const msg = err.response?.data?.error || err.response?.data?.message || err.message || "Registration failed.";
-      showToast(msg, "error"); 
+    } catch (err: any) {
+      if (isNetworkError(err)) {
+        await enqueueJob("register-patient", {
+          patient: payload,
+          encounter: {
+            doctorId: selectedDoctorId,
+            type: 'OPD',
+            vitals,
+            complaints: regData.medical_history || 'Routine Checkup'
+          },
+          headers: getHeaders(),
+        });
+        resetFlow("Saved offline — patient will be registered & queued when connection returns.");
+      } else {
+        const msg = err.response?.data?.error || err.response?.data?.message || err.message || "Registration failed.";
+        showToast(msg, "error");
+      }
     }
     finally { setIsProcessing(false); }
   };
@@ -331,14 +345,19 @@ export default function OPDRegistrationPage() {
     if (!selectedPatient) return;
     setIsProcessing(true);
     try {
-      await axios.post(`${API_BASE}/api/hospital/encounters`, {
-        patientId: selectedPatient.id,
-        doctorId: selectedDoctorId,
-        type: 'OPD',
-        vitals,
-        complaints: 'Follow-up Consultation'
-      }, { headers: getHeaders() });
-      resetFlow("Visit generated. Token issued.");
+      const res = await offlineRequest({
+        method: 'POST',
+        url: `${API_BASE}/api/hospital/encounters`,
+        data: {
+          patientId: selectedPatient.id,
+          doctorId: selectedDoctorId,
+          type: 'OPD',
+          vitals,
+          complaints: 'Follow-up Consultation'
+        },
+        headers: getHeaders()
+      });
+      resetFlow(res.queued ? "Saved offline — token will be issued when connection returns." : "Visit generated. Token issued.");
     } catch (err: any) {
       const msg = err.response?.data?.error || err.response?.data?.message || err.message || "Failed to issue token.";
       showToast(msg, "error");

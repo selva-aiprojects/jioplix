@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import { useToast } from "../../../components/ToastProvider";
 import { API_BASE_URL as API_BASE } from "../../../config/api";
+import { offlineRequest } from "../../../lib/offline/offline";
 import { Pill } from 'lucide-react';
 
 
@@ -39,8 +39,8 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
       const userId = localStorage.getItem("userId");
       const url = `${API_BASE}/api/hospital/pharmacy/prescriptions${role === 'doctor' || role === 'DOCTOR' ? `?doctorId=${userId}` : ''}`;
       const [preRes, invRes] = await Promise.all([
-        axios.get(url, { headers }),
-        axios.get(`${API_BASE}/api/hospital/pharmacy/inventory`, { headers })
+        offlineRequest({ method: 'GET', url, headers }),
+        offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/pharmacy/inventory`, headers })
       ]);
       setPrescriptions(preRes.data);
       setInventory(invRes.data);
@@ -54,7 +54,7 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
       "x-tenant-id": localStorage.getItem("tenant") || ""
     };
     try {
-      const res = await axios.get(`${API_BASE}/api/hospital/pharmacy/prescriptions/${pres.id}/items`, { headers });
+      const res = await offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/pharmacy/prescriptions/${pres.id}/items`, headers });
       setActivePrescription({ ...pres, items: res.data });
       setSelectedItems(res.data.map((item: any) => ({
         drugId: item.medicine_id || inventory.find(i => i.drug_name === (item.medicine_name || item.drug_name))?.id,
@@ -71,13 +71,18 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
       "x-tenant-id": localStorage.getItem("tenant") || ""
     };
     try {
-      await axios.post(`${API_BASE}/api/hospital/pharmacy/dispense`, {
-        encounterId: activePrescription.encounter_id,
-        prescriptionId: activePrescription.id,
-        items: selectedItems.filter(i => i.drugId)
-      }, { headers });
-      
-      showToast("Medication dispensed & billing queue updated!", "success");
+      const res = await offlineRequest({
+        method: 'POST',
+        url: `${API_BASE}/api/hospital/pharmacy/dispense`,
+        data: {
+          encounterId: activePrescription.encounter_id,
+          prescriptionId: activePrescription.id,
+          items: selectedItems.filter(i => i.drugId)
+        },
+        headers
+      });
+
+      showToast(res.queued ? "Dispensing saved offline — will sync when connection returns." : "Medication dispensed & billing queue updated!", "success");
       setActivePrescription(null);
       fetchData();
     } catch (err: any) { 
@@ -95,7 +100,7 @@ export default function PrescriptionQueue({ embedded = false }: { embedded?: boo
         "x-tenant-id": localStorage.getItem("tenant") || ""
       };
       try {
-        const res = await axios.get(`${API_BASE}/api/hospital/pharmacy/prescriptions/${pres.id}/items`, { headers });
+        const res = await offlineRequest({ method: 'GET', url: `${API_BASE}/api/hospital/pharmacy/prescriptions/${pres.id}/items`, headers });
         items = res.data;
       } catch (err) {
         showToast("Failed to fetch prescription details for printing", "error");
