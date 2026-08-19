@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BrandLogo from '../../components/BrandLogo';
 import {
-  Shield, ArrowLeftRight, Lock, Bed, Pill, CreditCard,
+  Shield, ArrowLeftRight, Lock, Bed, Pill, CreditCard, Activity, ClipboardList, Globe2,
   Mic, CheckCircle, Star, HeartPulse, MessageSquare, Phone, Mail, ArrowRight,
   Zap, Users, BarChart3,
   Stethoscope, Calendar, FlaskConical, Headset, Bot, Sparkles, Check, Download
@@ -91,18 +91,28 @@ const GLOBAL_CSS = `
 `;
 
 const MODULES = [
-  { icon: Stethoscope, title: 'OPD & Consultation', desc: 'Registration, doctor queues, consultation desk with inline vitals, chief-complaint bar & voice dictation.', color: '#0056A8', bg: '#e0f2fe', tag: '⚡ +94% Speedup' },
-  { icon: Calendar, title: 'Appointments & Scheduling', desc: 'Doctor availability, weekly rules, advanced scheduling console and patient self-booking.', color: '#7c3aed', bg: '#ede9fe', tag: '📅 1-Click Booking' },
-  { icon: Bed, title: 'IPD & Bed Census', desc: 'Admission desk, live bed map, census & daycare, discharge summaries and hourly/daily bed billing.', color: '#d97706', bg: '#fef3c7', tag: '🛏️ Zero Leakage' },
-  { icon: FlaskConical, title: 'Laboratory Management', desc: 'Lab billing queue, work-order management, results workflow and AI-assisted lab assistant.', color: '#059669', bg: '#d1fae5', tag: '🔬 Automated TAT' },
-  { icon: Pill, title: 'Pharmacy & Stock Control', desc: 'Dashboard, stock inventory, inward register, order management and prescription queue.', color: '#dc2626', bg: '#fee2e2', tag: '📦 Batch Expiry Guard' },
-  { icon: CreditCard, title: 'Billing & Invoicing', desc: 'Central billing desk, insurance processing, GST e-Invoicing and real-time financial audit.', color: '#0284c7', bg: '#e0f2fe', tag: '💳 Instant GST Audit' },
-  { icon: BarChart3, title: 'Operations & Clinical Analytics', desc: 'Extended-stay (>3 days) LOS monitor, dashboards and trend analytics for smarter decisions.', color: '#0d9488', bg: '#ccfbf1', tag: '📊 Live Surveillance' },
-  { icon: Headset, title: 'Enterprise Help Desk', desc: 'Staff & patient-grievance tickets with SLA policies, auto-escalation and equipment register.', color: '#9333ea', bg: '#f3e8ff', tag: '🎫 99.9% SLA Track' },
-  { icon: MessageSquare, title: 'WhatsApp Communication', desc: 'Message board, mail management, reminder tracker and executive WhatsApp automation center.', color: '#16a34a', bg: '#dcfce7', tag: '📱 98% Open Rate' },
-  { icon: Bot, title: 'Clinical AI Co-Pilot', desc: 'Multi-tenant RAG chatbot, voice dictation (STT), vision OCR, text-to-action and audio TTS.', color: '#4338ca', bg: '#e0e7ff', tag: '🤖 Zero Jargon Error' },
-  { icon: Users, title: 'Staff Roster & HRMS', desc: 'Manage credentials, shifts, attendance, on-call rosters, statutory payroll and permissions.', color: '#ea580c', bg: '#ffedd5', tag: '👨‍⚕️ Automated Shifts' },
-  { icon: Shield, title: 'HIPAA RBAC & Security', desc: 'HIPAA-compliant roles, PII masking tiers, granular permissions and audit trails.', color: '#059669', bg: '#d1fae5', tag: '🔒 ABDM M2/M3' },
+  { icon: Stethoscope, title: 'OPD & Consultation', desc: 'Registration, queues, vitals, complaints, clinical history, lab orders, prescriptions and voice dictation.', color: '#0056A8', bg: '#e0f2fe', tag: 'OPD' },
+  { icon: Calendar, title: 'Appointments & Scheduling', desc: 'Doctor calendars, recurring availability, leave rules, slot booking and patient self-scheduling.', color: '#7c3aed', bg: '#ede9fe', tag: 'Scheduling' },
+  { icon: Bed, title: 'IPD, Beds & Discharge', desc: 'Admission desk, live bed map, ward census, length-of-stay monitoring and discharge summaries.', color: '#d97706', bg: '#fef3c7', tag: 'IPD' },
+  { icon: HeartPulse, title: 'Emergency & Nursing', desc: 'Casualty workflows, nursing desk, critical-care coordination and bedside continuity.', color: '#dc2626', bg: '#fee2e2', tag: 'Critical Care' },
+  { icon: FlaskConical, title: 'Laboratory & AI Lab', desc: 'Accessioning, sample collection, work orders, authorization, billing and AI-assisted results.', color: '#059669', bg: '#d1fae5', tag: 'Diagnostics' },
+  { icon: Activity, title: 'Radiology & DICOM/PACS', desc: 'Imaging orders, modality worklists, report workflows and PACS interoperability.', color: '#0284c7', bg: '#e0f2fe', tag: 'Imaging' },
+  { icon: Pill, title: 'Pharmacy & Inventory', desc: 'Prescription queue, stock, inward register, suppliers, orders, expiry and reorder controls.', color: '#dc2626', bg: '#fee2e2', tag: 'Pharmacy' },
+  { icon: CreditCard, title: 'Billing, Finance & Insurance', desc: 'Central billing, packages, advances, refunds, GST e-invoicing, claims and write-offs.', color: '#d97706', bg: '#fef3c7', tag: 'Revenue' },
+  { icon: ClipboardList, title: 'Procurement & Supply Chain', desc: 'Indents, requisitions, rate contracts, purchase orders, GRN/QC and consumption analytics.', color: '#0d9488', bg: '#ccfbf1', tag: 'Supply Chain' },
+  { icon: BarChart3, title: 'Analytics & Reports', desc: 'Clinical, operations, performance, alert, revenue and extended-stay dashboards for leadership.', color: '#0d9488', bg: '#ccfbf1', tag: 'Insights' },
+  { icon: Users, title: 'Staff, HRMS & Payroll', desc: 'Accounts, roles, shifts, attendance, on-call rosters, credentials, payroll and payslips.', color: '#ea580c', bg: '#ffedd5', tag: 'Workforce' },
+  { icon: MessageSquare, title: 'Communication & CRM', desc: 'Patient deduplication, family groups, referrals, consents, message board, mail and reminders.', color: '#16a34a', bg: '#dcfce7', tag: 'Engagement' },
+  { icon: Headset, title: 'Help Desk & Equipment', desc: 'Staff and patient tickets with SLA policies, escalation workflows and equipment register.', color: '#9333ea', bg: '#f3e8ff', tag: 'Support' },
+  { icon: Bot, title: 'AI Co-Pilot & Automation', desc: 'RAG lookups, voice dictation, vision OCR, text-to-action, TTS and workflow assistance.', color: '#4338ca', bg: '#e0e7ff', tag: 'AI' },
+  { icon: Shield, title: 'EMR, MRD & Governance', desc: 'SOAP EMR, medical records, consent, audit trails, PHI access and privilege governance.', color: '#059669', bg: '#d1fae5', tag: 'Governance' },
+  { icon: Zap, title: 'OT, CSSD & Blood Bank', desc: 'Operation theatre planning, sterile services, donors, components and inventory tracking.', color: '#b45309', bg: '#fef3c7', tag: 'Clinical Services' },
+  { icon: HeartPulse, title: 'Dietetics & Infection Control', desc: 'Nutrition plans, diet workflows, HAI monitoring, incidents and quality improvement.', color: '#0891b2', bg: '#cffafe', tag: 'Quality' },
+  { icon: ArrowLeftRight, title: 'Ambulance & Mortuary', desc: 'Transport coordination, ambulance operations and respectful deceased-body intake workflows.', color: '#64748b', bg: '#f1f5f9', tag: 'Continuity' },
+  { icon: Mic, title: 'Telemedicine & Patient Portal', desc: 'Virtual consultation rooms, patient access, health timelines, appointments and reports.', color: '#2563eb', bg: '#dbeafe', tag: 'Patient Care' },
+  { icon: Globe2, title: 'ABDM, FHIR & HL7', desc: 'ABHA and health-information exchange with standards-based interoperability and logs.', color: '#0891b2', bg: '#cffafe', tag: 'Interoperability' },
+  { icon: Shield, title: 'Device Telemetry & IoT', desc: 'Medical-device telemetry, real-time signals and operational visibility across the facility.', color: '#7c3aed', bg: '#ede9fe', tag: 'Connected Care' },
+  { icon: Shield, title: 'Multi-Tenant Nexus', desc: 'Hospital provisioning, tenant isolation, platform users, activity, utilization and global support.', color: '#1d4ed8', bg: '#dbeafe', tag: 'Enterprise' },
 ];
 
 const ANDROID_APP = { flutter: '3.44.9', appVersion: '1.0.1' };
@@ -244,7 +254,7 @@ export default function LandingPage() {
                 borderRadius: '999px'
               }}>
                 <span style={{ background: '#0056A8', color: '#ffffff', fontSize: '11px', fontWeight: 900, padding: '2px 8px', borderRadius: '999px' }}>NEW 2026 EDITION</span>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#003870' }}>✨ 12+ Clinical Modules · AI Co-Pilot · Help Desk SLA</span>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: '#003870' }}>✨ 30+ Connected Modules · AI Co-Pilot · Enterprise Interoperability</span>
               </div>
               <a href="/Jioplix-Lite.apk" download title="Download Android Lite APK" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#dcfce7', border: '1px solid #86efac', padding: '6px 16px', borderRadius: '999px', textDecoration: 'none' }}>
                 <span style={{ fontSize: '13px', fontWeight: 800, color: '#15803d' }}>📱 Android App</span>
@@ -384,7 +394,7 @@ export default function LandingPage() {
           <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto' }}>
             <span style={{ fontSize: '12px', fontWeight: 900, letterSpacing: '2px', textTransform: 'uppercase', color: '#0056A8' }}>Comprehensive Ecosystem</span>
             <h2 style={{ fontSize: isMobile ? '30px' : '44px', fontWeight: 900, color: '#0f172a', margin: '10px 0 14px', letterSpacing: '-1px' }}>
-              12 Deeply-Integrated Clinical Modules
+              30+ Connected Modules Across the Hospital
             </h2>
             <p style={{ color: '#64748b', fontSize: '17px', lineHeight: 1.6 }}>
               Spanning the entire patient journey — from front-desk registration to discharge, laboratory diagnostics, pharmacy inventory and statutory financial audits.
@@ -420,7 +430,7 @@ export default function LandingPage() {
           <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto' }}>
             <span style={{ fontSize: '12px', fontWeight: 900, letterSpacing: '2px', textTransform: 'uppercase', color: '#00C897' }}>Sales Advantage</span>
             <h2 style={{ fontSize: isMobile ? '30px' : '44px', fontWeight: 900, color: '#0f172a', margin: '10px 0 14px', letterSpacing: '-1px' }}>
-              9 Game-Changing Capabilities Engineered for Growth
+              The Operating Layer Behind Better Care
             </h2>
             <p style={{ color: '#64748b', fontSize: '17px', lineHeight: 1.6 }}>
               Maximize hospital revenue capture, eliminate operational friction, and deliver a 10x superior patient experience.

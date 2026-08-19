@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import LoginPage from './modules/auth/LoginPage';
 import LandingPage from './modules/auth/LandingPage';
+import JioplixPosterPage from './modules/auth/JioplixPosterPage';
 import { applyTheme } from './config/theme';
 import DashboardPage from './modules/tenant/dashboard/DashboardPage';
 import MastersPage from './modules/tenant/masters/MastersPage';
@@ -189,6 +190,7 @@ function App() {
       <SubdomainObserver />
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/poster" element={<JioplixPosterPage />} />
         <Route path="/login" element={<LoginPage />} />
         
         {/* Mobile Experience Portal */}
