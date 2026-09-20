@@ -218,5 +218,24 @@ Detailed plan: `docs/Requirements/Enhancements_Implementation_Plan.md`
   - [x] I4: Consumption-linked auto-reorder + Procurement PR hook
   - [x] I5: Expiry/dead-stock analytics + UI screens
 
+### Phase F — Centralized SaaS Multi-Tenant Provisioning, Decoupled Architecture & Universal SSO (v19) — Complete
+- [x] **Decoupled Database Architecture**: Jioplix operates autonomously on dedicated Supabase PostgreSQL (`aws-1-ap-southeast-1.pooler.supabase.com`). Zero clinical/hospital data stored in Cybelinx Central Control Plane.
+- [x] **Universal SSO Exchange API (`POST /api/auth/sso/exchange`)**:
+  - [x] S1: HMAC-SHA256 JWT signature verification matching Cybelinx Central signing key
+  - [x] S2: Resilient Just-In-Time (JIT) user provisioning supporting both `password` and `password_hash` schemas
+  - [x] S3: Full 44 dynamic enterprise RBAC navigation menus assigned to provisioned users
+  - [x] S4: Self-healing tenant registration: automatically registers missing tenants in `nexus.tenants` on incoming subdomain
+  - [x] S5: Schema auto-cloning from base template (`"wellness"` — 73 clinical tables) for newly provisioned facilities
+- [x] **Frontend Login Screen Auto-Bypass**:
+  - [x] B1: Query parameter `?sso_token=...` interception on mount in `LoginPage.tsx`
+  - [x] B2: Session state hydration into `localStorage` (`auth_token`, `tenant`)
+  - [x] B3: Zero-click direct routing to `"/tenant/dashboard"`
+  - [x] B4: "⚡ Continue with Supabase SSO" direct button on the manual login form
+- [x] **Live Production Verification**:
+  - [x] V1: `https://wellness.jioplix.com/login?sso_token=...` auto-bypass verified (dashboard screenshot captured)
+  - [x] V2: `https://nixon.jioplix.com/login` clicking Continue with Supabase SSO verified with dynamic tenant registration & schema clone
+  - [x] V3: Code pushed to `selva-aiprojects/jioplix` `main` branch (commits `9732b9f`, `2337c39`) and live on Vercel
+
 ---
-*Last Updated: 2026-08-08 15:30*
+*Last Updated: 2026-09-20 18:25*
+
