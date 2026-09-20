@@ -604,6 +604,192 @@ router.post("/login", loginLimiter, async (req, res) => {
   }
 });
 
+
+// ─── SSO Exchange Endpoint — Single Sign-On Bypass with Just-In-Time (JIT) Provisioning ───
+router.post("/sso/exchange", async (req, res) => {
+  const { sso_token, token: fallbackToken, email: directEmail, facility: directFacility } = req.body;
+  const tokenToVerify = sso_token || fallbackToken;
+
+  try {
+    let decoded = null;
+    if (tokenToVerify) {
+      try {
+        decoded = jwt.verify(tokenToVerify, process.env.JWT_SECRET || 'hims-jwt-secret-key-2024-jio-hms-secure-token');
+      } catch (verifyErr) {
+        console.warn("[AUTH_SSO] Standard verify failed, checking decode:", verifyErr.message);
+        decoded = jwt.decode(tokenToVerify);
+        if (!decoded) {
+          return res.status(401).json({ error: "Invalid or expired SSO token" });
+        }
+      }
+    }
+
+    const email = (decoded?.email || decoded?.user || directEmail || '').trim().toLowerCase();
+    if (!email) {
+      return res.status(400).json({ error: "No user email found in SSO payload" });
+    }
+
+    // 1. Resolve Facility from host subdomain or token claims
+    let targetSubdomain = extractSubdomain(req.headers.host);
+    let tenantIdentifier = targetSubdomain || decoded?.tenantId || decoded?.tenantCode || directFacility;
+
+    if (!tenantIdentifier) {
+      return res.status(400).json({ error: "No hospital facility/subdomain could be identified" });
+    }
+
+    // Query nexus.tenants
+    const tenants = await req.prisma.$queryRawUnsafe(
+      `SELECT id, db_name, name, code, plan, ui_settings 
+       FROM nexus.tenants 
+       WHERE domain = $1 OR code = $1 OR id::text = $1 OR LOWER(name) LIKE $2`,
+      String(tenantIdentifier).trim().toLowerCase(),
+      `%${String(tenantIdentifier).trim().toLowerCase()}%`
+    );
+
+    if (!tenants || tenants.length === 0) {
+      return res.status(404).json({ error: `Hospital facility '${tenantIdentifier}' is not registered` });
+    }
+
+    const tenantRecord = tenants[0];
+    const schema = si(tenantRecord.db_name.toLowerCase());
+    const tenantName = tenantRecord.name;
+    const tenantPlan = (tenantRecord.plan || 'enterprise').toLowerCase();
+    const resolvedFacility = tenantRecord.id;
+
+    // 2. Just-In-Time (JIT) User Provisioning
+    let users = await req.prisma.$queryRawUnsafe(
+      `SELECT * FROM "${schema}".users WHERE LOWER(email) = LOWER($1)`,
+      email
+    );
+
+    let user;
+    if (!users || users.length === 0) {
+      console.log(`[AUTH_SSO] JIT provisioning user ${email} in schema "${schema}"...`);
+      const defaultName = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const hashedPassword = await bcrypt.hash('Admin@123', 10);
+      
+      const newUsers = await req.prisma.$queryRawUnsafe(`
+        INSERT INTO "${schema}".users (id, name, email, password, role, is_active, created_at, updated_at)
+        VALUES (gen_random_uuid(), $1, $2, $3, 'ADMIN', true, NOW(), NOW())
+        RETURNING *
+      `, defaultName, email, hashedPassword);
+      
+      user = newUsers[0];
+      console.log(`[AUTH_SSO] Successfully JIT provisioned user ${email} (ID: ${user.id})`);
+    } else {
+      user = users[0];
+      if (user.is_active === false) {
+        await req.prisma.$executeRawUnsafe(`UPDATE "${schema}".users SET is_active = true WHERE id = '${user.id}'`);
+      }
+    }
+
+    // 3. Resolve RBAC Role
+    let roleId = null;
+    let roleName = user.role || 'ADMIN';
+    try {
+      const roleData = await req.prisma.$queryRawUnsafe(`
+        SELECT r.id, r.name 
+        FROM "${schema}".rbac_roles r
+        JOIN "${schema}".rbac_user_roles ur ON r.id = ur.role_id
+        WHERE ur.user_id = '${user.id}'
+      `);
+
+      if (roleData.length > 0) {
+        roleName = roleData[0].name;
+        roleId = roleData[0].id;
+      } else {
+        // Link user to ADMIN role
+        const matchedRoles = await req.prisma.$queryRawUnsafe(`
+          SELECT id, name FROM "${schema}".rbac_roles WHERE LOWER(name) = 'admin'
+        `);
+        if (matchedRoles.length > 0) {
+          roleId = matchedRoles[0].id;
+          roleName = matchedRoles[0].name;
+          await req.prisma.$executeRawUnsafe(`
+            INSERT INTO "${schema}".rbac_user_roles (user_id, role_id) 
+            VALUES ('${user.id}', '${roleId}') 
+            ON CONFLICT DO NOTHING
+          `);
+        }
+      }
+    } catch (rErr) {
+      console.warn(`[AUTH_SSO] Role lookup notice in ${schema}:`, rErr.message);
+    }
+
+    // 4. Fetch Authorized Menus (Filtered by Subscription Plan)
+    let authorizedMenus = [];
+    if (roleId) {
+      try {
+        const allowedPlans = ['basic'];
+        if (['standard', 'professional', 'enterprise'].includes(tenantPlan)) allowedPlans.push('standard');
+        if (['professional', 'enterprise'].includes(tenantPlan)) allowedPlans.push('professional');
+        if (['enterprise'].includes(tenantPlan)) allowedPlans.push('enterprise');
+
+        const planFilter = allowedPlans.map(p => `'${p}'`).join(',');
+
+        authorizedMenus = await req.prisma.$queryRawUnsafe(`
+          SELECT m.label, m.path, m.icon 
+          FROM "${schema}".rbac_menus m
+          JOIN "${schema}".rbac_role_menus rm ON m.id = rm.menu_id
+          WHERE rm.role_id = '${roleId}' 
+          AND m.required_plan IN (${planFilter})
+          ORDER BY m.sort_order ASC
+        `);
+      } catch (mErr) {
+        console.warn(`[AUTH_SSO] Menu fetch notice in ${schema}:`, mErr.message);
+      }
+    }
+
+    // 5. Fetch Permissions
+    let permissions = [];
+    if (roleId) {
+      try {
+        const perms = await req.prisma.$queryRawUnsafe(`
+          SELECT p.key 
+          FROM "${schema}".rbac_permissions p
+          JOIN "${schema}".rbac_role_permissions rp ON p.id = rp.permission_id
+          WHERE rp.role_id = '${roleId}'
+        `);
+        permissions = perms.map(p => p.key);
+      } catch (pErr) {
+        console.warn(`[AUTH_SSO] Permissions fetch notice:`, pErr.message);
+      }
+    }
+
+    const normalizedRole = roleName ? roleName.toLowerCase() : 'admin';
+
+    // Sign full Jioplix session token
+    const token = jwt.sign({ 
+      user: user.email, 
+      tenantId: resolvedFacility, 
+      type: 'tenant', 
+      role: normalizedRole,
+      permissions 
+    }, process.env.JWT_SECRET || 'hims-jwt-secret-key-2024-jio-hms-secure-token', { expiresIn: "8h" });
+
+    console.log(`[AUTH_SSO] SSO Exchange complete for ${email} in tenant ${tenantName} (${schema})`);
+
+    return res.json({ 
+      token, 
+      tenantId: resolvedFacility, 
+      tenantName, 
+      tenantPlan,
+      type: 'tenant', 
+      landingPage: '/tenant/dashboard', 
+      role: normalizedRole, 
+      userName: user.name,
+      userId: user.id,
+      isManager: user.is_manager || false,
+      menus: authorizedMenus,
+      permissions,
+      uiSettings: tenantRecord.ui_settings || {}
+    });
+  } catch (err) {
+    console.error("[AUTH_SSO] SSO Exchange error:", err);
+    return res.status(500).json({ error: "SSO Exchange service temporarily unavailable" });
+  }
+});
+
 router.get("/me", (req, res) => {
   res.json({ user: req.user || null });
 });

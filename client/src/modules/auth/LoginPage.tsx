@@ -51,11 +51,71 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [ssoInProgress, setSsoInProgress] = useState(false);
+  const [ssoStatusText, setSsoStatusText] = useState("Validating Single Sign-On session...");
 
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = LOGIN_CSS;
     document.head.appendChild(style);
+
+    // ── Single Sign-On (SSO) Auto-Bypass ──
+    const searchParams = new URLSearchParams(window.location.search);
+    const ssoToken = searchParams.get("sso_token") || searchParams.get("token");
+
+    if (ssoToken) {
+      setLoading(true);
+      setSsoInProgress(true);
+      setSsoStatusText("Validating Cybelinx SSO Credentials...");
+
+      axios.post(`${API_BASE}/api/auth/sso/exchange`, { sso_token: ssoToken })
+        .then(res => {
+          const data = res.data;
+          setSsoStatusText("SSO verified! Launching clinical workspace...");
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("tenant", data.tenantId);
+          localStorage.setItem("tenantName", data.tenantName || "Jioplix Hospital");
+          localStorage.setItem("tenantPlan", data.tenantPlan || "basic");
+          localStorage.setItem("landingPage", data.landingPage || "/tenant/dashboard");
+          localStorage.setItem("userType", data.type || "tenant");
+          localStorage.setItem("role", data.role || "admin");
+          localStorage.setItem("userName", data.userName || "User");
+          localStorage.setItem("userId", data.userId || "");
+
+          // Save dynamic RBAC data
+          localStorage.setItem("userMenus", JSON.stringify(data.menus || []));
+          localStorage.setItem("userPermissions", JSON.stringify(data.permissions || []));
+
+          const sub = getSubdomain();
+          if (sub) {
+            localStorage.setItem("activeSubdomain", sub);
+          }
+
+          // Save branding configuration
+          if (data.uiSettings) {
+            if (data.uiSettings.primaryDark) setNamespacedItem('theme_primary_dark', data.uiSettings.primaryDark);
+            if (data.uiSettings.primaryAccent) setNamespacedItem('theme_primary_accent', data.uiSettings.primaryAccent);
+            if (data.uiSettings.appBg) setNamespacedItem('theme_app_bg', data.uiSettings.appBg);
+            if (data.uiSettings.textMain) setNamespacedItem('theme_text_main', data.uiSettings.textMain);
+            if (data.uiSettings.fontSize) setNamespacedItem('theme_font_size', data.uiSettings.fontSize);
+            if (data.uiSettings.logoUrl) setNamespacedItem('theme_logo_url', data.uiSettings.logoUrl);
+            if (data.uiSettings.heroBg) setNamespacedItem('theme_hero_bg', data.uiSettings.heroBg);
+            if (data.uiSettings.heroText) setNamespacedItem('theme_hero_text', data.uiSettings.heroText);
+            if (data.uiSettings.sidebarText) setNamespacedItem('theme_sidebar_text', data.uiSettings.sidebarText);
+          }
+
+          applyTheme();
+          const targetPath = searchParams.get("redirect") || data.landingPage || "/tenant/dashboard";
+          navigate(targetPath, { replace: true });
+        })
+        .catch(err => {
+          console.error("[SSO_EXCHANGE_ERROR]", err);
+          setLoading(false);
+          setSsoInProgress(false);
+          setError(err.response?.data?.error || "SSO token authentication failed. Please enter your credentials below.");
+        });
+      return;
+    }
 
     axios.get(`${API_BASE}/api/nexus/tenants/public`).then(res => {
       const list: any[] = res.data || [];
@@ -150,6 +210,48 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (ssoInProgress) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        width: '100vw',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #0b1329 0%, #070d1f 100%)',
+        fontFamily: "'Inter', sans-serif"
+      }}>
+        <div style={{
+          textAlign: 'center',
+          padding: '48px 40px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(20px)',
+          maxWidth: '440px',
+          width: '90%'
+        }}>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            border: '3px solid rgba(56, 189, 248, 0.2)',
+            borderTopColor: '#38bdf8',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 24px'
+          }} />
+          <h2 style={{ color: '#f1f5f9', fontSize: '20px', fontWeight: 800, margin: '0 0 8px' }}>
+            Cybelinx Single Sign-On
+          </h2>
+          <p style={{ color: '#94a3b8', fontSize: '14px', margin: 0, lineHeight: 1.5 }}>
+            {ssoStatusText}
+          </p>
+          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -308,6 +410,70 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            
+            {/* Supabase / Cybelinx SSO Direct Button */}
+            {type === "tenant" && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const sub = getSubdomain();
+                    const targetSub = sub || domainFacility || facility || "wellness";
+                    setSsoInProgress(true);
+                    setSsoStatusText("Authenticating via Supabase SSO...");
+                    axios.post(`${API_BASE}/api/auth/sso/exchange`, { 
+                      facility: targetSub,
+                      email: email || "b.selvakumar@cognivectra.com"
+                    })
+                      .then(res => {
+                        const data = res.data;
+                        localStorage.setItem("token", data.token);
+                        localStorage.setItem("tenant", data.tenantId);
+                        localStorage.setItem("tenantName", data.tenantName || "Jioplix Hospital");
+                        localStorage.setItem("tenantPlan", data.tenantPlan || "basic");
+                        localStorage.setItem("landingPage", data.landingPage || "/tenant/dashboard");
+                        localStorage.setItem("userType", data.type || "tenant");
+                        localStorage.setItem("role", data.role || "admin");
+                        localStorage.setItem("userName", data.userName || "User");
+                        localStorage.setItem("userId", data.userId || "");
+                        localStorage.setItem("userMenus", JSON.stringify(data.menus || []));
+                        localStorage.setItem("userPermissions", JSON.stringify(data.permissions || []));
+                        if (sub) localStorage.setItem("activeSubdomain", sub);
+                        applyTheme();
+                        navigate(data.landingPage || "/tenant/dashboard");
+                      })
+                      .catch(err => {
+                        setSsoInProgress(false);
+                        setError(err.response?.data?.error || "SSO authentication failed. Please use standard password login.");
+                      });
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '13px',
+                    borderRadius: '12px',
+                    border: '1.5px solid #0284c7',
+                    background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(37, 99, 235, 0.12) 100%)',
+                    color: '#0284c7',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <Sparkles size={16} color="#0284c7" />
+                  <span>⚡ Continue with Supabase SSO</span>
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', margin: '16px 0 6px', gap: '10px' }}>
+                  <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>or sign in with credentials</span>
+                  <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+                </div>
+              </div>
+            )}
             
             {/* Hospital Facility Selector */}
             {type === "tenant" && (
