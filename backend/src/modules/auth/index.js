@@ -647,6 +647,54 @@ router.post("/sso/exchange", async (req, res) => {
     );
 
     if (!tenants || tenants.length === 0) {
+      console.log(`[AUTH_SSO] Auto-registering missing tenant "${tenantIdentifier}" in nexus.tenants...`);
+      const safeCode = String(tenantIdentifier).trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+      const cleanName = safeCode.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + ' Hospital';
+      const newTenantId = require('crypto').randomUUID();
+
+      try {
+        await req.prisma.$executeRawUnsafe(`
+          INSERT INTO nexus.tenants (
+            id, name, db_name, plan, background_color, text_color, hero_background_color,
+            overall_text_color, created_at, admin_email, shard_id, code, domain, ui_settings
+          )
+          VALUES (
+            $1::uuid, $2, $3, 'enterprise', '#ffffff', '#1e293b', '#f8fafc',
+            '#475569', NOW(), $4, $3, $3, $3, '{}'::jsonb
+          )
+          ON CONFLICT (id) DO NOTHING
+        `, newTenantId, cleanName, safeCode, email);
+
+        await req.prisma.$executeRawUnsafe(`CREATE SCHEMA IF NOT EXISTS "${safeCode}"`);
+        const wellnessTables = await req.prisma.$queryRawUnsafe(`
+          SELECT table_name FROM information_schema.tables 
+          WHERE table_schema = 'wellness' AND table_type = 'BASE TABLE'
+        `);
+        for (const t of wellnessTables) {
+          try {
+            await req.prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "${safeCode}"."${t.table_name}" (LIKE "wellness"."${t.table_name}" INCLUDING ALL)`);
+          } catch (e) {}
+        }
+
+        const seedTables = ['rbac_roles', 'rbac_menus', 'rbac_role_menus', 'departments', 'specialities', 'consultation_modes', 'wards', 'beds', 'services', 'diseases', 'treatments'];
+        for (const st of seedTables) {
+          try {
+            await req.prisma.$executeRawUnsafe(`INSERT INTO "${safeCode}"."${st}" SELECT * FROM "wellness"."${st}" ON CONFLICT DO NOTHING`);
+          } catch (e) {}
+        }
+
+        tenants = await req.prisma.$queryRawUnsafe(
+          `SELECT id, db_name, name, code, plan, ui_settings 
+           FROM nexus.tenants 
+           WHERE domain = $1 OR code = $1 OR id::text = $1`,
+          safeCode
+        );
+      } catch (autoErr) {
+        console.error("[AUTH_SSO] Auto-registration warning:", autoErr.message);
+      }
+    }
+
+    if (!tenants || tenants.length === 0) {
       return res.status(404).json({ error: `Hospital facility '${tenantIdentifier}' is not registered` });
     }
 
@@ -668,8 +716,14 @@ router.post("/sso/exchange", async (req, res) => {
       const defaultName = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       const hashedPassword = await bcrypt.hash('Admin@123', 10);
       
+      const colCheck = await req.prisma.$queryRawUnsafe(`
+        SELECT column_name FROM information_schema.columns 
+        WHERE table_schema = '${schema}' AND table_name = 'users' AND column_name IN ('password', 'password_hash')
+      `);
+      const passCol = colCheck.length > 0 && colCheck[0].column_name === 'password' ? 'password' : 'password_hash';
+
       const newUsers = await req.prisma.$queryRawUnsafe(`
-        INSERT INTO "${schema}".users (id, name, email, password, role, is_active, created_at, updated_at)
+        INSERT INTO "${schema}".users (id, name, email, ${passCol}, role, is_active, created_at, updated_at)
         VALUES (gen_random_uuid(), $1, $2, $3, 'ADMIN', true, NOW(), NOW())
         RETURNING *
       `, defaultName, email, hashedPassword);
